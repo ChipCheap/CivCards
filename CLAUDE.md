@@ -1,8 +1,18 @@
 # CivCards
 
+A civilization-themed card game set at the transition from the late medieval era into modern times, with one shared card universe used across three modes (multiplayer engine builder, roguelike, constructed CCG).
+
+The project-wide design rules, goals and invariants live in `framework.md`. Read it before designing, specifying or implementing anything; feature frameworks (`<Feature>.framework.md`) may never break its boundaries.
+
 ## Project Context
 
+- **Type:** Game (card game: simultaneous-turn engine-builder / deckbuilder, plus later roguelike and constructed CCG modes).
+- **Prototype stack:** Static web page (HTML / JavaScript), hostable on GitHub Pages or similar. Players join by game code; no port forwarding or other network setup for players.
+- **Final game stack:** Likely Unity / C# (not yet locked). Designs must stay engine-agnostic until then.
+
 ### Status of existing code
+
+No code yet — design phase only (`framework.md` written by the explorer).
 
 ## Working Rules
 
