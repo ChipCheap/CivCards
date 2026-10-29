@@ -2,7 +2,7 @@
 
 ## Open
 
-Each item is mirrored in `framework.md` → `## Open questions` (same number).
+Items 1–11 are mirrored in `framework.md` → `## Open questions` (same number).
 
 1. **How Wonders are claimed.**
    - (A) Sealed bid: losers are refunded but have spent the turn; tied highest bidders all build it. Costs: a second claim rule, and an exception to "a market claim never fails because of another player's action".
@@ -18,12 +18,19 @@ Each item is mirrored in `framework.md` → `## Open questions` (same number).
 9. **Civilization list and starter decks.** *Recommendation:* 2 contrasting civs in the prototype, sharing a base starter deck plus a few unique cards each.
 10. **AI approach.** *Recommendation:* rule-based first; the headless, deterministic rules keep trained / genetic-algorithm AI possible.
 11. **Hidden information in the final game** (no player's hidden state sent to other clients). *Recommendation:* the prototype is exempt; the architect decides how the final game guarantees it.
-12. **Connection approach for the prototype.** Peer-to-peer in the browser (PeerJS / Trystero: no accounts, but the host's tab is the server) vs. a hosted realtime database (Firebase / Supabase: survives refreshes, but needs a free account). *Recommendation:* decided by the architect; earlier lean was the realtime database. Since losing state when the host leaves is accepted, peer-to-peer is also viable.
+
+
+### Prototype
+
+- **Connection test between your two PCs** (`Prototyper.architecture.md` → Infrastructure). A minimal page tries to connect the two real players through PeerJS's free public broker. *If it connects:* build on it. *If it doesn't:* swap the transport module for a hosted realtime database used only as a message relay (one free account for you; nothing for players). Pending until the test is run.
 
 ## Agreed, not yet written
 
-- **`Prototyper.framework.md`** — a feature framework for the prototype tool (cards loaded from a folder, shuffled and synced online, manual counters, a notes field, joining by game code, no rules enforcement). Agreed to explore it as its own framework; not yet explored.
+- **Implementer skill** — none exists (DungeonCrawler only had the agent file). Write a current one in `.claude/skills/implementer/`, reading the flat `name.plan.md`, once specification is done and before the first build.
 
 ## Parked
 
 - Spectating, progression / unlocks, accounts for decks, scoring that depends on how the game ended, genetic-algorithm AI training, the Roguelike and Constructed mode frameworks → `backlog.md`.
+- Prototype turn structure (Ready button, turn ending, automatic market refill) → `backlog.md`.
+- Unity Netcode + Relay for multiplayer (rejected for the prototype; revisit when the final game's stack is chosen) → `backlog.md`.
+- Civilizations and their own starter decks (the prototype uses one shared starter deck) → `backlog.md`.

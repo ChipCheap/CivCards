@@ -7,7 +7,7 @@ The project-wide design rules, goals and invariants live in `framework.md`. Read
 ## Project Context
 
 - **Type:** Game (card game: simultaneous-turn engine-builder / deckbuilder, plus later roguelike and constructed CCG modes).
-- **Prototype stack:** Static web page (HTML / JavaScript), hostable on GitHub Pages or similar. Players join by game code; no port forwarding or other network setup for players.
+- **Prototype stack:** Static web page (HTML / JavaScript), hostable on GitHub Pages or similar. Players join by game code; no port forwarding or other network setup for players. Design in `Prototyper.framework.md`, architecture in `Prototyper.architecture.md`.
 - **Final game stack:** Likely Unity / C# (not yet locked). Designs must stay engine-agnostic until then.
 
 ### Status of existing code
@@ -77,6 +77,12 @@ deciding or what you are about to write.
 **An item leaves the bench only when it lands in a framework file or moves to `backlog.md`.** The two
 files have different jobs: `bench.md` is what is in flight now, `backlog.md` is what is wanted later.
 
+### Ask decisions as multiple choice
+
+When I need to decide something, ask it as multiple-choice questions (the question tool), recommended
+option first, related questions batched up to four at a time. Options, costs and the recommendation go
+into the choices themselves, not into a prose list I have to answer by typing.
+
 ### "Executive decision"
 
 When I say **executive decision**, stop arguing and adopt what I said.
@@ -93,9 +99,22 @@ relitigating it.
 
 ## Skill Behaviors
 
-Rules here are additional instructions layered on top of the named skill's own procedure.
+Rules here are additional instructions layered on top of the named skill's own procedure. The skills
+live in `.claude/skills/`.
 
-### Explorer · Architect · Specifier
+### Explorer
 
-- **Always quote the rule you cite** — see `## Working Rules` above. It applies to these skills as it
-  applies everywhere else; it is repeated here only because these skills cite identifiers most heavily.
+- **Always quote the rule you cite** — see `## Working Rules` above. Repeated here only because this
+  skill cites identifiers heavily.
+
+### Architect
+
+- **Always quote the rule you cite** — see `## Working Rules` above. Repeated here only because this
+  skill cites identifiers heavily.
+
+### Specifier
+
+- **Always quote the rule you cite** — see `## Working Rules` above. Repeated here only because this
+  skill cites identifiers heavily.
+
+### Implementer

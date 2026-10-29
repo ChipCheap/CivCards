@@ -162,24 +162,26 @@ There are four shared stacks. Each stack shows cards face-up, and a claimed card
 
 ## Boundaries & invariants
 
+Labelled **A** (Always) and **N** (Never) for citing.
+
 **Always**
-1. Every game ends. Modernization can be slowed but never stopped. Slowing effects add up to only a few turns.
-2. All players act at the same time. Resolution never pauses to wait for a player's decision.
-3. Every card keeps one identity (name, art, role) across all modes. A shared keyword means the same thing in every mode.
-4. Card definitions are engine-independent data.
-5. The game rules work without any UI. Every UI interaction calls exactly one game action, and the game can run entirely without a screen. Given the same starting shuffle (random seed) and the same player choices, it always produces the same result. This is needed for AI training, simulation, replays and rejoining.
-6. Hidden information stays hidden: opponents' builds and exact scores. Only the leaderboard order, market claims, scouted range and wave-arrival snapshots are shown.
-7. The final turn is always announced before it is played.
-8. Every core rule works with 1–4 players, with AI in empty seats. No rule needs two or more humans.
-9. Effect animations add at most a couple of minutes to a game, and they can always be sped up or skipped.
+- **A1.** Every game ends. Modernization can be slowed but never stopped. Slowing effects add up to only a few turns.
+- **A2.** All players act at the same time. Resolution never pauses to wait for a player's decision.
+- **A3.** Every card keeps one identity (name, art, role) across all modes. A shared keyword means the same thing in every mode.
+- **A4.** Card definitions are engine-independent data.
+- **A5.** The game rules work without any UI. Every UI interaction calls exactly one game action, and the game can run entirely without a screen. Given the same starting shuffle (random seed) and the same player choices, it always produces the same result. This is needed for AI training, simulation, replays and rejoining.
+- **A6.** Hidden information stays hidden: opponents' builds and exact scores. Only the leaderboard order, market claims, scouted range and wave-arrival snapshots are shown.
+- **A7.** The final turn is always announced before it is played.
+- **A8.** Every core rule works with 1–4 players, with AI in empty seats. No rule needs two or more humans.
+- **A9.** Effect animations add at most a couple of minutes to a game, and they can always be sped up or skipped.
 
 **Never**
-1. No hexes, tiles, population assignment, adjacency effects or real-time play.
-2. A market claim never fails because of what another player did. Wonders are the only possible exception (see Open questions).
-3. A player is never eliminated or left unable to act.
-4. The first prototype doesn't enforce rules. Enforcement is added step by step, never as an all-at-once requirement.
-5. No monetization, including pay-to-win.
-6. A strategic resource never has more than 1–2 copies in the game.
+- **N1.** No hexes, tiles, population assignment, adjacency effects or real-time play.
+- **N2.** A market claim never fails because of what another player did. Wonders are the only possible exception (see Open questions).
+- **N3.** A player is never eliminated or left unable to act.
+- **N4.** The first prototype doesn't enforce rules. Enforcement is added step by step, never as an all-at-once requirement.
+- **N5.** No monetization, including pay-to-win.
+- **N6.** A strategic resource never has more than 1–2 copies in the game.
 
 ## Standards adopted
 
@@ -215,7 +217,7 @@ Each has a recommended default.
 7. **Make attacking the leader pay off.** *Default: write it down as a design goal checked in playtests (for example, plunder grows with the defender's wealth), not as a strict rule.*
 8. **Pricier options that skip a strategic resource.** *Default: not a goal. Revisit only if lockouts feel bad in playtests.*
 9. **Civilization list and starter decks.** *Default: begin with 2 contrasting civs in the prototype, sharing the same base starter deck plus a few unique cards each.*
-10. **AI approach.** *Default: rule-based AI first. The headless, deterministic rules (Always 5) keep trained or genetic-algorithm AI possible later.*
+10. **AI approach.** *Default: rule-based AI first. The headless, deterministic rules (A5: "The game rules work without any UI") keep trained or genetic-algorithm AI possible later.*
 11. **Hidden information in the final game.** Because builds are hidden, the final game must not send a player's hidden state to other players' machines. *Default: the prototype is exempt (it trusts players). The architect decides how the final game guarantees this.*
 12. **Roguelike and Constructed modes.** *Default: explore each in its own framework once the Engine Builder's core loop feels right in the prototype.*
 13. **Accounts, spectating, progression.** *Default: out until after the Engine Builder is playable end to end.*
