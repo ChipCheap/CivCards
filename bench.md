@@ -22,7 +22,7 @@ Items 1–11 are mirrored in `framework.md` → `## Open questions` (same number
 
 ## Agreed, not yet written
 
-- **Prototype build, in three runs** (`Prototyper.plan.md`): run 1 = S3–S6 (card loader, table core, setup, tests) — **built**, 28 tests passing; run 2 = S7–S11 (page shell, host and guest sessions, layout, drawing) — **built**, checked in two local tabs; run 3 = S12–S17 (drag and drop, keys, right panel, left HUD, hand strips, optional search).
+*(nothing)*
 
 ## Parked
 

@@ -63,10 +63,6 @@ MARKET_STARTS.forEach((market, marketIndex) => {
   }
 });
 
-export function slotLayout(slotId) {
-  return SLOTS.get(slotId);
-}
-
 export function allSlotLayouts() {
   return [...SLOTS.entries()].map(([slotId, slot]) => ({ slotId, ...slot }));
 }
@@ -79,14 +75,20 @@ export function privateZoneRect(seat) {
   return sideRect(BOTTOM_PRIVATE_ZONE, seat);
 }
 
-// The rectangle a loose stack covers, from its centre position.
-export function looseStackRect(position) {
-  return { x: position.x - CARD_WIDTH / 2, y: position.y - CARD_HEIGHT / 2, width: CARD_WIDTH, height: CARD_HEIGHT };
+// The rectangle a stack covers: its slot's, or a card's size around a loose stack's centre position.
+export function stackRect(stack) {
+  if (stack.isSlot) {
+    return SLOTS.get(stack.id).rect;
+  }
+  return { x: stack.position.x - CARD_WIDTH / 2, y: stack.position.y - CARD_HEIGHT / 2, width: CARD_WIDTH, height: CARD_HEIGHT };
+}
+
+export function containsPoint(rect, point) {
+  return point.x >= rect.x && point.x <= rect.x + rect.width && point.y >= rect.y && point.y <= rect.y + rect.height;
 }
 
 export function isInPrivateZone(point, seat) {
-  const zone = privateZoneRect(seat);
-  return point.x >= zone.x && point.x <= zone.x + zone.width && point.y >= zone.y && point.y <= zone.y + zone.height;
+  return containsPoint(privateZoneRect(seat), point);
 }
 
 function sideRect(bottomRect, seat) {

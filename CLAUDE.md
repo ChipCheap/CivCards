@@ -12,12 +12,11 @@ The project-wide design rules, goals and invariants live in `framework.md`. Read
 
 ### Status of existing code
 
-Prototype: connection test (`prototype/connection-test.html`, `Prototyper.plan.md` S1), GitHub Pages
-workflow (H1), card loader with sample cards (S3) and table core with tests (S4–S6) exist. Run the tests
-with `node --test "tests/prototype/*.test.js"`. The game page (`prototype/index.html`, S7–S11) opens a
-table, joins by link, mirrors each player's side and hides private cards; nothing can be moved yet
-(S12 onward). Local preview: the `prototype` entry in `.claude/launch.json` serves `prototype/` on
-port 8765.
+The prototype (`Prototyper.plan.md` S1–S17, H1–H2) is built and playable at
+https://chipcheap.github.io/CivCards/ — the host opens it and sends the invite link. Card files and
+their format are in `prototype/cards/` (README there). Run the tests with
+`node --test "tests/prototype/*.test.js"`. Local preview: the `prototype` entry in
+`.claude/launch.json` serves `prototype/` on port 8765.
 
 ## Working Rules
 

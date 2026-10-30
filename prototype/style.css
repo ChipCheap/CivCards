@@ -127,10 +127,12 @@ button {
   border-bottom: 1px solid var(--border);
 }
 
-.opponent-hand .card {
+.opponent-hand .card.back {
   width: 44px;
   height: 62px;
+  flex: none;
   font-size: 0;
+  border-width: 2px;
 }
 
 .hand-count {
@@ -354,6 +356,250 @@ button {
   left: 0;
   top: 20px;
   opacity: 0.8;
+}
+
+/* Dragging */
+
+.drag-ghost {
+  position: fixed;
+  width: 100px;
+  height: 140px;
+  pointer-events: none;
+  z-index: 15;
+  opacity: 0.9;
+  transform: rotate(-3deg);
+}
+
+.drag-ghost .card {
+  width: 100%;
+  height: 100%;
+}
+
+.stack.is-target,
+.slot.is-target {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+.own-hand .card.is-lifted {
+  opacity: 0.25;
+}
+
+.own-hand .card {
+  cursor: grab;
+}
+
+/* Right panel */
+
+.panel-heading {
+  font-size: 1rem;
+  margin: 4px 0 8px;
+}
+
+.panel-filter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.panel-filter select {
+  flex: 1;
+  font: inherit;
+  background: var(--background);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.catalog {
+  display: grid;
+  grid-template-columns: repeat(2, 90px);
+  gap: 8px;
+  margin: 8px 0 16px;
+}
+
+.catalog-card {
+  width: 90px;
+  height: 126px;
+  cursor: grab;
+}
+
+.catalog-card .card {
+  width: 100px;
+  height: 140px;
+  transform: scale(0.9);
+  transform-origin: 0 0;
+}
+
+.panel-stacks {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.panel-stack {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--background);
+  cursor: grab;
+  user-select: none;
+}
+
+.trash-can {
+  position: sticky;
+  bottom: 0;
+  padding: 18px 10px;
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--muted);
+  text-align: center;
+}
+
+.trash-can.is-target {
+  border-color: var(--pointer);
+  color: var(--pointer);
+}
+
+/* Left HUD */
+
+.hud-section {
+  margin-top: 16px;
+}
+
+.hud-heading {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.hud-hint {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.counter-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 26px 44px 26px;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.counter-caption {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.counter-step {
+  padding: 2px 0;
+}
+
+.counter-value {
+  width: 100%;
+  font: inherit;
+  text-align: center;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--background);
+  color: var(--text);
+}
+
+.counter-value.shared {
+  display: block;
+  font-weight: 700;
+}
+
+.notes {
+  width: 100%;
+  margin-top: 8px;
+  font: inherit;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--background);
+  color: var(--text);
+  resize: vertical;
+}
+
+.reveal-toggle {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.reveal-toggle.is-revealed {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Menu and search */
+
+.context-menu {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+  padding: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  z-index: 25;
+}
+
+.context-menu-item {
+  border: none;
+  text-align: left;
+  background: transparent;
+}
+
+.context-menu-item:hover {
+  background: var(--background);
+}
+
+.search-dialog {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(760px, 90vw);
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  z-index: 25;
+}
+
+.search-title {
+  margin: 0;
+  font-weight: 700;
+}
+
+.search-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  overflow-y: auto;
+}
+
+.search-list .card {
+  cursor: pointer;
+}
+
+.search-close {
+  align-self: flex-end;
 }
 
 /* Messages */

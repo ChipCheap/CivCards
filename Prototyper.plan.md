@@ -105,6 +105,7 @@ invariants, PG/PD are `Prototyper.architecture.md`'s guidelines and decisions.
 
 **Technical note:** *The room code, the connection state and the "Copy invite link" button already sit at the top of the left HUD (`index.html`, filled by `main.js`). S15 lists them as part of the HUD; they are built now because S8 needs the invite button. Deviation: built earlier than S15.
 **Technical note:** *`main.js` draws everything the session reports: it puts `#<code>` into the address bar, shows the invite button, the card-problems panel and the failure overlay. The session never touches the page, so it stays on its side of the architecture's module boundary. Deviation: S8's text has the session do these.
+**Technical note:** Found while testing run 3: opening a second invite link in the same tab changes only the part after `#`, which browsers don't reload for, so the old table stayed. `main.js` now reloads the page when the code in the address changes. Deviation: beyond the step text.
 
 ### S8: Session — host side
 **Covers:** G1, G3, G22, G23, G24
@@ -144,35 +145,52 @@ invariants, PG/PD are `Prototyper.architecture.md`'s guidelines and decisions.
 ### S12: Screen — drag and drop
 **Covers:** G5, G6, G9, G20
 **Files:** `prototype/js/screen/input.js` (new)
-**Description:** Mouse down on a stack starts dragging its top card (grab request); with Shift held, the whole stack. While dragging, the stack or slot under the cursor point is highlighted, and position updates go out as presence about 20 times a second. On release, the cursor point alone picks the target: a visible stack or slot → move onto it; the hand strip → into the hand at that index; the trash can → trash; empty table → new stack at that point. Dragging within your hand reorders it; dragging a hand card out places it per the same rules. Stacks hidden from the viewer (inside the opponent's unrevealed zone) are never targets or grab sources, but the zone's empty area is a valid drop spot. Release sends the move and a release of the lock.
+**Description:** Mouse down on a stack starts dragging its top card (grab request)*; with Shift held, the whole stack. While dragging, the stack or slot under the cursor point is highlighted, and position updates go out as presence about 20 times a second*. On release, the cursor point alone picks the target*: a visible stack or slot → move onto it; the hand strip → into the hand at that index; the trash can → trash; empty table → new stack at that point. Dragging within your hand reorders it; dragging a hand card out places it per the same rules. Stacks hidden from the viewer (inside the opponent's unrevealed zone) are never targets or grab sources, but the zone's empty area is a valid drop spot. Release sends the move and a release of the lock*.
 **Rationale:** PA3: "the cursor point at drop time alone decides which stack a card joins."
+
+**Technical note:** *A press that moves less than 4 px is a click and moves nothing. The grab is sent when movement starts; if the next table shows the other player holds the stack, the drag ends and the card is back where it was (S9's drag half, built here).
+**Technical note:** *Your pointer goes out as presence whenever it is over the table, not only while dragging, and disappears for the opponent when it leaves the table. Deviation: beyond the step text.
+**Technical note:** *Drop cases beyond the step: a whole stack dropped on your hand draws all of it; catalog cards and panel stacks always land as a new stack at the cursor and can't go to the hand; a drop over the HUD or the panel puts the card back; the lifted stack doesn't count as a target when nothing of it stays behind, so a single card can be nudged a little. Deviation: beyond the step text.
+**Technical note:** *After a drop, the card stays drawn where it landed until the next table arrives (fallback 1.5 s), so it doesn't flicker back first. Escape cancels a drag.
 
 ### S13: Screen — keys and right-click menu
 **Covers:** G7, G9
 **Files:** `prototype/js/screen/input.js`
-**Description:** With the cursor over a visible stack or hand card, or while holding a card: 1–9 draws that many into your hand, F flips the top card / the held card / the hovered hand card, Shift + F flips the whole stack, R shuffles, C copies (the copy appears as a new stack just beside the cursor). Right-click on a stack opens a menu with draw 1, draw N (asks for a number), flip, flip stack, shuffle, copy, delete. Keys are ignored while typing in the notes field or any input.
+**Description:** With the cursor over a visible stack or hand card, or while holding a card*: 1–9 draws that many into your hand, F flips the top card / the held card / the hovered hand card, Shift + F flips the whole stack, R shuffles, C copies (the copy appears as a new stack just beside the cursor)*. Right-click on a stack opens a menu with draw 1, draw N (asks for a number), flip, flip stack, shuffle, copy, delete*. Keys are ignored while typing in the notes field or any input.
+
+**Technical note:** *Keys go by physical key position (`event.code`), so they sit in the same place on a German keyboard.
+**Technical note:** *The user set where a copy goes: slightly to the right of the card it copies — on the table 40 units to the right of the original, overlapping it a little; for a hand card, right after the original in the hand (the core's `copy` request gained this hand case, with a test). Deviation: the step said "just beside the cursor".
+**Technical note:** *The menu's "delete" is two entries, "Delete top card" and "Delete stack", so it is never unclear what goes; the menu also holds "Search…" (S17). "Draw…" asks with the browser's number prompt. Deviation: two delete entries instead of one.
 
 ### S14: Screen — right panel
 **Covers:** G12, G15
 **Files:** `prototype/js/screen/panel.js` (new)
-**Description:** Lists all card definitions as small cards, with type and era filters, and the predefined `panel` stacks (e.g. the era 2–4 market stacks) by name and size. Dragging a catalog card onto the table spawns a new face-up card; dragging a panel stack spawns that whole stack shuffled face-down (each drag creates a fresh copy, so the stack stays available in the panel). The trash can sits at the bottom of the panel and highlights as a drop target.
+**Description:** Lists all card definitions as small cards, with type and era filters, and the predefined `panel` stacks (e.g. the era 2–4 market stacks) by name and size*. Dragging a catalog card onto the table spawns a new face-up card; dragging a panel stack spawns that whole stack shuffled face-down (each drag creates a fresh copy, so the stack stays available in the panel). The trash can sits at the bottom of the panel and highlights as a drop target.
+
+**Technical note:** *Panel stacks never change during a game, so the list is drawn once, from the first table.
 
 ### S15: Screen — left HUD
 **Covers:** G13, G14
 **Files:** `prototype/js/screen/hud.js` (new)
-**Description:** Six private counters (Production, Food, Population, Knowledge, Attack, Defense) with − / + buttons and a typed value, and a notes box; both live only in the player's own browser storage, keyed by room code, and never travel. Shared Modernization and turn counters with − / +, sent as counter-add requests. A Reveal buildings toggle for your own private zone, showing its current state. Room code and connection state at the top.
+**Description:** Six private counters (Production, Food, Population, Knowledge, Attack, Defense) with − / + buttons and a typed value, and a notes box; both live only in the player's own browser storage, keyed by room code*, and never travel. Shared Modernization and turn counters with − / +, sent as counter-add requests. A Reveal buildings toggle for your own private zone, showing its current state. Room code and connection state at the top.
 **Rationale:** Private values never need the host, so keeping them local is simpler and survives a host refresh. Shared counters go through the host (PA2).
+
+**Technical note:** *The host has no code until its room is open, so its private values are kept on screen and saved from that moment on. Checked locally: a refreshed guest keeps its counters, notes and hand.
 
 ### S16: Hand strips
 **Covers:** G4, G9
 **Files:** `prototype/js/screen/render.js`, `prototype/js/screen/input.js`
-**Description:** The bottom strip lays out your hand in order, spreading or overlapping cards to fit the width; the top strip shows the opponent's backs. Hover preview works on your face-up hand cards only.
+**Description:** The bottom strip lays out your hand in order, spreading or overlapping cards to fit the width; the top strip shows the opponent's backs. Hover preview works on your face-up hand cards only*.
+
+**Technical note:** *The hover preview works on every face-up card on the page — table, hand, catalog and search — since the opponent's hand shows only backs anyway. Deviation: wider than the step text.
 
 ### S17: Search (optional)
 **Covers:** G8
 **Files:** `prototype/js/screen/input.js`, `prototype/js/core.js`
 **Description:** A right-click "Search" on a visible stack opens a list of its cards (faces shown to the searcher only); clicking one moves it into the searcher's hand via a take-card request. Build only after S1–S16 work; drop it if it doesn't come out cleanly.
 **Rationale:** Prototyper.framework.md: "Search (optional for the first build, only if it works cleanly)".
+
+**Technical note:** Built. The core gained one request, `take-card` (`{ stackId, cardId }`), with its own test. The searcher sees every card's face, face-down ones included; the opponent sees nothing of the search.
 
 ## Helper steps
 
@@ -186,7 +204,9 @@ invariants, PG/PD are `Prototyper.architecture.md`'s guidelines and decisions.
 ### H2: Prototype README
 **Justification:** The card files are edited by hand; the format rules (columns, `start` values, art file names) need to be written down where the user edits.
 **Files:** `prototype/cards/README.md` (new)
-**Description:** Short reference for `cards.csv` and `stacks.csv` columns, the allowed `start` values, where art goes, and how to run the core tests.
+**Description:** Short reference for `cards.csv` and `stacks.csv` columns, the allowed `start` values, where art goes, and how to run the core tests*.
+
+**Technical note:** *Uses the working command `node --test "tests/prototype/*.test.js"` (see S6).
 
 ## Assumptions
 

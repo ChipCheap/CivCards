@@ -1,8 +1,11 @@
 // Wires the page together: decides host or guest from the address, loads the cards on the host,
-// starts the session and the screen, and shows the session's status on the page.
+// starts the session and the screen parts, and shows the session's status on the page.
 
 import { loadCardData } from "./loader.js";
 import { SESSION_FAILURE, startGuest, startHost } from "./session.js";
+import { createHud } from "./screen/hud.js";
+import { createInput } from "./screen/input.js";
+import { createPanel } from "./screen/panel.js";
 import { createScreen } from "./screen/render.js";
 import { createView } from "./screen/view.js";
 
@@ -18,12 +21,9 @@ const FAILURE_MESSAGES = Object.freeze({
 
 const viewportElement = document.getElementById("table-viewport");
 const boardElement = document.getElementById("board");
-const screenElements = {
-  boardElement,
-  handElement: document.getElementById("own-hand"),
-  opponentHandElement: document.getElementById("opponent-hand"),
-  previewElement: document.getElementById("card-preview"),
-};
+const handElement = document.getElementById("own-hand");
+const panelElement = document.getElementById("side-panel");
+const hudElement = document.getElementById("hud");
 const roomCodeElement = document.getElementById("room-code");
 const connectionStateElement = document.getElementById("connection-state");
 const copyInviteButton = document.getElementById("copy-invite");
@@ -42,6 +42,10 @@ copyInviteButton.addEventListener("click", async () => {
 });
 
 const roomCode = location.hash.slice(1).trim().toUpperCase();
+// Opening another invite link in this tab changes only the part after "#", which browsers don't
+// reload for; reloading starts over at the new table. The host's own code is written with
+// replaceState, which doesn't fire this.
+window.addEventListener("hashchange", () => location.reload());
 if (roomCode === "") {
   hostTable();
 } else {
@@ -58,41 +62,77 @@ async function hostTable() {
     return;
   }
   showProblems(cardData.problems);
-  const screen = createScreen({
-    ...screenElements,
-    view: createView(viewportElement, boardElement, false),
+  // The host session applies requests at once and calls page.showTable before startHost returns, so the
+  // page reaches the session through these arrows, which only run once the player acts.
+  let session;
+  const page = createPage({
     seat: 0,
     cards: cardData.cards,
+    sendRequest: request => session.sendRequest(request),
+    sendPresence: presence => session.sendPresence(presence),
   });
-  startHost({
+  session = startHost({
     cardData,
     random: Math.random,
-    onTable: screen.showTable,
-    onPresence: screen.showPresence,
-    onStatus: showStatus,
+    onTable: page.showTable,
+    onPresence: page.showPresence,
+    onStatus: status => {
+      if (status.kind === "hosting") {
+        page.useRoomCode(status.code);
+      }
+      showStatus(status);
+    },
   });
 }
 
 function joinTable(code) {
   roomCodeElement.textContent = `Table ${code}`;
   connectionStateElement.textContent = "Joining…";
-  let screen;
-  startGuest({
+  let page;
+  const session = startGuest({
     code,
     onReady: ({ seat, cards, table }) => {
-      // Seat 1 sees the board mirrored, so its own side is at the bottom too.
-      screen = createScreen({
-        ...screenElements,
-        view: createView(viewportElement, boardElement, seat === 1),
+      page = createPage({
         seat,
         cards,
+        sendRequest: request => session.sendRequest(request),
+        sendPresence: presence => session.sendPresence(presence),
       });
-      screen.showTable(table);
+      page.useRoomCode(code);
+      page.showTable(table);
     },
-    onTable: table => screen.showTable(table),
-    onPresence: (seat, presence) => screen.showPresence(seat, presence),
+    onTable: table => page.showTable(table),
+    onPresence: (seat, presence) => page.showPresence(seat, presence),
     onStatus: showStatus,
   });
+}
+
+// Builds the table screen for one seat: drawing, right panel, left HUD and input, all fed the same table.
+function createPage({ seat, cards, sendRequest, sendPresence }) {
+  // Seat 1 sees the board mirrored, so its own side is at the bottom too.
+  const view = createView(viewportElement, boardElement, seat === 1);
+  const screen = createScreen({
+    boardElement,
+    handElement,
+    opponentHandElement: document.getElementById("opponent-hand"),
+    previewElement: document.getElementById("card-preview"),
+    view,
+    seat,
+    cards,
+  });
+  const panel = createPanel(panelElement, cards);
+  const hud = createHud(hudElement, seat, sendRequest);
+  const input = createInput({ viewportElement, handElement, panelElement, screen, view, seat, cards, sendRequest, sendPresence });
+  return {
+    showTable(table) {
+      screen.showTable(table);
+      panel.showTable(table);
+      hud.showTable(table);
+      input.setTable(table);
+    },
+    showPresence: screen.showPresence,
+    useRoomCode: hud.useRoomCode,
+  };
 }
 
 function showStatus(status) {

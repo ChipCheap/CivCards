@@ -88,6 +88,7 @@ const REQUEST_HANDLERS = Object.freeze({
   "flip-stack": flipStack,
   "shuffle": shuffleStack,
   "draw": draw,
+  "take-card": takeChosenCard,
   "copy": copy,
   "trash-card": trashCard,
   "trash-stack": trashStack,
@@ -210,15 +211,37 @@ function draw({ table, seat, request }) {
   return true;
 }
 
-// { from: { stackId } | { handIndex }, position } — a new card of the same definition and face state,
-// as its own stack at `position`.
+// { stackId, cardId } — takes one chosen card out of a stack (a search) into the requester's hand, face-up.
+function takeChosenCard({ table, seat, request }) {
+  const stack = findUsableStack(table, seat, request.stackId);
+  const cardIndex = stack === undefined ? -1 : stack.cards.findIndex(card => card.id === request.cardId);
+  if (cardIndex === -1) {
+    return false;
+  }
+  const [card] = stack.cards.splice(cardIndex, 1);
+  table.seats[seat].hand.push({ ...card, faceUp: true });
+  if (stack.cards.length === 0) {
+    emptyStack(table, stack);
+  }
+  return true;
+}
+
+// { from: { stackId }, position } or { from: { handIndex } } — a new card of the same definition and face
+// state: from a stack, as its own stack at `position`; from the hand, right after the original.
 function copy({ table, seat, request }) {
   const source = resolveSource(table, seat, request.from);
-  if (source === undefined || !isPosition(request.position)) {
+  if (source === undefined) {
     return false;
   }
   const original = peekCard(table, seat, source);
   const duplicate = createCard(table, original.definitionId, original.faceUp);
+  if (source.handIndex !== undefined) {
+    table.seats[seat].hand.splice(source.handIndex + 1, 0, duplicate);
+    return true;
+  }
+  if (!isPosition(request.position)) {
+    return false;
+  }
   table.stacks.push(createLooseStack(table, request.position, [duplicate]));
   return true;
 }

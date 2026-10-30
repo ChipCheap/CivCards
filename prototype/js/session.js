@@ -120,12 +120,9 @@ export function startHost({ cardData, random, onTable, onPresence, onStatus }) {
   onTable(table);
 
   return {
-    seat: HOST_SEAT,
-    // TODO: Called by the screen's drag, keys and HUD — see Prototyper.plan.md S12–S15
     sendRequest(request) {
       applyRequest(HOST_SEAT, request);
     },
-    // TODO: Called by the screen's pointer tracking — see Prototyper.plan.md S12
     sendPresence(presence) {
       sendToGuest({ kind: "presence", seat: HOST_SEAT, presence });
     },
@@ -169,11 +166,9 @@ export function startGuest({ code, onReady, onTable, onPresence, onStatus }) {
   });
 
   return {
-    // TODO: Called by the screen's drag, keys and HUD — see Prototyper.plan.md S12–S15
     sendRequest(request) {
       room.send({ kind: "request", request });
     },
-    // TODO: Called by the screen's pointer tracking — see Prototyper.plan.md S12
     sendPresence(presence) {
       room.send({ kind: "presence", presence });
     },

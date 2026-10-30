@@ -81,7 +81,6 @@ export function createView(viewportElement, boardElement, isMirrored) {
       return isMirrored ? { x: point.x, y: TABLE_HEIGHT - point.y } : point;
     },
     // A pointer position on screen, as an unmirrored point in table units.
-    // TODO: Called by drag and drop and pointer tracking — see Prototyper.plan.md S12
     toTablePoint(clientX, clientY) {
       const bounds = viewportElement.getBoundingClientRect();
       const boardX = (clientX - bounds.left - offsetX) / scale;

@@ -179,6 +179,16 @@ test("cards in hand can be reordered", () => {
   assert.deepEqual(table.seats[0].hand, [second, third, first]);
 });
 
+test("searching takes one chosen card out of a stack into the hand, face-up", () => {
+  const table = newTable();
+  const deckCards = stackById(table, deckSlotId(0)).cards;
+  const chosen = deckCards[1];
+  const after = apply(table, 0, { kind: "take-card", stackId: deckSlotId(0), cardId: chosen.id }, createRandom(1));
+  assert.deepEqual(after.seats[0].hand, [{ ...chosen, faceUp: true }]);
+  assert.deepEqual(stackById(after, deckSlotId(0)).cards, deckCards.filter(card => card.id !== chosen.id));
+  assert.equal(apply(table, 0, { kind: "take-card", stackId: deckSlotId(0), cardId: "no-such-card" }, createRandom(1)), table);
+});
+
 test("a copy keeps the definition and face state with a new id", () => {
   const table = newTable();
   const original = stackById(table, displaySlotId("market-tech", 1)).cards[0];
@@ -188,6 +198,21 @@ test("a copy keeps the definition and face state with a new id", () => {
   assert.equal(duplicate.faceUp, original.faceUp);
   assert.notEqual(duplicate.id, original.id);
   assert.deepEqual(stackById(after, displaySlotId("market-tech", 1)).cards, [original], "the original stays");
+});
+
+test("a copy of a hand card goes right after it in the hand", () => {
+  let table = applyAll(newTable(), 0, [
+    { kind: "draw", stackId: deckSlotId(0), count: 2 },
+    { kind: "flip", from: { handIndex: 0 } },
+  ]);
+  const [first, second] = table.seats[0].hand;
+  table = apply(table, 0, { kind: "copy", from: { handIndex: 0 } }, createRandom(1));
+  const hand = table.seats[0].hand;
+  assert.equal(hand.length, 3);
+  assert.deepEqual([hand[0], hand[2]], [first, second]);
+  assert.equal(hand[1].definitionId, first.definitionId);
+  assert.equal(hand[1].faceUp, false, "the copy keeps the original's face state");
+  assert.notEqual(hand[1].id, first.id);
 });
 
 test("trashing a card removes it; trashing a stack empties a slot or removes a loose stack", () => {
