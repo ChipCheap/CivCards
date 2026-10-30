@@ -20,13 +20,9 @@ Items 1–11 are mirrored in `framework.md` → `## Open questions` (same number
 11. **Hidden information in the final game** (no player's hidden state sent to other clients). *Recommendation:* the prototype is exempt; the architect decides how the final game guarantees it.
 
 
-### Prototype
-
-- **Connection test between your two PCs** — the test page (`Prototyper.plan.md` S1) is built and works locally; it goes live once pushed and GitHub Pages is switched to "GitHub Actions". S2 ("Stop after S1 and H1 are published. The user and their friend open the test from their own PCs and report the status line") waits for your result. *If it connects:* the build continues with S3. *If it doesn't:* back to the specifier to swap the transport for a hosted realtime database used only as a message relay (one free account for you; nothing for players).
-
 ## Agreed, not yet written
 
-*(nothing)*
+- **Prototype build, in three runs** (`Prototyper.plan.md`): run 1 = S3–S6 (card loader, table core, setup, tests) — **built**, 28 tests passing; run 2 = S7–S11 (page shell, host and guest sessions, layout, drawing); run 3 = S12–S17 (drag and drop, keys, right panel, left HUD, hand strips, optional search).
 
 ## Parked
 

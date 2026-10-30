@@ -1,0 +1,35 @@
+stack,card,count,start
+Starter deck,farm,3,player-deck
+Starter deck,workshop,3,player-deck
+Starter deck,militia,2,player-deck
+Starter deck,scholar,1,player-deck
+Starter deck,levy,1,player-deck
+Era 1 Resources,iron,1,market-resources
+Era 1 Resources,coal,1,market-resources
+Era 1 Resources,horses,1,market-resources
+Era 1 Resources,timber,1,market-resources
+Era 1 Resources,stone,1,market-resources
+Era 1 Resources,salt,1,market-resources
+Era 1 Technology,printing-press,1,market-tech
+Era 1 Technology,crop-rotation,1,market-tech
+Era 1 Technology,gunpowder,1,market-tech
+Era 1 Technology,banking,1,market-tech
+Era 1 Technology,navigation,1,market-tech
+Era 1 Technology,astronomy,1,market-tech
+Era 1 Blueprints,sawmill,1,market-blueprints
+Era 1 Blueprints,forge,1,market-blueprints
+Era 1 Blueprints,granary,1,market-blueprints
+Era 1 Blueprints,barracks,1,market-blueprints
+Era 1 Blueprints,market-hall,1,market-blueprints
+Era 1 Blueprints,harbor,1,market-blueprints
+Era 1 Wonders,cathedral,1,market-wonders
+Era 1 Wonders,great-library,1,market-wonders
+Era 1 Wonders,royal-palace,1,market-wonders
+Era 1 Wonders,observatory,1,market-wonders
+Era 1 Wonders,grand-canal,1,market-wonders
+Era 1 Wonders,citadel,1,market-wonders
+Era 2 Technology,steam-engine,1,panel
+Era 2 Technology,railway,1,panel
+Era 2 Technology,factory-system,1,panel
+Era 2 Technology,chemistry,1,panel
+Unrest cards,unrest,6,panel
