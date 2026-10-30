@@ -12,7 +12,9 @@ The project-wide design rules, goals and invariants live in `framework.md`. Read
 
 ### Status of existing code
 
-No code yet — design phase only (`framework.md` written by the explorer).
+Prototype: the connection test page (`prototype/connection-test.html`, `Prototyper.plan.md` S1) and the
+GitHub Pages workflow (H1) exist; the card table itself (S3 onward) is not built yet. Local preview:
+the `prototype` entry in `.claude/launch.json` serves `prototype/` on port 8765.
 
 ## Working Rules
 

@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CivCards Connection Test</title>
+  <style>
+    :root {
+      --background: #f6f4ef;
+      --surface: #ffffff;
+      --text: #1f1d1a;
+      --muted: #6b665d;
+      --border: #d9d4c9;
+      --waiting: #8a6d1f;
+      --success: #1f7a3a;
+      --failure: #b0302a;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --background: #1b1a18;
+        --surface: #262422;
+        --text: #eeeae2;
+        --muted: #a8a196;
+        --border: #3d3a35;
+        --waiting: #e0bf63;
+        --success: #6fd08c;
+        --failure: #ff8a80;
+      }
+    }
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font: 16px/1.5 system-ui, sans-serif;
+    }
+    main {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 32px 16px;
+    }
+    h1 {
+      font-size: 1.4rem;
+      margin: 0 0 24px;
+    }
+    .status {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin: 0 0 8px;
+    }
+    .status[data-state="waiting"] { color: var(--waiting); }
+    .status[data-state="connected"] { color: var(--success); }
+    .status[data-state="failed"] { color: var(--failure); }
+    .detail {
+      color: var(--muted);
+      margin: 0 0 24px;
+    }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 0 0 16px;
+    }
+    .invite-row {
+      display: flex;
+      gap: 8px;
+    }
+    .invite-row input {
+      flex: 1;
+      min-width: 0;
+      font: inherit;
+      padding: 6px 8px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--background);
+      color: var(--text);
+    }
+    button {
+      font: inherit;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--background);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .log {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>CivCards connection test</h1>
+    <p class="status" id="status" data-state="waiting">Starting…</p>
+    <p class="detail" id="detail"></p>
+
+    <section class="panel" id="invite" hidden>
+      <p>Send this link to the other player:</p>
+      <div class="invite-row">
+        <input id="invite-link" type="text" readonly>
+        <button id="copy-invite" type="button">Copy link</button>
+      </div>
+    </section>
+
+    <section class="panel" id="measurements" hidden>
+      <p id="connection-kind"></p>
+      <p id="round-trip"></p>
+    </section>
+
+    <section class="panel">
+      <p>What happened (tell the other player or Claude if something fails):</p>
+      <ol class="log" id="log"></ol>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js"
+          integrity="sha384-x0YgkOr/3UOZP2CRDxGW9e0Q+2Qjyr3uJrm4xU32Y7ZCNAo7Cc7bjhrZMi/dwczu"
+          crossorigin="anonymous"></script>
+  <script type="module">
+    // Room codes leave out I, L and O so they can't be misread as 1 or 0.
+    const CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ";
+    const CODE_LENGTH = 5;
+    // Our codes share PeerJS's public broker with other apps; the prefix keeps them apart.
+    const BROKER_ID_PREFIX = "civcards-";
+    const CONNECT_TIMEOUT_MILLISECONDS = 20000;
+    const PING_INTERVAL_MILLISECONDS = 1000;
+    // A tab that closes abruptly sends no goodbye, so silence this long counts as the other player gone.
+    const SILENCE_LIMIT_MILLISECONDS = 5000;
+
+    const statusElement = document.getElementById("status");
+    const detailElement = document.getElementById("detail");
+    const inviteSection = document.getElementById("invite");
+    const inviteLinkInput = document.getElementById("invite-link");
+    const copyInviteButton = document.getElementById("copy-invite");
+    const measurementsSection = document.getElementById("measurements");
+    const connectionKindElement = document.getElementById("connection-kind");
+    const roundTripElement = document.getElementById("round-trip");
+    const logList = document.getElementById("log");
+
+    let hasFailed = false;
+    let isConnected = false;
+
+    function showStatus(state, headline, detail) {
+      statusElement.dataset.state = state;
+      statusElement.textContent = headline;
+      detailElement.textContent = detail;
+    }
+
+    function logEvent(text) {
+      const entry = document.createElement("li");
+      entry.textContent = `${new Date().toLocaleTimeString()} — ${text}`;
+      logList.append(entry);
+    }
+
+    function fail(headline, detail) {
+      if (hasFailed) {
+        return;
+      }
+      hasFailed = true;
+      showStatus("failed", headline, detail);
+      logEvent(`Failed: ${headline}`);
+    }
+
+    function createRoomCode() {
+      const randomValues = crypto.getRandomValues(new Uint32Array(CODE_LENGTH));
+      return Array.from(randomValues, value => CODE_ALPHABET[value % CODE_ALPHABET.length]).join("");
+    }
+
+    function readRoomCodeFromAddress() {
+      const code = location.hash.slice(1).trim().toUpperCase();
+      return code.length > 0 ? code : undefined;
+    }
+
+    // Maps PeerJS error types to what the player can do about them.
+    function describeBrokerError(error) {
+      switch (error.type) {
+        case "peer-unavailable":
+          return ["No test with this code is open",
+            "Ask the other player to open the test page again and send you the new link."];
+        case "network":
+        case "server-error":
+        case "socket-error":
+        case "socket-closed":
+          return ["Could not reach the PeerJS broker",
+            "The free introduction service didn't answer. Check your internet connection, or try again later."];
+        case "browser-incompatible":
+          return ["This browser can't make direct connections",
+            "Try a current Chrome, Edge or Firefox."];
+        default:
+          return ["Could not connect", `PeerJS reported: ${error.type} — ${error.message}`];
+      }
+    }
+
+    // Once the browsers are connected the broker is no longer needed, so losing it is only logged.
+    function handleBrokerError(error) {
+      if (isConnected) {
+        logEvent(`Broker connection lost (${error.type}); the test connection is unaffected`);
+        return;
+      }
+      fail(...describeBrokerError(error));
+    }
+
+    // Asks the browser which network route the connection settled on.
+    async function describeConnectionKind(peerConnection) {
+      const report = await peerConnection.getStats();
+      let selectedPairId;
+      report.forEach(statistic => {
+        if (statistic.type === "transport" && statistic.selectedCandidatePairId) {
+          selectedPairId = statistic.selectedCandidatePairId;
+        }
+      });
+      let selectedPair;
+      report.forEach(statistic => {
+        const isSelected = selectedPairId
+          ? statistic.id === selectedPairId
+          : statistic.type === "candidate-pair" && statistic.nominated && statistic.state === "succeeded";
+        if (isSelected) {
+          selectedPair = statistic;
+        }
+      });
+      if (!selectedPair) {
+        return "Connection route: unknown (the browser didn't say).";
+      }
+      const localCandidate = report.get(selectedPair.localCandidateId);
+      const remoteCandidate = report.get(selectedPair.remoteCandidateId);
+      const isRelayed = localCandidate?.candidateType === "relay" || remoteCandidate?.candidateType === "relay";
+      return isRelayed
+        ? "Connection route: through a PeerJS relay server (a direct connection wasn't possible)."
+        : "Connection route: direct between your two browsers.";
+    }
+
+    function watchConnection(connection) {
+      const timeout = setTimeout(() => fail("Could not connect within 20 seconds",
+        "Your two networks probably block each other. Note what the list below says and report it."),
+        CONNECT_TIMEOUT_MILLISECONDS);
+      let pingTimer;
+      let lastReplyAt;
+
+      function reportLostContact() {
+        clearInterval(pingTimer);
+        fail("Lost contact with the other player", "Their page was closed, or the connection dropped.");
+      }
+
+      connection.on("iceStateChanged", state => {
+        logEvent(`Network state: ${state}`);
+        if (state !== "failed") {
+          return;
+        }
+        clearTimeout(timeout);
+        if (isConnected) {
+          reportLostContact();
+        } else {
+          fail("The connection was blocked",
+            "Neither a direct connection nor a PeerJS relay got through between your two networks.");
+        }
+      });
+
+      connection.on("open", async () => {
+        clearTimeout(timeout);
+        isConnected = true;
+        logEvent("Connected to the other player");
+        showStatus("connected", "Connected — it works",
+          "Leave both pages open for a minute; the round-trip time should stay steady.");
+        inviteSection.hidden = true;
+        measurementsSection.hidden = false;
+        connectionKindElement.textContent = await describeConnectionKind(connection.peerConnection);
+        logEvent(connectionKindElement.textContent);
+        lastReplyAt = performance.now();
+        pingTimer = setInterval(() => {
+          if (performance.now() - lastReplyAt > SILENCE_LIMIT_MILLISECONDS) {
+            reportLostContact();
+            return;
+          }
+          connection.send({ kind: "ping", sentAt: performance.now() });
+        }, PING_INTERVAL_MILLISECONDS);
+      });
+
+      connection.on("data", message => {
+        if (typeof message !== "object" || message === null || typeof message.sentAt !== "number") {
+          return;
+        }
+        if (message.kind === "ping") {
+          connection.send({ kind: "pong", sentAt: message.sentAt });
+        } else if (message.kind === "pong") {
+          lastReplyAt = performance.now();
+          const roundTripMilliseconds = Math.round(performance.now() - message.sentAt);
+          roundTripElement.textContent = `Round trip: ${roundTripMilliseconds} ms`;
+        }
+      });
+
+      connection.on("close", () => {
+        clearTimeout(timeout);
+        reportLostContact();
+      });
+
+      connection.on("error", error => {
+        clearTimeout(timeout);
+        fail("The connection broke", `PeerJS reported: ${error.type} — ${error.message}`);
+      });
+    }
+
+    function hostRoom() {
+      const code = createRoomCode();
+      const peer = new Peer(BROKER_ID_PREFIX + code);
+      showStatus("waiting", "Contacting the PeerJS broker…", "");
+
+      peer.on("open", () => {
+        inviteLinkInput.value = `${location.origin}${location.pathname}#${code}`;
+        inviteSection.hidden = false;
+        showStatus("waiting", "Waiting for the other player", `Your test code is ${code}.`);
+        logEvent(`Registered with the broker as code ${code}`);
+      });
+
+      peer.on("connection", connection => {
+        logEvent("The other player is connecting…");
+        watchConnection(connection);
+      });
+
+      peer.on("error", error => {
+        // A code already taken by someone else: start over with a fresh one.
+        if (error.type === "unavailable-id") {
+          logEvent(`Code ${code} was taken; trying another`);
+          peer.destroy();
+          hostRoom();
+          return;
+        }
+        handleBrokerError(error);
+      });
+    }
+
+    function joinRoom(code) {
+      const peer = new Peer();
+      showStatus("waiting", "Contacting the PeerJS broker…", `Joining test code ${code}.`);
+
+      peer.on("open", () => {
+        logEvent(`Reached the broker; connecting to code ${code}`);
+        showStatus("waiting", "Connecting to the other player…", `Joining test code ${code}.`);
+        watchConnection(peer.connect(BROKER_ID_PREFIX + code, { reliable: true }));
+      });
+
+      peer.on("error", handleBrokerError);
+    }
+
+    copyInviteButton.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(inviteLinkInput.value);
+        copyInviteButton.textContent = "Copied";
+      } catch {
+        inviteLinkInput.select();
+        copyInviteButton.textContent = "Press Ctrl+C";
+      }
+    });
+
+    if (typeof Peer !== "function") {
+      fail("The networking library didn't load",
+        "The page couldn't download PeerJS from cdn.jsdelivr.net. Check your connection or any content blocker.");
+    } else {
+      const code = readRoomCodeFromAddress();
+      if (code) {
+        joinRoom(code);
+      } else {
+        hostRoom();
+      }
+    }
+  </script>
+</body>
+</html>

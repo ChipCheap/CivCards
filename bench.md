@@ -22,7 +22,7 @@ Items 1–11 are mirrored in `framework.md` → `## Open questions` (same number
 
 ### Prototype
 
-- **Connection test between your two PCs** — `Prototyper.plan.md` S1 builds the test page and S2 ("Stop after S1 and H1 are published. The user and their friend open the test from their own PCs and report the status line") waits for your result. *If it connects:* the build continues with S3. *If it doesn't:* back to the specifier to swap the transport for a hosted realtime database used only as a message relay (one free account for you; nothing for players).
+- **Connection test between your two PCs** — the test page (`Prototyper.plan.md` S1) is built and works locally; it goes live once pushed and GitHub Pages is switched to "GitHub Actions". S2 ("Stop after S1 and H1 are published. The user and their friend open the test from their own PCs and report the status line") waits for your result. *If it connects:* the build continues with S3. *If it doesn't:* back to the specifier to swap the transport for a hosted realtime database used only as a message relay (one free account for you; nothing for players).
 
 ## Agreed, not yet written
 

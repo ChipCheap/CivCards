@@ -48,8 +48,13 @@ invariants, PG/PD are `Prototyper.architecture.md`'s guidelines and decisions.
 ### S1: Connection test page
 **Covers:** G2
 **Files:** `prototype/connection-test.html` (new)
-**Description:** A standalone page, published with the prototype, that loads the pinned PeerJS client from a CDN. Opened without a hash, it registers on PeerJS's public broker under the id `civcards-<code>` (a random 5-letter code), shows a "copy this link" box with `connection-test.html#<code>`, and waits. Opened with a hash, it connects to that id. Once connected, both sides exchange a ping every second and show round-trip time, plus a large plain-language status line: "Waiting for the other player", "Connected — it works", or "Could not connect" with the reason (broker unreachable, code not found, direct connection blocked by the network). A connection attempt that hasn't succeeded within 20 seconds counts as failed.
+**Description:** A standalone page, published with the prototype, that loads the pinned PeerJS client from a CDN*. Opened without a hash, it registers on PeerJS's public broker under the id `civcards-<code>` (a random 5-letter code), shows a "copy this link" box with `connection-test.html#<code>`, and waits. Opened with a hash, it connects to that id. Once connected, both sides exchange a ping every second and show round-trip time*, plus a large plain-language status line*: "Waiting for the other player", "Connected — it works", or "Could not connect" with the reason (broker unreachable, code not found, direct connection blocked by the network)*. A connection attempt that hasn't succeeded within 20 seconds counts as failed.
 **Rationale:** Prototyper.framework.md: "Before anything else is built, a minimal connection test is tried between the two real players' machines." The `civcards-` prefix keeps our codes from colliding with other apps on the shared public broker.
+
+**Technical note:** *Pinned PeerJS 1.5.5, the latest stable release (2.0 is still beta), loaded from jsDelivr with a subresource integrity hash.
+**Technical note:** *Added a silence check: if no ping reply arrives for 5 seconds, the page reports "Lost contact with the other player". A tab that closes abruptly sends no close signal, so without this the remaining page kept showing "Connected — it works". Deviation: beyond the step text.
+**Technical note:** *PeerJS's default settings include its free relay (TURN) servers, so a blocked direct connection can still succeed through a relay. The page therefore also reports the route it got: "direct between your two browsers" or "through a PeerJS relay server". Deviation: this report goes beyond the step text.
+**Technical note:** *Added an on-page event list ("What happened") with timestamps, so a failure can be reported exactly. Deviation: beyond the step text.
 
 ### S2: Checkpoint — run the connection test with the real players
 **Covers:** G2
@@ -147,7 +152,9 @@ invariants, PG/PD are `Prototyper.architecture.md`'s guidelines and decisions.
 ### H1: GitHub Pages publishing workflow
 **Justification:** S1 must be reachable by both players before anything else, and PD8 chose publishing `prototype/` through GitHub Actions.
 **Files:** `.github/workflows/pages.yml` (new)
-**Description:** On every push to `main`, upload `prototype/` unchanged as the Pages artifact and deploy it. No build step. One manual step for the user, done once: repo Settings → Pages → Source: GitHub Actions.
+**Description:** On every push to `main`, upload `prototype/` unchanged as the Pages artifact and deploy it*. No build step. One manual step for the user, done once: repo Settings → Pages → Source: GitHub Actions.
+
+**Technical note:** *Actions pinned to their current major versions: `actions/checkout@v7`, `actions/configure-pages@v6`, `actions/upload-pages-artifact@v5`, `actions/deploy-pages@v5`. The workflow can also be started by hand from the Actions tab.
 
 ### H2: Prototype README
 **Justification:** The card files are edited by hand; the format rules (columns, `start` values, art file names) need to be written down where the user edits.

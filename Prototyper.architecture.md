@@ -130,7 +130,7 @@ Five modules, each with one job. Arrows show what may depend on what; nothing de
 - **Fallback:** if the test fails, the transport module is swapped for a hosted realtime database (Firebase Realtime Database or Supabase) used **only as a message relay** between the host and guests. The host still owns the table, so nothing outside the transport changes. Cost: one free account for the developer; players still need nothing.
 - **Persistence:** none. The table lives in the host's tab; losing it on a host refresh is accepted (`framework.md`: "It's fine to lose the game state if the host leaves or refreshes").
 - **Third-party code** (PD10), each pinned and loaded from a CDN:
-  - the PeerJS client library (networking);
+  - the PeerJS client library, version 1.5.5 from jsDelivr with an integrity hash (networking);
   - a CSV parser, if the implementer finds quoted multi-line card text worth one.
 
 ## Extensibility
