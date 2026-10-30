@@ -6,7 +6,7 @@ export const PLAYER_DECK_START = "player-deck";
 export const PANEL_START = "panel";
 export const MARKET_STARTS = Object.freeze(["market-resources", "market-tech", "market-blueprints", "market-wonders"]);
 
-const DISPLAY_SLOTS_PER_MARKET = 3;
+export const DISPLAY_SLOTS_PER_MARKET = 3;
 
 export function deckSlotId(seat) {
   return `seat${seat}-deck`;

@@ -1,0 +1,413 @@
+:root {
+  --background: #ece7dc;
+  --surface: #f8f5ee;
+  --table: #d7cdb8;
+  --text: #24211c;
+  --muted: #6e675b;
+  --border: #b9ae98;
+  --accent: #8a5a1f;
+  --card-face: #fffdf8;
+  --card-back: #5b3f22;
+  --card-back-text: #e8d6b5;
+  --zone-own: rgba(40, 110, 70, 0.10);
+  --zone-opponent: rgba(140, 50, 40, 0.10);
+  --held: #c58a2e;
+  --pointer: #b03a2e;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1d1b18;
+    --surface: #282521;
+    --table: #34302a;
+    --text: #ece6da;
+    --muted: #a49c8e;
+    --border: #4f4940;
+    --accent: #e0a85a;
+    --card-face: #f4efe4;
+    --card-back: #6d4b2a;
+    --card-back-text: #ecdcbc;
+    --zone-own: rgba(90, 190, 120, 0.12);
+    --zone-opponent: rgba(220, 100, 90, 0.12);
+    --held: #e0a85a;
+    --pointer: #ff8a7a;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: grid;
+  grid-template-columns: 220px 1fr 220px;
+  background: var(--background);
+  color: var(--text);
+  font: 14px/1.4 system-ui, sans-serif;
+  overflow: hidden;
+}
+
+button {
+  font: inherit;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* Side columns */
+
+.hud,
+.side-panel {
+  padding: 12px;
+  background: var(--surface);
+  border-color: var(--border);
+  border-style: solid;
+  overflow-y: auto;
+}
+
+.hud {
+  border-width: 0 1px 0 0;
+}
+
+.side-panel {
+  border-width: 0 0 0 1px;
+}
+
+.room-status h1 {
+  font-size: 1.2rem;
+  margin: 0 0 8px;
+}
+
+.room-code {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.connection-state {
+  margin: 4px 0 8px;
+  color: var(--muted);
+}
+
+/* Centre column */
+
+.table-column {
+  display: grid;
+  grid-template-rows: 84px 1fr 168px;
+  min-width: 0;
+  min-height: 0;
+}
+
+.opponent-hand,
+.own-hand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  overflow-x: auto;
+  background: var(--surface);
+}
+
+.opponent-hand {
+  border-bottom: 1px solid var(--border);
+}
+
+.opponent-hand .card {
+  width: 44px;
+  height: 62px;
+  font-size: 0;
+}
+
+.hand-count {
+  color: var(--muted);
+  white-space: nowrap;
+  margin-right: 8px;
+}
+
+.own-hand {
+  border-top: 1px solid var(--border);
+}
+
+.own-hand .card {
+  width: 100px;
+  height: 140px;
+  flex: none;
+}
+
+.table-viewport {
+  position: relative;
+  overflow: hidden;
+  background: var(--background);
+  cursor: grab;
+  touch-action: none;
+}
+
+.table-viewport.is-panning {
+  cursor: grabbing;
+}
+
+.board {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  background: var(--table);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+/* Board furniture */
+
+.slot,
+.private-zone,
+.market-title,
+.stack,
+.presence-pointer {
+  position: absolute;
+}
+
+.slot {
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.private-zone {
+  border-radius: 12px;
+  pointer-events: none;
+}
+
+.private-zone.own {
+  background: var(--zone-own);
+}
+
+.private-zone.opponent {
+  background: var(--zone-opponent);
+}
+
+.private-zone-label {
+  padding: 6px 10px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.market-title {
+  transform: translateY(-100%);
+  padding-bottom: 4px;
+  font-weight: 700;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.stack-layer,
+.presence-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.stack {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.stack.is-held {
+  outline: 3px solid var(--held);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+.count-badge {
+  position: absolute;
+  right: -8px;
+  top: -8px;
+  min-width: 24px;
+  padding: 2px 6px;
+  border-radius: 12px;
+  background: var(--accent);
+  color: var(--card-face);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Cards */
+
+.card {
+  width: var(--card-width, 100px);
+  height: var(--card-height, 140px);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  user-select: none;
+}
+
+.stack .card {
+  width: 100%;
+  height: 100%;
+}
+
+.card.face {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 6px;
+  background: var(--card-face);
+  color: #24211c;
+  border: 1px solid #b9ae98;
+}
+
+.card.back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card-back);
+  color: var(--card-back-text);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  border: 3px solid var(--card-back-text);
+}
+
+.card-name {
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.card-kind,
+.card-cost {
+  font-size: 9px;
+  color: #6e675b;
+}
+
+.card-cost {
+  font-weight: 700;
+}
+
+.card-art {
+  width: 100%;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.card-text {
+  font-size: 9px;
+  white-space: pre-line;
+  overflow: hidden;
+}
+
+/* Preview: the same card template, drawn larger */
+
+.card-preview {
+  position: fixed;
+  right: 232px;
+  bottom: 180px;
+  width: 240px;
+  height: 336px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.card-preview .card {
+  width: 100px;
+  height: 140px;
+  transform: scale(2.4);
+  transform-origin: 0 0;
+}
+
+/* Other player */
+
+.presence-pointer {
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--pointer);
+  color: #ffffff;
+  font-size: 12px;
+  transform: translate(8px, 8px);
+  white-space: nowrap;
+}
+
+.held-card {
+  position: absolute;
+  left: 0;
+  top: 20px;
+  opacity: 0.8;
+}
+
+/* Messages */
+
+.problems {
+  position: fixed;
+  left: 232px;
+  top: 12px;
+  max-width: 480px;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  z-index: 20;
+}
+
+.problems h2 {
+  font-size: 1rem;
+  margin: 0 0 8px;
+}
+
+.problems ul {
+  margin: 0 0 12px;
+  padding-left: 18px;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 30;
+}
+
+.overlay-box {
+  max-width: 420px;
+  padding: 24px;
+  background: var(--surface);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+.overlay-title {
+  margin: 0 0 8px;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.overlay-detail {
+  margin: 0 0 16px;
+  color: var(--muted);
+}

@@ -14,8 +14,10 @@ The project-wide design rules, goals and invariants live in `framework.md`. Read
 
 Prototype: connection test (`prototype/connection-test.html`, `Prototyper.plan.md` S1), GitHub Pages
 workflow (H1), card loader with sample cards (S3) and table core with tests (S4–S6) exist. Run the tests
-with `node --test "tests/prototype/*.test.js"`. No game page yet (S7 onward). Local preview: the
-`prototype` entry in `.claude/launch.json` serves `prototype/` on port 8765.
+with `node --test "tests/prototype/*.test.js"`. The game page (`prototype/index.html`, S7–S11) opens a
+table, joins by link, mirrors each player's side and hides private cards; nothing can be moved yet
+(S12 onward). Local preview: the `prototype` entry in `.claude/launch.json` serves `prototype/` on
+port 8765.
 
 ## Working Rules
 

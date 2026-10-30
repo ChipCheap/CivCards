@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CivCards Prototype</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <aside class="hud" id="hud">
+    <section class="room-status">
+      <h1>CivCards</h1>
+      <p class="room-code" id="room-code"></p>
+      <p class="connection-state" id="connection-state">Starting…</p>
+      <button type="button" id="copy-invite" hidden>Copy invite link</button>
+    </section>
+  </aside>
+
+  <main class="table-column">
+    <div class="opponent-hand" id="opponent-hand"></div>
+    <div class="table-viewport" id="table-viewport">
+      <div class="board" id="board"></div>
+    </div>
+    <div class="own-hand" id="own-hand"></div>
+  </main>
+
+  <aside class="side-panel" id="side-panel"></aside>
+
+  <div class="card-preview" id="card-preview" hidden></div>
+
+  <section class="problems" id="problems" hidden>
+    <h2>Some card rows were skipped</h2>
+    <ul id="problem-list"></ul>
+    <button type="button" id="dismiss-problems">Dismiss</button>
+  </section>
+
+  <div class="overlay" id="overlay" hidden>
+    <div class="overlay-box">
+      <p class="overlay-title" id="overlay-title"></p>
+      <p class="overlay-detail" id="overlay-detail"></p>
+      <button type="button" id="new-table">Start a new table</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js"
+          integrity="sha384-x0YgkOr/3UOZP2CRDxGW9e0Q+2Qjyr3uJrm4xU32Y7ZCNAo7Cc7bjhrZMi/dwczu"
+          crossorigin="anonymous"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
