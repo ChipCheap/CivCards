@@ -42,6 +42,9 @@ invariants, PG/PD are `Prototyper.architecture.md`'s guidelines and decisions.
 | G23: A third person is refused while two seats are taken | S8 |
 | G24: Host's card definitions win for a joining player | S8, S9 |
 | G25: No build step and no server of our own (PN2); no rules enforcement (PN1) | H1, S4, S7 |
+| G26: Middle mouse button pans the table anywhere (added after run 3 at the user's request) | S18 |
+| G27: The right panel collapses to the right, ◀ reopens it, the trash stays usable (added after run 3) | S19 |
+| G28: Catalog text search, regex by default, over all card text joined by line breaks (added after run 3) | S20 |
 
 ## Plan steps
 
@@ -192,6 +195,21 @@ invariants, PG/PD are `Prototyper.architecture.md`'s guidelines and decisions.
 
 **Technical note:** Built. The core gained one request, `take-card` (`{ stackId, cardId }`), with its own test. The searcher sees every card's face, face-down ones included; the opponent sees nothing of the search.
 
+### S18: Middle-mouse panning
+**Covers:** G26
+**Files:** `prototype/js/screen/view.js`
+**Description:** Pressing the middle mouse button anywhere on the table pans it, over cards too; the left button still pans on empty table. The browser's own middle-click autoscroll is suppressed on the table.
+
+### S19: Collapsible right panel
+**Covers:** G27
+**Files:** `prototype/js/screen/panel.js`, `prototype/style.css`, `prototype/js/screen/render.js`
+**Description:** A ▶ button at the top of the right panel collapses it to a thin strip on the right edge; the strip shows a ◀ button that reopens the panel, and the rest of the strip is the trash can, so cards can still be trashed while the catalog is hidden. The table widens into the freed space. The open or collapsed state is remembered in the viewer's browser. The hand strip re-fits whenever its width changes, not only when the window is resized.
+
+### S20: Catalog text search
+**Covers:** G28
+**Files:** `prototype/js/screen/panel.js`, `prototype/style.css`
+**Description:** A search box above the catalog, with a "Regex" checkbox ticked by default. Each card is searched as one text: name, `<type> Era <era>`, cost and rules text, joined by line breaks (empty fields left out). Regex mode ignores upper and lower case, and `^` / `$` match at each line. Unticked, the box matches plain text, ignoring case. An invalid pattern marks the box and leaves the list unfiltered by text. The search combines with the type and era filters.
+
 ## Helper steps
 
 ### H1: GitHub Pages publishing workflow
@@ -256,3 +274,6 @@ invariants, PG/PD are `Prototyper.architecture.md`'s guidelines and decisions.
 - **G23 satisfied when:** a third browser opening the link sees "This table is full".
 - **G24 satisfied when:** a guest who loaded the page before a card push still sees the host's card definitions.
 - **G25 satisfied when:** the published folder runs as plain files with no build, and nothing in the code checks card rules.
+- **G26 satisfied when:** holding the middle button and moving pans the table, also when starting over a card, with no autoscroll icon.
+- **G27 satisfied when:** ▶ collapses the panel to a strip, ◀ reopens it, a card dropped on the collapsed strip is trashed, and the state survives a reload.
+- **G28 satisfied when:** `^Farm$` finds only Farm, `Era 2` finds the era 2 cards, `food` finds every card mentioning Food, and `[` marks the box invalid without hiding cards.

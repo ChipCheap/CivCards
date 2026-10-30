@@ -87,7 +87,8 @@ export function createScreen({ boardElement, handElement, opponentHandElement, p
       previewElement.hidden = true;
     }
   });
-  window.addEventListener("resize", () => fitHand());
+  // The strip changes width with the window and when the right panel collapses or opens.
+  new ResizeObserver(() => fitHand()).observe(handElement);
 
   function drawPrivateZone(zoneSeat, owner) {
     const zoneElement = createElement("div", `private-zone ${owner}`);

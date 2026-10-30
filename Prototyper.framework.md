@@ -48,7 +48,7 @@ minute or two you are both playing on the new cards. Nobody installs anything, n
 - **Before anything else is built**, a minimal connection test is tried between the two real players' machines. If they can't connect, the fallback is a hosted realtime database (Firebase Realtime Database or Supabase), which needs one free account for the developer and nothing for players.
 
 ### Screen layout
-- **Centre:** the shared table, a 2D pane both players see. It can be panned and zoomed.
+- **Centre:** the shared table, a 2D pane both players see. It can be panned (middle mouse button anywhere, or left button on empty table) and zoomed (mouse wheel).
 - **Your side is always at the bottom.** Each player sees the board mirrored so their own deck, discard and private zone sit just above their hand, and the opponent's side is at the top. Cards stay upright for both.
 - **Bottom:** your own hand.
 - **Top:** the opponent's hand, shown only as card backs (you can see how many cards they hold).
@@ -113,6 +113,8 @@ of one. There is no other kind of object, so there are no half-stacked cards.
 
 ### Right panel
 - The **card catalog**: every card defined in the repo, filterable by type and era, dragged onto the table to create a card.
+- A **text search** over the catalog, a regular expression by default (a checkbox switches to plain text). It matches against all the text on a card, one field per line: name, then type and era (`Building Era 1`), then cost, then rules text — so `Farm` is searched as `Farm\nBuilding Era 1\n1 card\nProduces 1 Food each turn.`
+- The panel **collapses to the right**: a ◀ button reopens it. While collapsed, the thin strip that remains is still the trash can.
 - **Predefined stacks** whose starting place is the panel — the era 2, 3 and 4 market stacks, and any other prepared stacks — dragged out as a whole stack.
 - The **trash can**.
 

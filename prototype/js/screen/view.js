@@ -8,9 +8,12 @@ const MINIMUM_SCALE = 0.2;
 const MAXIMUM_SCALE = 3;
 const WHEEL_ZOOM_SPEED = 0.0015;
 const FIT_MARGIN = 16;
+const LEFT_BUTTON = 0;
+const MIDDLE_BUTTON = 1;
 
 // `viewportElement` is the visible table area; `boardElement` is the full-size board inside it, which
-// this view moves and scales. Pressing on empty board (anything that isn't a card stack) pans.
+// this view moves and scales. The middle button pans from anywhere; the left button pans from empty
+// board (anything that isn't a card stack), since on a stack it drags a card.
 export function createView(viewportElement, boardElement, isMirrored) {
   let scale = 1;
   let offsetX = 0;
@@ -47,10 +50,20 @@ export function createView(viewportElement, boardElement, isMirrored) {
     applyTransform();
   }, { passive: false });
 
+  // The browser's middle-click autoscroll starts on mousedown, so it is stopped there.
+  viewportElement.addEventListener("mousedown", event => {
+    if (event.button === MIDDLE_BUTTON) {
+      event.preventDefault();
+    }
+  });
+
   viewportElement.addEventListener("pointerdown", event => {
-    if (event.button !== 0 || event.target.closest(".stack") !== null) {
+    const isMiddlePan = event.button === MIDDLE_BUTTON;
+    const isLeftPan = event.button === LEFT_BUTTON && event.target.closest(".stack") === null;
+    if (!isMiddlePan && !isLeftPan) {
       return;
     }
+    event.preventDefault();
     const startX = event.clientX - offsetX;
     const startY = event.clientY - offsetY;
     viewportElement.setPointerCapture(event.pointerId);
