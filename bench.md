@@ -26,7 +26,7 @@ Items 1–11 are mirrored in `framework.md` → `## Open questions` (same number
 
 ## Agreed, not yet written
 
-- **Implementer skill** — none exists (DungeonCrawler only had the agent file). Write a current one in `.claude/skills/implementer/`, reading the flat `Prototyper.plan.md`. Specification is now done, so this is due before the first build.
+*(nothing)*
 
 ## Parked
 
