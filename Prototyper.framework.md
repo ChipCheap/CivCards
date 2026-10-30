@@ -49,7 +49,8 @@ minute or two you are both playing on the new cards. Nobody installs anything, n
 
 ### Screen layout
 - **Centre:** the shared table, a 2D pane both players see. It can be panned and zoomed.
-- **Bottom:** your own hand, face-up to you.
+- **Your side is always at the bottom.** Each player sees the board mirrored so their own deck, discard and private zone sit just above their hand, and the opponent's side is at the top. Cards stay upright for both.
+- **Bottom:** your own hand.
 - **Top:** the opponent's hand, shown only as card backs (you can see how many cards they hold).
 - **Left HUD:** counters and notes.
 - **Right panel:** card catalog, later-era stacks, trash can.
@@ -72,6 +73,11 @@ of one. There is no other kind of object, so there are no half-stacked cards.
 
 **Keys** (with the cursor over a stack, or while holding a card)
 - **1–9:** draw that many cards from the top into your hand.
+
+**Your hand**
+- **Drawing turns a card face-up.** Any card that enters your hand from the table (by number key, the menu, or dragging it in) arrives face-up.
+- **Cards keep their state everywhere else.** In your hand you can flip a card face-down with F, and then you hold it without seeing its face. A card dragged from your hand onto the table lands the way it is in your hand.
+- You can reorder your hand by dragging a card to another position in it.
 - **F:** flip the card under the cursor (the top card of a stack), or the card you are holding.
 - **Shift + F:** flip the whole stack, reversing its order — this is how a discard pile becomes a face-down deck.
 - **R:** shuffle the stack.
@@ -87,6 +93,7 @@ of one. There is no other kind of object, so there are no half-stacked cards.
 - **The shared market** has, for each of its four stacks (Strategic resources, Technology, Blueprints, Wonders — the stacks in `framework.md` `### Market`), a face-down **supply slot** and **3 face-up display slots**. Players claim by copying a displayed card (C) and refill the display by hand.
 - **The starting layout comes from the repo.** The stacks file says where each predefined stack starts: in a named slot on the board, or in the right panel. Era 1 market stacks start on the board; the era 2, 3 and 4 stacks start in the right panel, to be dragged onto the market when an era begins.
 - **Starter decks:** both players start with **the same starter deck**, placed shuffled and face-down in their deck slot. Civilizations and their own starter decks are future content.
+- **Setup the tool does once, when a table starts:** every stack that starts on the board is shuffled face-down into its slot, and each market stack's 3 display slots are filled face-up from its supply. Opening hands are drawn by hand. Setup is not a card rule, so PN1 still holds.
 
 ### Copy and trash
 - **C** creates a copy. This is how a market claim works: `framework.md` says "If several players claim the same card in the same turn, **all of them get it**", so each claimant copies the displayed card instead of taking the one object.

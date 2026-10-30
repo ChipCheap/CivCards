@@ -9,4 +9,5 @@
 - **Prototype turn structure** — Ready button, turn ending, automatic market refill. Skipped in the first prototype version; see `Prototyper.framework.md`.
 - **Unity Netcode + Relay** — considered for the prototype and rejected (slow build loop, heavy browser page, throwaway tool). Revisit for the final game's multiplayer once its stack is chosen.
 - **Civilizations and civ-specific starter decks** — the prototype uses one shared starter deck for both players.
+- **Prototype "New game" button** — host-only reset that rebuilds and reshuffles the table in the same room, so the guest keeps the link. Left out of the first plan.
 - **Genetic-algorithm AI training** — after a rule-based AI; relies on the headless, deterministic rules.

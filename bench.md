@@ -22,11 +22,11 @@ Items 1–11 are mirrored in `framework.md` → `## Open questions` (same number
 
 ### Prototype
 
-- **Connection test between your two PCs** (`Prototyper.architecture.md` → Infrastructure). A minimal page tries to connect the two real players through PeerJS's free public broker. *If it connects:* build on it. *If it doesn't:* swap the transport module for a hosted realtime database used only as a message relay (one free account for you; nothing for players). Pending until the test is run.
+- **Connection test between your two PCs** — `Prototyper.plan.md` S1 builds the test page and S2 ("Stop after S1 and H1 are published. The user and their friend open the test from their own PCs and report the status line") waits for your result. *If it connects:* the build continues with S3. *If it doesn't:* back to the specifier to swap the transport for a hosted realtime database used only as a message relay (one free account for you; nothing for players).
 
 ## Agreed, not yet written
 
-- **Implementer skill** — none exists (DungeonCrawler only had the agent file). Write a current one in `.claude/skills/implementer/`, reading the flat `name.plan.md`, once specification is done and before the first build.
+- **Implementer skill** — none exists (DungeonCrawler only had the agent file). Write a current one in `.claude/skills/implementer/`, reading the flat `Prototyper.plan.md`. Specification is now done, so this is due before the first build.
 
 ## Parked
 
@@ -34,3 +34,4 @@ Items 1–11 are mirrored in `framework.md` → `## Open questions` (same number
 - Prototype turn structure (Ready button, turn ending, automatic market refill) → `backlog.md`.
 - Unity Netcode + Relay for multiplayer (rejected for the prototype; revisit when the final game's stack is chosen) → `backlog.md`.
 - Civilizations and their own starter decks (the prototype uses one shared starter deck) → `backlog.md`.
+- A "New game" button that resets the table in the same room (left out of `Prototyper.plan.md`; a new game means the host reloads and sends a new link) → `backlog.md`.
