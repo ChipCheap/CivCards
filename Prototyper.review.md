@@ -21,7 +21,7 @@ Findings are labelled **R1–R10** (labels from this review, most severe first).
 | R7 | **Fixed** — "no pointer on the table" is sent once until the pointer returns | Code only |
 | R8 | **Fixed** — Numpad 1–9 draw like the number row | Browser: Numpad 3 drew 3 |
 | R9 | **Fixed** — only a quote at the start of a cell opens a quoted section | New loader test (31 tests, all passing) |
-| R10 | **Open** — the `rect` → `rectangle` rename, in its own commit | — |
+| R10 | **Fixed** in commit `55790c6`, which changes nothing else — `rect`, `sideRect`, `bottomRect`, `stackRect`, `privateZoneRect`, `toBoardRect`, `boardRect` became `…Rectangle` (58 identifiers, renamed with the TypeScript language service) | Byte-identical to a baseline of the commit before: the 31 test results, every layout number, and a seeded render of both seats' boards, hands and resulting requests (SHA-256 `bc4a30fe…` seat 0, `a136d1dd…` seat 1) |
 
 ## Decision
 
