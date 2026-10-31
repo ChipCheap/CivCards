@@ -49,17 +49,17 @@ const SLOTS = new Map();
 const MARKET_BLOCKS = [];
 
 for (let seat = 0; seat < SEAT_SIDES; seat++) {
-  SLOTS.set(deckSlotId(seat), { rect: sideRect(BOTTOM_DECK, seat), label: "Deck" });
-  SLOTS.set(discardSlotId(seat), { rect: sideRect(BOTTOM_DISCARD, seat), label: "Discard" });
+  SLOTS.set(deckSlotId(seat), { rectangle: sideRectangle(BOTTOM_DECK, seat), label: "Deck" });
+  SLOTS.set(discardSlotId(seat), { rectangle: sideRectangle(BOTTOM_DISCARD, seat), label: "Discard" });
 }
 MARKET_STARTS.forEach((market, marketIndex) => {
   const x = MARKET_COLUMN_X[marketIndex % 2];
   const y = MARKET_ROW_Y[Math.floor(marketIndex / 2)];
-  MARKET_BLOCKS.push({ title: MARKET_NAMES[market], rect: { x, y, width: MARKET_BLOCK_WIDTH, height: CARD_HEIGHT } });
-  SLOTS.set(supplySlotId(market), { rect: { x, y, width: CARD_WIDTH, height: CARD_HEIGHT }, label: "Supply" });
+  MARKET_BLOCKS.push({ title: MARKET_NAMES[market], rectangle: { x, y, width: MARKET_BLOCK_WIDTH, height: CARD_HEIGHT } });
+  SLOTS.set(supplySlotId(market), { rectangle: { x, y, width: CARD_WIDTH, height: CARD_HEIGHT }, label: "Supply" });
   for (let displayNumber = 1; displayNumber <= DISPLAY_SLOTS_PER_MARKET; displayNumber++) {
     const displayX = x + displayNumber * (CARD_WIDTH + GAP);
-    SLOTS.set(displaySlotId(market, displayNumber), { rect: { x: displayX, y, width: CARD_WIDTH, height: CARD_HEIGHT }, label: "" });
+    SLOTS.set(displaySlotId(market, displayNumber), { rectangle: { x: displayX, y, width: CARD_WIDTH, height: CARD_HEIGHT }, label: "" });
   }
 });
 
@@ -71,26 +71,26 @@ export function marketBlocks() {
   return MARKET_BLOCKS;
 }
 
-export function privateZoneRect(seat) {
-  return sideRect(BOTTOM_PRIVATE_ZONE, seat);
+export function privateZoneRectangle(seat) {
+  return sideRectangle(BOTTOM_PRIVATE_ZONE, seat);
 }
 
 // The rectangle a stack covers: its slot's, or a card's size around a loose stack's centre position.
-export function stackRect(stack) {
+export function stackRectangle(stack) {
   if (stack.isSlot) {
-    return SLOTS.get(stack.id).rect;
+    return SLOTS.get(stack.id).rectangle;
   }
   return { x: stack.position.x - CARD_WIDTH / 2, y: stack.position.y - CARD_HEIGHT / 2, width: CARD_WIDTH, height: CARD_HEIGHT };
 }
 
-export function containsPoint(rect, point) {
-  return point.x >= rect.x && point.x <= rect.x + rect.width && point.y >= rect.y && point.y <= rect.y + rect.height;
+export function containsPoint(rectangle, point) {
+  return point.x >= rectangle.x && point.x <= rectangle.x + rectangle.width && point.y >= rectangle.y && point.y <= rectangle.y + rectangle.height;
 }
 
 export function isInPrivateZone(point, seat) {
-  return containsPoint(privateZoneRect(seat), point);
+  return containsPoint(privateZoneRectangle(seat), point);
 }
 
-function sideRect(bottomRect, seat) {
-  return seat === 0 ? bottomRect : { ...bottomRect, y: TABLE_HEIGHT - bottomRect.y - bottomRect.height };
+function sideRectangle(bottomRectangle, seat) {
+  return seat === 0 ? bottomRectangle : { ...bottomRectangle, y: TABLE_HEIGHT - bottomRectangle.y - bottomRectangle.height };
 }

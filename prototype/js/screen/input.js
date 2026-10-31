@@ -2,7 +2,7 @@
 // and search. The cursor point at drop time alone picks where a card goes (Prototyper.framework.md
 // PA3). It also sends this player's pointer and held card to the other player as presence.
 
-import { CARD_HEIGHT, CARD_WIDTH, containsPoint, isInPrivateZone, stackRect } from "./layout.js";
+import { CARD_HEIGHT, CARD_WIDTH, containsPoint, isInPrivateZone, stackRectangle } from "./layout.js";
 import { createCardBack, createCardFace, createElement, isStackVisibleTo } from "./render.js";
 
 const DRAG_THRESHOLD_PIXELS = 4;
@@ -226,7 +226,7 @@ export function createInput({ viewportElement, handElement, panelElement, screen
   function stackAt(point) {
     for (let i = table.stacks.length - 1; i >= 0; i--) {
       const stack = table.stacks[i];
-      if (isLiftedAway(stack) || !containsPoint(stackRect(stack), point)) {
+      if (isLiftedAway(stack) || !containsPoint(stackRectangle(stack), point)) {
         continue;
       }
       if (stack.isSlot || isStackVisibleTo(table, stack, seat)) {
@@ -487,8 +487,8 @@ export function createInput({ viewportElement, handElement, panelElement, screen
 
   // The centre of a copy of this stack's top card: slightly to the right of it.
   function besideStack(stackId) {
-    const rect = stackRect(findStack(stackId));
-    return { x: rect.x + rect.width / 2 + COPY_SHIFT, y: rect.y + rect.height / 2 };
+    const rectangle = stackRectangle(findStack(stackId));
+    return { x: rectangle.x + rectangle.width / 2 + COPY_SHIFT, y: rectangle.y + rectangle.height / 2 };
   }
 
   return {

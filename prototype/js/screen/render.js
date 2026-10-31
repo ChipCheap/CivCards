@@ -3,7 +3,7 @@
 // stacks in the opponent's unrevealed private zone are not drawn at all, and the opponent's hand shows
 // only card backs.
 
-import { CARD_HEIGHT, CARD_WIDTH, allSlotLayouts, isInPrivateZone, marketBlocks, privateZoneRect, stackRect } from "./layout.js";
+import { CARD_HEIGHT, CARD_WIDTH, allSlotLayouts, isInPrivateZone, marketBlocks, privateZoneRectangle, stackRectangle } from "./layout.js";
 
 const HAND_CARD_GAP = 6;
 
@@ -55,18 +55,18 @@ export function createScreen({ boardElement, handElement, opponentHandElement, p
   boardElement.style.setProperty("--card-height", `${CARD_HEIGHT}px`);
   const ownZoneLabel = drawPrivateZone(seat, "own");
   const opponentZoneLabel = drawPrivateZone(opponentSeat, "opponent");
-  for (const { slotId, rect, label } of allSlotLayouts()) {
+  for (const { slotId, rectangle, label } of allSlotLayouts()) {
     const slotElement = createElement("div", "slot", label);
     slotElement.dataset.slotId = slotId;
-    placeElement(slotElement, view.toBoardRect(rect));
+    placeElement(slotElement, view.toBoardRectangle(rectangle));
     boardElement.append(slotElement);
   }
   // Titles go above each market block as this viewer sees it, so they stay on top when mirrored.
   for (const block of marketBlocks()) {
     const titleElement = createElement("div", "market-title", block.title);
-    const boardRect = view.toBoardRect(block.rect);
-    titleElement.style.left = `${boardRect.x}px`;
-    titleElement.style.top = `${boardRect.y}px`;
+    const boardRectangle = view.toBoardRectangle(block.rectangle);
+    titleElement.style.left = `${boardRectangle.x}px`;
+    titleElement.style.top = `${boardRectangle.y}px`;
     boardElement.append(titleElement);
   }
   const stackLayer = createElement("div", "stack-layer");
@@ -113,7 +113,7 @@ export function createScreen({ boardElement, handElement, opponentHandElement, p
 
   function drawPrivateZone(zoneSeat, owner) {
     const zoneElement = createElement("div", `private-zone ${owner}`);
-    placeElement(zoneElement, view.toBoardRect(privateZoneRect(zoneSeat)));
+    placeElement(zoneElement, view.toBoardRectangle(privateZoneRectangle(zoneSeat)));
     const labelElement = createElement("div", "private-zone-label");
     zoneElement.append(labelElement);
     boardElement.append(zoneElement);
@@ -132,7 +132,7 @@ export function createScreen({ boardElement, handElement, opponentHandElement, p
     const stackElement = createElement("div", "stack");
     stackElement.dataset.stackId = stack.id;
     stackElement.classList.toggle("is-held", stack.heldBy !== null && stack.heldBy !== seat);
-    placeElement(stackElement, view.toBoardRect(stackRect(stack)));
+    placeElement(stackElement, view.toBoardRectangle(stackRectangle(stack)));
     stackElement.append(createCardElement(cardsToDraw.at(-1)));
     if (cardsToDraw.length > 1) {
       stackElement.append(createElement("div", "count-badge", String(cardsToDraw.length)));
@@ -263,9 +263,9 @@ export function createElement(tagName, className, text) {
   return element;
 }
 
-function placeElement(element, rect) {
-  element.style.left = `${rect.x}px`;
-  element.style.top = `${rect.y}px`;
-  element.style.width = `${rect.width}px`;
-  element.style.height = `${rect.height}px`;
+function placeElement(element, rectangle) {
+  element.style.left = `${rectangle.x}px`;
+  element.style.top = `${rectangle.y}px`;
+  element.style.width = `${rectangle.width}px`;
+  element.style.height = `${rectangle.height}px`;
 }

@@ -89,8 +89,8 @@ export function createView(viewportElement, boardElement, isMirrored) {
 
   return {
     // A rectangle in table units, as board-element coordinates for this viewer.
-    toBoardRect(rect) {
-      return isMirrored ? { ...rect, y: TABLE_HEIGHT - rect.y - rect.height } : rect;
+    toBoardRectangle(rectangle) {
+      return isMirrored ? { ...rectangle, y: TABLE_HEIGHT - rectangle.y - rectangle.height } : rectangle;
     },
     // A point in table units, as board-element coordinates for this viewer.
     toBoardPoint(point) {
