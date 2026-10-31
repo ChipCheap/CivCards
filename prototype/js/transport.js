@@ -2,6 +2,10 @@
 // uses PeerJS, loaded by index.html as the global `Peer`, and PeerJS's free public broker to introduce
 // the browsers. Everything above it sees rooms, plain-data messages and plain-word failures.
 
+import { RELAY_SERVERS } from "./relay-servers.js";
+
+const PEER_OPTIONS = Object.freeze({ config: { iceServers: RELAY_SERVERS } });
+
 // Our room ids share the public broker with other apps; the prefix keeps them apart.
 const BROKER_ID_PREFIX = "civcards-";
 const CONNECT_TIMEOUT_MILLISECONDS = 20000;
@@ -32,7 +36,7 @@ export function openRoom(code, handlers) {
     handlers.onFailure(FAILURE.libraryMissing);
     return { send() {}, disconnect() {} };
   }
-  const peer = new Peer(BROKER_ID_PREFIX + code);
+  const peer = new Peer(BROKER_ID_PREFIX + code, PEER_OPTIONS);
   let isOpen = false;
   let isRetryingBroker = false;
 
@@ -97,7 +101,7 @@ export function joinRoom(code, handlers) {
     handlers.onFailure(FAILURE.libraryMissing);
     return { send() {} };
   }
-  const peer = new Peer();
+  const peer = new Peer(PEER_OPTIONS);
   let link;
   let hasFailed = false;
   let isOpen = false;

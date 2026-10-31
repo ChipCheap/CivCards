@@ -122,6 +122,10 @@
           integrity="sha384-x0YgkOr/3UOZP2CRDxGW9e0Q+2Qjyr3uJrm4xU32Y7ZCNAo7Cc7bjhrZMi/dwczu"
           crossorigin="anonymous"></script>
   <script type="module">
+    import { RELAY_SERVERS } from "./js/relay-servers.js";
+
+    const PEER_OPTIONS = Object.freeze({ config: { iceServers: RELAY_SERVERS } });
+
     // Room codes leave out I, L and O so they can't be misread as 1 or 0.
     const CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ";
     const CODE_LENGTH = 5;
@@ -229,9 +233,13 @@
       const localCandidate = report.get(selectedPair.localCandidateId);
       const remoteCandidate = report.get(selectedPair.remoteCandidateId);
       const isRelayed = localCandidate?.candidateType === "relay" || remoteCandidate?.candidateType === "relay";
-      return isRelayed
-        ? "Connection route: through a PeerJS relay server (a direct connection wasn't possible)."
-        : "Connection route: direct between your two browsers.";
+      if (!isRelayed) {
+        return "Connection route: direct between your two browsers.";
+      }
+      // Only your own side knows how it reaches the relay; the other side's relay route isn't reported here.
+      const relayProtocol = localCandidate?.relayProtocol;
+      const protocolNote = relayProtocol ? ` over ${relayProtocol.toUpperCase()}` : "";
+      return `Connection route: through the relay server${protocolNote} (a direct connection wasn't possible).`;
     }
 
     function watchConnection(connection) {
@@ -256,7 +264,7 @@
           reportLostContact();
         } else {
           fail("The connection was blocked",
-            "Neither a direct connection nor a PeerJS relay got through between your two networks.");
+            "Neither a direct connection nor the relay server got through between your two networks.");
         }
       });
 
@@ -306,7 +314,7 @@
 
     function hostRoom() {
       const code = createRoomCode();
-      const peer = new Peer(BROKER_ID_PREFIX + code);
+      const peer = new Peer(BROKER_ID_PREFIX + code, PEER_OPTIONS);
       showStatus("waiting", "Contacting the PeerJS broker…", "");
 
       peer.on("open", () => {
@@ -334,7 +342,7 @@
     }
 
     function joinRoom(code) {
-      const peer = new Peer();
+      const peer = new Peer(PEER_OPTIONS);
       showStatus("waiting", "Contacting the PeerJS broker…", `Joining test code ${code}.`);
 
       peer.on("open", () => {

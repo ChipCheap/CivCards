@@ -125,7 +125,12 @@ Five modules, each with one job. Arrows show what may depend on what; nothing de
 ## Infrastructure
 
 - **Hosting:** GitHub Pages, published from `prototype/` by GitHub Actions (PD8). The repo is public, so Pages is free.
-- **Matchmaking:** PeerJS's free public broker (PD6). No relay server for strict networks.
+- **Matchmaking:** PeerJS's free public broker (PD6).
+- **Relay for strict networks:** a TURN relay on the developer's free Metered account, including
+  encrypted TURN on port 443, which networks that block everything else still allow. Added after a
+  real join failed: PeerJS's own relay runs on port 3478 only. The game and the connection test share
+  one list of these servers. Its credentials are public in the page source, which is accepted because
+  the account is capped and has no payment card. Players still need nothing.
 - **Connection check first.** Before the tool is built, a minimal connection test runs between the two real players' PCs (`Prototyper.framework.md`: "Before anything else is built, a minimal connection test is tried between the two real players' machines").
 - **Fallback:** if the test fails, the transport module is swapped for a hosted realtime database (Firebase Realtime Database or Supabase) used **only as a message relay** between the host and guests. The host still owns the table, so nothing outside the transport changes. Cost: one free account for the developer; players still need nothing.
 - **Persistence:** none. The table lives in the host's tab; losing it on a host refresh is accepted (`framework.md`: "It's fine to lose the game state if the host leaves or refreshes").
