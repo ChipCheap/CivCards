@@ -23,7 +23,7 @@ CivCards is a civilization-themed card game set at the turn from the late mediev
 - One shared card identity per card across all modes, plus a shared set of core keywords.
 - Simultaneous turns for 1–4 players, with AI filling empty seats or playing solo games.
 - Asymmetric civilizations: different starter cards and focuses.
-- A minimal per-player board: an ordered row of buildings. There is no shared map.
+- A minimal per-player board: an ordered row of buildings, laid out in rings around the city centre. There is no shared map.
 - A shared market with era-based stacks, a shared Modernization track, and military attack waves.
 - Deck codes for sharing decks.
 - An early, throwaway-friendly online prototype. It gets its own feature framework (`Prototyper.framework.md`).
@@ -60,23 +60,25 @@ CivCards is a civilization-themed card game set at the turn from the late mediev
 - Once a turn starts resolving, it **never pauses for a player's decision**. Anything a player could choose during resolution is chosen beforehand, through the order of their building row or an automatic priority order.
 
 ### Card uses
-A card in hand can be used in one of these ways:
-- **Play:** use its effect. It goes to the discard pile and comes back later, like a normal deckbuilder.
-- **Build:** place it permanently in your building row, where it produces from then on.
-- **Pay:** spend it as payment for other cards. For example, a Heavy Sawmill costs 2 cards.
-- **Burn:** give up the card for a one-time payoff and remove it from the game. The exact rules are open, starting from Hexarchy's version.
+Every card has one kind, which decides how it is used (details in `CoreLoop.framework.md`):
+- **Play:** action cards are played for their effect, using one of your plays. They go to the discard pile and come back later, like a normal deckbuilder.
+- **Build:** blueprints and Wonders are placed permanently in a slot of your building row, where they produce from then on. Building uses no play.
+- **Pay:** any card can be spent as payment for other cards. For example, a Heavy Sawmill costs 2 cards.
+- **Burn:** any card can be given up for a one-time payoff and removed from the game. The exact rules are open, starting from Hexarchy's version.
 
 Some emergency effects add **junk cards** to your deck, which you later have to work to clear out. Cards claimed from the market go **into your deck** to be built later. The possible exception is Wonders (see Open questions).
 
 ### Resources
 - **Cards:** the main currency.
 - **Strategic resources** (such as Iron) are cards. There are **at most 1–2 copies** of each in a game. Some cards need a specific one (a Forge needs Iron).
-- **Production / Workforce:** produced each turn by population, and doesn't carry over.
+- **Production:** made by cards and buildings each turn. It doesn't carry over as Production: what is left at the end of a turn becomes Coin at 3:1.
 - **Food:** builds up from certain cards. Each time it crosses a threshold, population grows by +1. Food also mostly pays for military cards.
-- **Population:** just a number that sets your workforce per turn. You never assign or manage it.
+- **Population:** just a number: how many cards you can Play each turn. You never assign or manage it.
+- **Coin:** narrow money. It comes from leftover Production, Trade cards and selling goods, and it buys redraws, goods from trading partners, ventures and Coin costs on some cards. It never pays Production costs and never buys Food or Technology. It is capped (details in `CoreLoop.framework.md`).
+- **Goods:** materials such as Grain, Fuel or Saltpetre, made and used by buildings and stored on them (details in `CoreLoop.framework.md`).
 - **Knowledge:** a base amount every player gets from global Modernization, plus extra from certain buildings. It's spent in the Technology market, and it's assumed to be the same thing as "modernization tokens".
 - **Military:** **Attack** and **Defense**. Some comes in each turn and some sits on buildings.
-- There is no Gold and no Influence. That kind of value comes from cards.
+- There is no Influence, and Coin is the only money. That kind of value comes from cards.
 
 ### Market
 There are four shared stacks. Each stack shows cards face-up, and a claimed card is replaced at the end of the turn.
@@ -90,6 +92,7 @@ There are four shared stacks. Each stack shows cards face-up, and a claimed card
 
 - **Claims buy time; nobody bids.** You state a claim, pay for it, and get the card. If several players claim the same card in the same turn, **all of them get it**, and it leaves only after that turn. The tension comes from waiting: you hold off a turn to grow your economy and hope nobody takes the card first.
 - The Technology and Blueprint stacks change when the era changes.
+- **Trading partners:** 2–3 computer-run neighbouring civilizations, the same for every player, sell ordinary goods for Coin and pay more for goods they want. They never sell strategic resources (details in `CoreLoop.framework.md`).
 
 ### Modernization, eras, end of game
 - A shared **Modernization** track always moves forward. Some builds push it faster, some slow it down, and it can never be stopped.
@@ -110,7 +113,7 @@ There are four shared stacks. Each stack shows cards face-up, and a claimed card
   - Each attacker's wave is checked **separately** against the defender's full Defense. Defense is a threshold, not a health bar, and it is checked when the wave arrives.
   - If Attack is not higher than Defense, nothing happens.
   - If Attack is higher, the leftover either **steals resources** for the attacker or **destroys buildings** whose Defense is lower than that leftover. Destroying gains the attacker little.
-  - Targets are picked automatically from the defender's building-row order or priority settings. A player can put buildings up front as decoys that soak up hits.
+  - Targets are picked automatically from the outermost ring of the defender's building row inward. Cheap buildings in outer slots act as decoys that soak up hits.
   - The attacker sees a **snapshot of the defender's state** at the moment the wave arrives, like scouting in a real-time strategy game.
 - **It should balance itself:** beating up a weaker player gains little. Leaders fight each other, and players behind catch up.
 
@@ -145,13 +148,13 @@ There are four shared stacks. Each stack shows cards face-up, and a claimed card
 | Several Wonder bids tie for highest (if Wonders are bid for) | All tied players build the Wonder, with its points and effects. |
 | Several waves arrive at one defender in the same turn | Each is checked separately against full Defense, so players can't team up to break a defense together. |
 | Defense changes while a wave is on the way | Defense is checked when the wave arrives. |
-| An attack would need a choice (what to steal, what to destroy) | Picked automatically from the defender's row order or priority settings. Nobody is asked. |
+| An attack would need a choice (what to steal, what to destroy) | Picked automatically from the outermost ring inward. Nobody is asked. |
 | A player is attacked over and over | No elimination. Only built buildings can be destroyed; the deck, hand and base workforce cannot. |
 | Deck and discard are both empty | You draw nothing that turn. |
 | Junk cards pile up | They slow you down, but they can never make you lose by themselves. |
 | A strategic resource is gone and a build path needs it | You adapt into other resources and builds. Pricier options that skip the resource are possible but not a goal. |
 | A market stack runs out | It stays empty. |
-| Hand size | No limit. |
+| Hand size | No maximum. Each turn you draw up to a hand limit that grows with the era; kept cards count against it, strategic resources don't (details in `CoreLoop.framework.md`). |
 | Modernization will cross the line this turn | Everyone can see it; the turn finishes, then scores are counted. |
 | Modernization has crossed the line | Everyone plays one last turn, then scores are counted. |
 | Tied final score | Higher production per turn wins; if still tied, shared victory. |

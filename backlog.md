@@ -11,3 +11,4 @@
 - **Civilizations and civ-specific starter decks** — the prototype uses one shared starter deck for both players.
 - **Prototype "New game" button** — host-only reset that rebuilds and reshuffles the table in the same room, so the guest keeps the link. Left out of the first plan.
 - **Genetic-algorithm AI training** — after a rule-based AI; relies on the headless, deterministic rules.
+- **Military expeditions against trading partners** — an add-on to `CoreLoop.framework.md`; trade only for now.
