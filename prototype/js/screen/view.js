@@ -73,13 +73,16 @@ export function createView(viewportElement, boardElement, isMirrored) {
       offsetY = moveEvent.clientY - startY;
       applyTransform();
     };
+    // Whichever of pointerup and pointercancel ends the pan, all three listeners go with it.
     const stopPanning = () => {
       viewportElement.removeEventListener("pointermove", pan);
+      viewportElement.removeEventListener("pointerup", stopPanning);
+      viewportElement.removeEventListener("pointercancel", stopPanning);
       viewportElement.classList.remove("is-panning");
     };
     viewportElement.addEventListener("pointermove", pan);
-    viewportElement.addEventListener("pointerup", stopPanning, { once: true });
-    viewportElement.addEventListener("pointercancel", stopPanning, { once: true });
+    viewportElement.addEventListener("pointerup", stopPanning);
+    viewportElement.addEventListener("pointercancel", stopPanning);
   });
 
   fitToViewport();

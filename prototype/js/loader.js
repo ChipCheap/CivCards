@@ -126,8 +126,9 @@ function* readRows(text, fileName, requiredColumns, problems) {
 }
 
 // Reads CSV as spreadsheets write it: quoted cells may hold separators, line breaks and doubled quotes.
-// The separator is a comma, or a semicolon when the header has semicolons and no commas, which is how
-// Excel saves CSV in German and other comma-decimal locales.
+// Only a quote at the very start of a cell opens a quoted section; one later in a hand-written cell
+// (Raise the "Banner") is kept as text. The separator is a comma, or a semicolon when the header has
+// semicolons and no commas, which is how Excel saves CSV in German and other comma-decimal locales.
 function parseCsv(text) {
   const source = text.replace(/^﻿/, "").replace(/\r\n?/g, "\n");
   const headerEnd = source.indexOf("\n");
@@ -137,6 +138,7 @@ function parseCsv(text) {
   let record = [];
   let cell = "";
   let isQuoted = false;
+  let isCellStart = true;
   for (let i = 0; i < source.length; i++) {
     const character = source[i];
     if (isQuoted) {
@@ -148,18 +150,22 @@ function parseCsv(text) {
       } else {
         isQuoted = false;
       }
-    } else if (character === "\"") {
+    } else if (character === "\"" && isCellStart) {
       isQuoted = true;
+      isCellStart = false;
     } else if (character === separator) {
       record.push(cell);
       cell = "";
+      isCellStart = true;
     } else if (character === "\n") {
       record.push(cell);
       records.push(record);
       record = [];
       cell = "";
+      isCellStart = true;
     } else {
       cell += character;
+      isCellStart = false;
     }
   }
   if (cell !== "" || record.length > 0) {

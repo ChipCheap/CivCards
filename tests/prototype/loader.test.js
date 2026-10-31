@@ -16,6 +16,13 @@ test("quoted cells keep separators, line breaks and doubled quotes", () => {
   }]);
 });
 
+test("a quote in the middle of an unquoted cell is kept as text and doesn't swallow later rows", () => {
+  const cardsText = `${CARDS_HEADER}\nbanner,Banner,Building,1,,Raise the "Banner" of war,\nfarm,Farm,Building,1,,Food,\n`;
+  const { cards, problems } = parseCardData(cardsText, STACKS_HEADER);
+  assert.deepEqual(problems, []);
+  assert.deepEqual(cards.map(card => [card.id, card.text]), [["banner", "Raise the \"Banner\" of war"], ["farm", "Food"]]);
+});
+
 test("Windows line endings and a byte-order mark are handled", () => {
   const cardsText = `﻿${CARDS_HEADER}\r\nfarm,Farm,Building,1,,"Line one\r\nLine two",\r\n`;
   const { cards, problems } = parseCardData(cardsText, STACKS_HEADER);

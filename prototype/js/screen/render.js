@@ -74,19 +74,40 @@ export function createScreen({ boardElement, handElement, opponentHandElement, p
   boardElement.append(stackLayer, presenceLayer);
 
   // Any face-up card anywhere on the page can be read larger.
+  let lastPointer = { clientX: 0, clientY: 0 };
+  document.addEventListener("pointermove", event => {
+    lastPointer = { clientX: event.clientX, clientY: event.clientY };
+  });
   document.addEventListener("pointerover", event => {
     const face = event.target.closest(".card.face");
-    if (face === null || previewElement.contains(face)) {
-      return;
+    if (face !== null && !previewElement.contains(face)) {
+      showPreview(face);
     }
-    previewElement.replaceChildren(createCardFace(definitions.get(face.dataset.definitionId)));
-    previewElement.hidden = false;
   });
   document.addEventListener("pointerout", event => {
     if (event.target.closest(".card.face") !== null) {
       previewElement.hidden = true;
     }
   });
+
+  function showPreview(face) {
+    previewElement.replaceChildren(createCardFace(definitions.get(face.dataset.definitionId)));
+    previewElement.hidden = false;
+  }
+
+  // A redraw replaces card elements without any pointerout, so the preview follows whatever face is
+  // now under the pointer, or hides when there is none.
+  function refreshPreview() {
+    if (previewElement.hidden) {
+      return;
+    }
+    const face = document.elementFromPoint(lastPointer.clientX, lastPointer.clientY)?.closest(".card.face") ?? null;
+    if (face === null || previewElement.contains(face)) {
+      previewElement.hidden = true;
+    } else {
+      showPreview(face);
+    }
+  }
   // The strip changes width with the window and when the right panel collapses or opens.
   new ResizeObserver(() => fitHand()).observe(handElement);
 
@@ -178,6 +199,7 @@ export function createScreen({ boardElement, handElement, opponentHandElement, p
       createElement("div", "hand-count", `Opponent's hand: ${opponentHandSize}`),
       ...Array.from({ length: opponentHandSize }, createCardBack),
     );
+    refreshPreview();
   }
 
   return {

@@ -12,7 +12,8 @@ const PENDING_DROP_LIMIT_MILLISECONDS = 1500;
 // A copy lands this far to the right of the card it copies, in table units, overlapping it a little
 // so both stay readable.
 const COPY_SHIFT = 40;
-const DRAW_KEYS = Object.freeze(["Digit1", "Digit2", "Digit3", "Digit4", "Digit5", "Digit6", "Digit7", "Digit8", "Digit9"]);
+// The number keys above the letters and on the number pad both draw.
+const DRAW_KEY_PATTERN = /^(?:Digit|Numpad)([1-9])$/;
 
 // `screen` is the drawing side from createScreen; `sendRequest` and `sendPresence` go to the session.
 export function createInput({ viewportElement, handElement, panelElement, screen, view, seat, cards, sendRequest, sendPresence }) {
@@ -25,7 +26,11 @@ export function createInput({ viewportElement, handElement, panelElement, screen
   // { definitionId } (catalog card) or { panelStackName }.
   let drag = null;
   let lastPresenceAt = 0;
+  // "No pointer on the table" needs sending only once until the pointer comes back.
+  let hasSentNoPointer = false;
+  // The open menu or search, and the stack it acts on.
   let openPopup = null;
+  let popupStackId = null;
 
   viewportElement.addEventListener("pointerdown", event => {
     const stackElement = event.target.closest("[data-stack-id]");
@@ -54,6 +59,10 @@ export function createInput({ viewportElement, handElement, panelElement, screen
 
   window.addEventListener("pointermove", event => {
     pointer = { clientX: event.clientX, clientY: event.clientY };
+    // A button released outside the window never sends pointerup; the next move shows it is up.
+    if (drag?.isMoving && !drag.isDropping && event.buttons === 0) {
+      cancelDrag();
+    }
     if (drag === null) {
       hovered = hoveredThing(event.target);
     } else if (!drag.isMoving && !drag.isDropping
@@ -68,7 +77,12 @@ export function createInput({ viewportElement, handElement, panelElement, screen
   });
   viewportElement.addEventListener("pointerleave", () => {
     if (drag === null) {
-      sendPresence(null);
+      publishPresence(null);
+    }
+  });
+  window.addEventListener("pointercancel", () => {
+    if (drag?.isMoving && !drag.isDropping) {
+      cancelDrag();
     }
   });
   window.addEventListener("pointerup", event => {
@@ -97,9 +111,9 @@ export function createInput({ viewportElement, handElement, panelElement, screen
     if (focus === null) {
       return;
     }
-    const drawCount = DRAW_KEYS.indexOf(event.code) + 1;
-    if (drawCount > 0 && focus.stackId !== undefined) {
-      sendRequest({ kind: "draw", stackId: focus.stackId, count: drawCount });
+    const drawKeyMatch = DRAW_KEY_PATTERN.exec(event.code);
+    if (drawKeyMatch !== null && focus.stackId !== undefined) {
+      sendRequest({ kind: "draw", stackId: focus.stackId, count: Number(drawKeyMatch[1]) });
     } else if (event.code === "KeyF" && event.shiftKey && focus.stackId !== undefined) {
       sendRequest({ kind: "flip-stack", stackId: focus.stackId });
     } else if (event.code === "KeyF" && !event.shiftKey && cardSource(focus) !== undefined) {
@@ -125,14 +139,20 @@ export function createInput({ viewportElement, handElement, panelElement, screen
     if (openPopup !== null && !openPopup.contains(event.target)) {
       closePopup();
     }
+    // Card drags and panning cancel the browser's default, which would otherwise move focus; pressing
+    // anywhere but a text field leaves that field, so keys act on the table again.
+    if (isTyping(document.activeElement) && !isTyping(event.target)) {
+      document.activeElement.blur();
+    }
   }, { capture: true });
 
   // --- Dragging ---
 
   function startDrag(event, source) {
     event.preventDefault();
-    // A new drag settles a drop still waiting for its table.
-    endDrag();
+    // A new drag settles the last one: a drop still waiting for its table ends, an unfinished drag is
+    // cancelled and its lock released.
+    cancelDrag();
     drag = { source, startX: event.clientX, startY: event.clientY, isMoving: false, isDropping: false };
   }
 
@@ -257,7 +277,7 @@ export function createInput({ viewportElement, handElement, panelElement, screen
     for (const request of requests) {
       sendRequest(request);
     }
-    sendPresence(presenceNow());
+    publishPresence(presenceNow());
   }
 
   function dropRequests(source, target) {
@@ -314,7 +334,7 @@ export function createInput({ viewportElement, handElement, panelElement, screen
     if (wasLifting) {
       screen.setDragSource(null);
     }
-    sendPresence(presenceNow());
+    publishPresence(presenceNow());
   }
 
   // --- Presence ---
@@ -323,8 +343,16 @@ export function createInput({ viewportElement, handElement, panelElement, screen
     const now = performance.now();
     if (now - lastPresenceAt >= PRESENCE_INTERVAL_MILLISECONDS) {
       lastPresenceAt = now;
-      sendPresence(presenceNow());
+      publishPresence(presenceNow());
     }
+  }
+
+  function publishPresence(presence) {
+    if (presence === null && hasSentNoPointer) {
+      return;
+    }
+    hasSentNoPointer = presence === null;
+    sendPresence(presence);
   }
 
   function presenceNow() {
@@ -378,7 +406,7 @@ export function createInput({ viewportElement, handElement, panelElement, screen
     }
     menuElement.style.left = `${clientX}px`;
     menuElement.style.top = `${clientY}px`;
-    showPopup(menuElement);
+    showPopup(menuElement, stackId);
   }
 
   // Lists a stack's cards, top first, with every face shown to the searcher only.
@@ -399,18 +427,20 @@ export function createInput({ viewportElement, handElement, panelElement, screen
     closeButton.type = "button";
     closeButton.addEventListener("click", closePopup);
     dialogElement.append(listElement, closeButton);
-    showPopup(dialogElement);
+    showPopup(dialogElement, stackId);
   }
 
-  function showPopup(popupElement) {
+  function showPopup(popupElement, stackId) {
     closePopup();
     openPopup = popupElement;
+    popupStackId = stackId;
     document.body.append(popupElement);
   }
 
   function closePopup() {
     openPopup?.remove();
     openPopup = null;
+    popupStackId = null;
   }
 
   // --- Helpers ---
@@ -445,6 +475,16 @@ export function createInput({ viewportElement, handElement, panelElement, screen
       : undefined;
   }
 
+  // Whether a hovered or menu target still exists for this player: a visible stack with cards in it, or
+  // a card in the hand.
+  function isStillThere(target) {
+    if (target.handIndex !== undefined) {
+      return target.handIndex < table.seats[seat].hand.length;
+    }
+    const stack = findStack(target.stackId);
+    return stack !== undefined && stack.cards.length > 0 && isStackVisibleTo(table, stack, seat);
+  }
+
   // The centre of a copy of this stack's top card: slightly to the right of it.
   function besideStack(stackId) {
     const rect = stackRect(findStack(stackId));
@@ -452,10 +492,17 @@ export function createInput({ viewportElement, handElement, panelElement, screen
   }
 
   return {
-    // Keeps the input in step with the table: ends a finished drop, and drops a drag whose stack was
-    // taken by the other player first or no longer exists.
+    // Keeps the input in step with the table: forgets a hovered stack or hand card that is gone or now
+    // hidden, closes a menu or search whose stack is gone, ends a finished drop, and drops a drag whose
+    // stack was taken by the other player first or no longer exists.
     setTable(nextTable) {
       table = nextTable;
+      if (hovered !== null && !isStillThere(hovered)) {
+        hovered = null;
+      }
+      if (popupStackId !== null && !isStillThere({ stackId: popupStackId })) {
+        closePopup();
+      }
       if (drag?.isDropping) {
         endDrag();
         return;

@@ -10,6 +10,8 @@ const CONNECT_TIMEOUT_MILLISECONDS = 20000;
 // because browsers slow timers down in background tabs, and a player switching tabs must not be dropped.
 const HEARTBEAT_INTERVAL_MILLISECONDS = 1000;
 const SILENCE_LIMIT_MILLISECONDS = 60000;
+// How often an open room retries the broker after losing it.
+const BROKER_RETRY_MILLISECONDS = 5000;
 
 export const FAILURE = Object.freeze({
   libraryMissing: "library-missing",
@@ -32,10 +34,14 @@ export function openRoom(code, handlers) {
   }
   const peer = new Peer(BROKER_ID_PREFIX + code);
   let isOpen = false;
+  let isRetryingBroker = false;
 
+  // Reconnecting to the broker reopens under the same id, so "open" can come again; only the first counts.
   peer.on("open", () => {
-    isOpen = true;
-    handlers.onOpen();
+    if (!isOpen) {
+      isOpen = true;
+      handlers.onOpen();
+    }
   });
   peer.on("error", error => {
     // Once the room is open the broker is only needed for newcomers, so losing it is not a failure.
@@ -44,6 +50,23 @@ export function openRoom(code, handlers) {
       handlers.onFailure(error.type === "unavailable-id" ? FAILURE.codeTaken : describeBrokerError(error));
     }
   });
+  // Connected players keep playing without the broker, but a refreshing guest can only find the room
+  // through it, so an open room keeps trying to get back until it succeeds.
+  peer.on("disconnected", () => {
+    if (isOpen && !isRetryingBroker) {
+      isRetryingBroker = true;
+      setTimeout(retryBroker, BROKER_RETRY_MILLISECONDS);
+    }
+  });
+
+  function retryBroker() {
+    if (peer.destroyed || !peer.disconnected) {
+      isRetryingBroker = false;
+      return;
+    }
+    peer.reconnect();
+    setTimeout(retryBroker, BROKER_RETRY_MILLISECONDS);
+  }
   peer.on("connection", dataConnection => {
     const guestId = nextGuestId++;
     const link = watchConnection(dataConnection, {

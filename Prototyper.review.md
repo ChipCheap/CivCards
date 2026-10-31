@@ -6,7 +6,22 @@
 `CLAUDE.md` ("Write code to the standard the first time")
 **Effort:** high — one reviewer pass, findings not separately verified
 
-Findings are labelled **R1–R10** (labels from this review, most severe first). Status is **open** for all.
+Findings are labelled **R1–R10** (labels from this review, most severe first).
+
+## Status (2026-10-31)
+
+| Finding | Status | How it was checked |
+|---|---|---|
+| R1 | **Fixed** — each new table forgets a hovered stack or hand card that is gone or hidden, and closes a menu or search whose stack is gone | Browser: drew a hovered stack empty, pressed C — no error |
+| R2 | **Fixed** — pressing anywhere but a text field takes focus out of that field | Browser: typed in Notes, pressed the table, drew with a key |
+| R3 | **Fixed** — an open room retries the broker every 5 s after losing it | Code only; a broker outage can't be produced locally |
+| R4 | **Fixed** — a new drag cancels the last one and releases its lock; a move with no button held and `pointercancel` cancel a drag | Browser, two tabs: the guest saw the lock released |
+| R5 | **Fixed** — after every redraw the preview follows the card under the pointer or hides | Browser: deleted the hovered card, the preview hid |
+| R6 | **Fixed** — ending a pan removes all three of its listeners | Code only |
+| R7 | **Fixed** — "no pointer on the table" is sent once until the pointer returns | Code only |
+| R8 | **Fixed** — Numpad 1–9 draw like the number row | Browser: Numpad 3 drew 3 |
+| R9 | **Fixed** — only a quote at the start of a cell opens a quoted section | New loader test (31 tests, all passing) |
+| R10 | **Open** — the `rect` → `rectangle` rename, in its own commit | — |
 
 ## Decision
 

@@ -22,7 +22,7 @@ Items 1–11 are mirrored in `framework.md` → `## Open questions` (same number
 
 ## Agreed, not yet written
 
-- **Fix the code review's findings** (`Prototyper.review.md`, 2026-10-31). First R1–R9, the correctness and efficiency findings (the top one is R1, "Stale stack id crashes copy and search"), in one change, checked in the browser. Then R10, renaming `rect` → `rectangle`, in a commit of its own that is proven behaviour-neutral, as the user-level CLAUDE.md requires: "A rename is made with a semantic tool, never find-and-replace, in a commit that changes nothing else". Agreed with the user; not started.
+- **Rename `rect` → `rectangle`** (`Prototyper.review.md` R10, "Abbreviation `rect` breaks the whole-word rule"), in a commit of its own that is proven behaviour-neutral, as the user-level CLAUDE.md requires: "A rename is made with a semantic tool, never find-and-replace, in a commit that changes nothing else". R1–R9 are fixed (status table in `Prototyper.review.md`).
 
 ## Parked
 
