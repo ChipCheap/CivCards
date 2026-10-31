@@ -10,7 +10,7 @@ Items 1–11 are mirrored in `framework.md` → `## Open questions` (same number
    - *Recommendation:* playtest both by hand in the prototype, leaning (B).
 2. **Exact Burn rules.** *Recommendation:* start from Hexarchy's Burn and diverge after playtests.
 3. **Who chooses steal vs. destroy on a successful attack.** *Recommendation:* the attacker sets the wave's goal when sending it; targets are picked automatically on the defender's side.
-4. **Modernization pacing and era thresholds.** *Recommendation:* a fixed advance each turn plus push/delay effects; eras change roughly every 4–5 turns.
+4. **Modernization pacing and era thresholds.** *Recommendation:* a fixed advance each turn, plus +1 for every Technology claimed (settled in `Technology.framework.md`), plus other push/delay effects; eras change roughly every 4–5 turns.
 5. **Knowledge = "modernization tokens"?** *Recommendation:* yes, one resource.
 6. **Game-length target.** *Recommendation:* aim for 13–16 turns (10–18 at the extremes), as a goal rather than a hard rule.
 7. **Make attacking the leader pay off** (e.g. plunder grows with the defender's wealth). *Recommendation:* a design goal checked in playtests, not an invariant.
@@ -19,19 +19,9 @@ Items 1–11 are mirrored in `framework.md` → `## Open questions` (same number
 10. **AI approach.** *Recommendation:* rule-based first; the headless, deterministic rules keep trained / genetic-algorithm AI possible.
 11. **Hidden information in the final game** (no player's hidden state sent to other clients). *Recommendation:* the prototype is exempt; the architect decides how the final game guarantees it.
 
-Items 12–13 are not yet in any framework.
+Item 12 is not yet in any framework.
 
-12. **How Technology differs from Blueprints** (next exploration). Today both are cards bought from the
-    market. A Technology is bought with Knowledge and "brings new cards into the game"; a Blueprint is
-    bought with cards or Production. What a Technology actually *is* is still unshaped.
-    - (A) A Technology is a lasting effect that takes no slot: it changes rules or boosts tagged
-      buildings, and it adds its era's new cards to the market. Cost: Technology effects have to stay
-      distinct from building effects.
-    - (B) A Technology is a prerequisite: it unlocks certain blueprints and upgrades for you. Cost: a
-      tech-tree feel, and the risk of being locked out.
-    - (C) Both: a lasting effect plus the right to build certain blueprints and upgrades.
-    - *Recommendation:* (C), worked through with the explorer next.
-13. **Culture as another way to win.** One use already raised: Culture as a second cost of Wonders,
+12. **Culture as another way to win.** One use already raised: Culture as a second cost of Wonders,
     because a civilization can't become culturally relevant without a culture that likes grand
     projects. Wonders in turn give unique effects and points. It clashes with
     `framework.md`'s "There is **one victory condition**: the most points when the game ends", and
@@ -42,7 +32,7 @@ Items 12–13 are not yet in any framework.
       needs its own announced-end rule (`framework.md` A7: "The final turn is always announced before
       it is played").
     - (C) Later. Cost: Wonders stay single-cost for now.
-    - *Recommendation:* (A), explored after Technology.
+    - *Recommendation:* (A), explored next.
 
 
 ## Agreed, not yet written

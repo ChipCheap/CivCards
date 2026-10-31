@@ -66,7 +66,7 @@ Every card has one kind, which decides how it is used (details in `CoreLoop.fram
 - **Pay:** any card can be spent as payment for other cards. For example, a Heavy Sawmill costs 2 cards.
 - **Burn:** any card can be given up for a one-time payoff and removed from the game. The exact rules are open, starting from Hexarchy's version.
 
-Some emergency effects add **junk cards** to your deck, which you later have to work to clear out. Cards claimed from the market go **into your deck** to be built later. The possible exception is Wonders (see Open questions).
+Some emergency effects add **junk cards** to your deck, which you later have to work to clear out. Cards claimed from the market go **into your deck** to be built later. Technologies are the exception: they go into your tech display and take effect at once (details in `Technology.framework.md`). The possible exception is Wonders (see Open questions).
 
 ### Resources
 - **Cards:** the main currency.
@@ -91,7 +91,7 @@ There are four shared stacks. Each stack shows cards face-up, and a claimed card
 | Wonders | Very high cost | Bid, or claimed like other cards (open) |
 
 - **Claims buy time; nobody bids.** You state a claim, pay for it, and get the card. If several players claim the same card in the same turn, **all of them get it**, and it leaves only after that turn. The tension comes from waiting: you hold off a turn to grow your economy and hope nobody takes the card first.
-- The Technology and Blueprint stacks change when the era changes.
+- The Technology and Blueprint stacks change when the era changes. Each new era's stacks are a small core plus what the previous era's research added (details in `Technology.framework.md`).
 - **Trading partners:** 2–3 computer-run neighbouring civilizations, the same for every player, sell ordinary goods for Coin and pay more for goods they want. They never sell strategic resources (details in `CoreLoop.framework.md`).
 
 ### Modernization, eras, end of game
@@ -214,7 +214,7 @@ Each has a recommended default.
    *Default: playtest both by hand in the prototype. Lean towards (B)*, because it keeps "a claim never fails" true without exceptions and is simpler to explain. (A) creates a unique gamble.
 2. **Exact Burn rules.** *Default: start from Hexarchy's Burn and adjust in playtests.*
 3. **Who chooses between stealing and destroying.** *Default: the attacker sets the wave's goal (steal or destroy) when sending it. Targets are still picked automatically on the defender's side.*
-4. **How Modernization moves and where the era thresholds are.** *Default: a fixed amount each turn, plus pushing and slowing effects. Thresholds get tuned so eras change roughly every 4–5 turns.*
+4. **How Modernization moves and where the era thresholds are.** *Default: a fixed amount each turn, plus +1 for every Technology claimed (`Technology.framework.md`), plus other pushing and slowing effects. Thresholds get tuned so eras change roughly every 4–5 turns.*
 5. **Are Knowledge and "modernization tokens" the same resource?** *Default: yes.*
 6. **Game-length target.** *Default: aim for 13–16 turns (roughly 10–18 at the extremes). It's a goal, not a hard rule.*
 7. **Make attacking the leader pay off.** *Default: write it down as a design goal checked in playtests (for example, plunder grows with the defender's wealth), not as a strict rule.*
