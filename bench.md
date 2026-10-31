@@ -2,12 +2,9 @@
 
 ## Open
 
-Items 1–11 are mirrored in `framework.md` → `## Open questions` (same number).
+Items 2–11 are mirrored in `framework.md` → `## Open questions` (same number). Item 1, how Wonders are
+claimed, is settled in `Culture.framework.md`.
 
-1. **How Wonders are claimed.**
-   - (A) Sealed bid: losers are refunded but have spent the turn; tied highest bidders all build it. Costs: a second claim rule, and an exception to "a market claim never fails because of another player's action".
-   - (B) An ordinary claim at a very high cost that comes online immediately. Costs: no gamble moment.
-   - *Recommendation:* playtest both by hand in the prototype, leaning (B).
 2. **Exact Burn rules.** *Recommendation:* start from Hexarchy's Burn and diverge after playtests.
 3. **Who chooses steal vs. destroy on a successful attack.** *Recommendation:* the attacker sets the wave's goal when sending it; targets are picked automatically on the defender's side.
 4. **Modernization pacing and era thresholds.** *Recommendation:* a fixed advance each turn, plus +1 for every Technology claimed (settled in `Technology.framework.md`), plus other push/delay effects; eras change roughly every 4–5 turns.
@@ -19,26 +16,13 @@ Items 1–11 are mirrored in `framework.md` → `## Open questions` (same number
 10. **AI approach.** *Recommendation:* rule-based first; the headless, deterministic rules keep trained / genetic-algorithm AI possible.
 11. **Hidden information in the final game** (no player's hidden state sent to other clients). *Recommendation:* the prototype is exempt; the architect decides how the final game guarantees it.
 
-Item 12 is not yet in any framework.
-
-12. **Culture as another way to win.** One use already raised: Culture as a second cost of Wonders,
-    because a civilization can't become culturally relevant without a culture that likes grand
-    projects. Wonders in turn give unique effects and points. It clashes with
-    `framework.md`'s "There is **one victory condition**: the most points when the game ends", and
-    "Scoring that changes depending on how the game ended" is parked.
-    - (A) Culture is a resource and a source of points inside the one victory condition: a second cost
-      of Wonders, scored at the end. Cost: it isn't a separate route to victory.
-    - (B) A separate culture victory that can end the game. Cost: amends the one-victory rule, and it
-      needs its own announced-end rule (`framework.md` A7: "The final turn is always announced before
-      it is played").
-    - (C) Later. Cost: Wonders stay single-cost for now.
-    - *Recommendation:* (A), explored next.
-
-
 ## Agreed, not yet written
 
-- **Prototype support for `CoreLoop.framework.md`:** counters for goods on building cards, and a Coin
-  counter. Agreed in the core-loop exploration; needs a change to `Prototyper.framework.md` and its plan.
+- **Prototype support for the design frameworks:** counters for goods on building cards, a Coin counter
+  and a Culture counter (`CoreLoop.framework.md`, `Culture.framework.md`), and a way to keep market
+  claims hidden until the turn ends, as `framework.md` now requires. Until then, players can write
+  their claims in the notes field and reveal them together. Needs a change to `Prototyper.framework.md`
+  and its plan.
 
 ## Parked
 

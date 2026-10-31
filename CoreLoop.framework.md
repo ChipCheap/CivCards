@@ -137,8 +137,8 @@ for example, military buildings aren't all "+X Attack".
 
 ### Tags
 
-Buildings carry tags from a small fixed set of about six: Agriculture, Industry, Military, Science,
-Trade and State. Cards refer to them, for example "your Industry buildings +1" or "trigger 2
+Buildings carry tags from a small fixed set of seven: Agriculture, Industry, Military, Science,
+Trade, State and Culture (added in `Culture.framework.md`). Cards refer to them, for example "your Industry buildings +1" or "trigger 2
 Agriculture buildings". Tags also give a civilization its focus without special rules: Europe could
 lean Industry and Trade, China Agriculture and State.
 
@@ -317,7 +317,7 @@ Each has a recommended default.
    Hexarchy's price of 2 and raise the cap to keep them in step (2 per redraw, cap 6).*
 5. **Walls.** *Default: +3 Defense to the centre ring; era-3 artillery ignores old walls.*
 6. **How large venture returns are.** *Default: about double the stake, 2–3 turns later.*
-7. **The tag list.** *Default: Agriculture, Industry, Military, Science, Trade, State.*
+7. **The tag list.** *Default: Agriculture, Industry, Military, Science, Trade, State, Culture.*
 8. **The goods per era.** *Default: about 5 per era, each made by at least 2 buildings. The list goes
    in the card files.*
 9. **The trading-partner pool.** *Default: about 6 partners, 2–3 drawn per game. Their lists go in the

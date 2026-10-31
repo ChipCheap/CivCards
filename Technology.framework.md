@@ -50,7 +50,7 @@ different research paths end with visibly different worlds.
 
 A claimed Technology goes straight into your **tech display**. It takes effect at once and lasts the
 whole game. It takes no building slot, never enters your deck or hand, and can't be stolen or
-destroyed. Other players see what you researched, because market claims are public.
+destroyed. Other players see what you researched once the turn resolves, when all market claims are revealed.
 
 ### What a Technology does
 
@@ -163,8 +163,8 @@ In this order, once the turn's claims have resolved:
 **Project invariants it inherits:**
 - **A1:** "Every game ends. Modernization can be slowed but never stopped." Research only ever pushes
   the track forward.
-- **A6:** "Hidden information stays hidden." Research is visible through market claims, which
-  `framework.md` already makes public.
+- **A6:** "Hidden information stays hidden." Research becomes visible when the turn resolves, as
+  every market claim does.
 - **N2:** "A market claim never fails because of what another player did." Shared claims of one
   Technology all succeed.
 - **N3:** "A player is never eliminated or left unable to act." Spread copies can always be Burned.

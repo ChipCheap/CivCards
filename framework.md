@@ -56,7 +56,7 @@ CivCards is a civilization-themed card game set at the turn from the late mediev
 ### Turn structure (Engine Builder)
 - All players plan and act **at the same time**. Each player can change their plan freely until they press **Ready**. The turn resolves once everyone is ready.
 - The final game can have an optional lobby timer. When it runs out, unready players are auto-readied with their current plan. The prototype has no timer.
-- Play is **open** within a turn. The only sealed part is Wonder bidding, if that version is kept (see Open questions).
+- Play is **open** within a turn. Market claims are the sealed part: nobody sees another player's claims, or the Culture offered on a Wonder, until the turn resolves. Then all claims are revealed and resolved together.
 - Once a turn starts resolving, it **never pauses for a player's decision**. Anything a player could choose during resolution is chosen beforehand, through the order of their building row or an automatic priority order.
 
 ### Card uses
@@ -66,7 +66,7 @@ Every card has one kind, which decides how it is used (details in `CoreLoop.fram
 - **Pay:** any card can be spent as payment for other cards. For example, a Heavy Sawmill costs 2 cards.
 - **Burn:** any card can be given up for a one-time payoff and removed from the game. The exact rules are open, starting from Hexarchy's version.
 
-Some emergency effects add **junk cards** to your deck, which you later have to work to clear out. Cards claimed from the market go **into your deck** to be built later. Technologies are the exception: they go into your tech display and take effect at once (details in `Technology.framework.md`). The possible exception is Wonders (see Open questions).
+Some emergency effects add **junk cards** to your deck, which you later have to work to clear out. Cards claimed from the market go **into your deck** to be built later. Technologies are the exception: they go into your tech display and take effect at once (details in `Technology.framework.md`). Wonders are also an exception: they are built straight into a slot when the turn resolves (details in `Culture.framework.md`).
 
 ### Resources
 - **Cards:** the main currency.
@@ -74,6 +74,7 @@ Some emergency effects add **junk cards** to your deck, which you later have to 
 - **Production:** made by cards and buildings each turn. It doesn't carry over as Production: what is left at the end of a turn becomes Coin at 3:1.
 - **Food:** builds up from certain cards. Each time it crosses a threshold, population grows by +1. Food also mostly pays for military cards.
 - **Population:** just a number: how many cards you can Play each turn. You never assign or manage it.
+- **Culture:** builds up from Culture buildings and actions and carries over. It is mostly spent on Wonders, cures Unrest, can't be stolen and scores nothing unspent (details in `Culture.framework.md`).
 - **Coin:** narrow money. It comes from leftover Production, Trade cards and selling goods, and it buys redraws, goods from trading partners, ventures and Coin costs on some cards. It never pays Production costs and never buys Food or Technology. It is capped (details in `CoreLoop.framework.md`).
 - **Goods:** materials such as Grain, Fuel or Saltpetre, made and used by buildings and stored on them (details in `CoreLoop.framework.md`).
 - **Knowledge:** a base amount every player gets from global Modernization, plus extra from certain buildings. It's spent in the Technology market, and it's assumed to be the same thing as "modernization tokens".
@@ -88,9 +89,9 @@ There are four shared stacks. Each stack shows cards face-up, and a claimed card
 | Strategic resources | Military | At most 1–2 copies of each in a game |
 | Technology | Knowledge | Split by era; brings new cards into the game |
 | Blueprints | Cards or Production | Split by era |
-| Wonders | Very high cost | Bid, or claimed like other cards (open) |
+| Wonders | Production + Culture | If several players claim the same Wonder, the highest Culture offer gets it |
 
-- **Claims buy time; nobody bids.** You state a claim, pay for it, and get the card. If several players claim the same card in the same turn, **all of them get it**, and it leaves only after that turn. The tension comes from waiting: you hold off a turn to grow your economy and hope nobody takes the card first.
+- **Claims buy time; nobody bids.** You state a claim, pay for it, and get the card. Claims stay hidden until the turn resolves. If several players claim the same card in the same turn, **all of them get it**, and it leaves only after that turn. The tension comes from waiting: you hold off a turn to grow your economy and hope nobody takes the card first. Wonders are the one exception: the highest Culture offer gets them.
 - The Technology and Blueprint stacks change when the era changes. Each new era's stacks are a small core plus what the previous era's research added (details in `Technology.framework.md`).
 - **Trading partners:** 2–3 computer-run neighbouring civilizations, the same for every player, sell ordinary goods for Coin and pay more for goods they want. They never sell strategic resources (details in `CoreLoop.framework.md`).
 
@@ -101,12 +102,12 @@ There are four shared stacks. Each stack shows cards face-up, and a claimed card
 
 ### Scoring
 - There is **one victory condition**: the most points when the game ends.
-- Points come from achievements such as production per turn, certain buildings, technology progress and strategic resources.
+- Points come from achievements such as production per turn, certain buildings (Culture buildings and Wonders above all), technology progress and strategic resources.
 - Players see only the **leaderboard order**: no exact scores, and no "far ahead" hint.
 - Ties are broken by higher production per turn, then shared victory.
 
 ### Military and player interaction
-- **Interaction:** players react to the visible claims in the market and to what scouting reveals. They take key cards before opponents can, and use military to slow down whoever is ahead.
+- **Interaction:** players react to the claims revealed at the end of each turn and to what scouting reveals. They take key cards before opponents can, and use military to slow down whoever is ahead.
 - **Range:** each opponent's distance is hidden until you first scout it with at least one military unit.
 - **Waves:** an attack is sent as a wave and arrives 1–4 turns later. It can't be recalled, and its units are used up.
 - **On arrival:**
@@ -119,7 +120,7 @@ There are four shared stacks. Each stack shows cards face-up, and a claimed card
 
 ### Hidden information
 - Opponents' builds are **hidden** by default.
-- **Visible to all:** market claims, the leaderboard order, the Modernization track, and the last-turn warning.
+- **Visible to all:** market claims once the turn has resolved, the leaderboard order, the Modernization track, and the last-turn warning.
 - **Revealed by play:** an opponent's range (once scouted) and their state when your wave arrives.
 
 ### Civilizations
@@ -145,7 +146,7 @@ There are four shared stacks. Each stack shows cards face-up, and a claimed card
 |---|---|
 | Several players claim the same market card in one turn | All of them get it. It leaves the market after the turn and is replaced. |
 | Several players claim the same strategic resource in one turn | All of them get a copy. Rare cards stay rare because each starts with only 1–2 copies. |
-| Several Wonder bids tie for highest (if Wonders are bid for) | All tied players build the Wonder, with its points and effects. |
+| Several players tie for the highest Culture offer on a Wonder | All tied players build the Wonder, with its points and effects. |
 | Several waves arrive at one defender in the same turn | Each is checked separately against full Defense, so players can't team up to break a defense together. |
 | Defense changes while a wave is on the way | Defense is checked when the wave arrives. |
 | An attack would need a choice (what to steal, what to destroy) | Picked automatically from the outermost ring inward. Nobody is asked. |
@@ -173,14 +174,14 @@ Labelled **A** (Always) and **N** (Never) for citing.
 - **A3.** Every card keeps one identity (name, art, role) across all modes. A shared keyword means the same thing in every mode.
 - **A4.** Card definitions are engine-independent data.
 - **A5.** The game rules work without any UI. Every UI interaction calls exactly one game action, and the game can run entirely without a screen. Given the same starting shuffle (random seed) and the same player choices, it always produces the same result. This is needed for AI training, simulation, replays and rejoining.
-- **A6.** Hidden information stays hidden: opponents' builds and exact scores. Only the leaderboard order, market claims, scouted range and wave-arrival snapshots are shown.
+- **A6.** Hidden information stays hidden: opponents' builds and exact scores. Only the leaderboard order, market claims (once the turn has resolved), scouted range and wave-arrival snapshots are shown.
 - **A7.** The final turn is always announced before it is played.
 - **A8.** Every core rule works with 1–4 players, with AI in empty seats. No rule needs two or more humans.
 - **A9.** Effect animations add at most a couple of minutes to a game, and they can always be sped up or skipped.
 
 **Never**
 - **N1.** No hexes, tiles, population assignment, adjacency effects or real-time play.
-- **N2.** A market claim never fails because of what another player did. Wonders are the only possible exception (see Open questions).
+- **N2.** A market claim never fails because of what another player did. Wonders are the one exception: the highest Culture offer gets them (`Culture.framework.md`).
 - **N3.** A player is never eliminated or left unable to act.
 - **N4.** The first prototype doesn't enforce rules. Enforcement is added step by step, never as an all-at-once requirement.
 - **N5.** No monetization, including pay-to-win.
@@ -207,11 +208,7 @@ Labelled **A** (Always) and **N** (Never) for citing.
 
 Each has a recommended default.
 
-1. **How Wonders are claimed.**
-   - (A) **Sealed bid.** The winner pays and builds. Losers get their bid back, but their turn is spent. Tied highest bidders all build the Wonder.
-   - (B) **Claimed like other cards, but very expensive**, and it takes effect **immediately** instead of going into your deck.
-
-   *Default: playtest both by hand in the prototype. Lean towards (B)*, because it keeps "a claim never fails" true without exceptions and is simpler to explain. (A) creates a unique gamble.
+1. **How Wonders are claimed.** *Settled in `Culture.framework.md`: claimed like other cards for Production + Culture; if several players claim the same Wonder, the highest hidden Culture offer gets it.*
 2. **Exact Burn rules.** *Default: start from Hexarchy's Burn and adjust in playtests.*
 3. **Who chooses between stealing and destroying.** *Default: the attacker sets the wave's goal (steal or destroy) when sending it. Targets are still picked automatically on the defender's side.*
 4. **How Modernization moves and where the era thresholds are.** *Default: a fixed amount each turn, plus +1 for every Technology claimed (`Technology.framework.md`), plus other pushing and slowing effects. Thresholds get tuned so eras change roughly every 4–5 turns.*
