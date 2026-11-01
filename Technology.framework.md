@@ -85,6 +85,10 @@ What the two sides contain depends on the Technology:
 
 ### Research shapes the world
 
+- **What goes in which stack.** An era's Blueprint stack holds what existed by the end of that era.
+  Its Technology stack holds what came after, so research is how the next era's buildings arrive
+  early. *Example:* era 1 runs to about 1600, so the printing house and the star fort are era-1
+  blueprints, and the telescope and the first steam engine are era-1 Technologies.
 - **Each era's Blueprint stack** contains a small core of cards that always appear, plus the
   blueprints that the previous era's research added. Research largely decides what can be built
   later.

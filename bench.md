@@ -12,11 +12,24 @@ claimed, is settled in `Culture.framework.md`.
 6. **Game-length target.** *Recommendation:* aim for 13–16 turns (10–18 at the extremes), as a goal rather than a hard rule.
 7. **Make attacking the leader pay off** (e.g. plunder grows with the defender's wealth). *Recommendation:* a design goal checked in playtests, not an invariant.
 8. **Pricier options that skip a strategic resource.** *Recommendation:* not a goal; revisit if lockouts feel bad.
-9. **Civilization list and starter decks.** *Recommendation:* 2 contrasting civs in the prototype, sharing a base starter deck plus a few unique cards each.
+9. **Civilization list and starter decks.** *Partly settled:* the prototype's civilizations are European nations, about four, each with its own bonus. *Recommendation for the rest:* a shared base starter deck plus a few unique cards each; China later.
 10. **AI approach.** *Recommendation:* rule-based first; the headless, deterministic rules keep trained / genetic-algorithm AI possible.
 11. **Hidden information in the final game** (no player's hidden state sent to other clients). *Recommendation:* the prototype is exempt; the architect decides how the final game guarantees it.
 
+**Era 1 cards** (`Era1.cards.md`, waiting on your review). My defaults where the frameworks are silent:
+
+- **Made cards that go unplayed.** *Recommendation:* a card a building puts into your hand each turn is removed at the end of the turn if not played. The alternative is that it joins the deck, which floods decks with units.
+- **Strategic resources are shown, not spent.** *Recommendation:* holding one lets you claim or build what needs it. Spending would make each copy usable once in the whole game.
+- **Starting towns** (your idea; section in `Era1.cards.md`, rule in `framework.md` → Civilizations). Settled: a town is a separate pick from the civilization; the Mill Town's river blocks slots 2, 6 and 10; the Castle Town starts with Stables and a Bog-Iron Pit. Still to review: the five towns' numbers.
+- **Which nations, with which bonus.** Drafted in `Era1.cards.md`: France (Feudal levy), Venice (Staple right), the Holy Roman Empire (Mining freedom), Castile (Pilgrims). *Recommendation:* these four; England is the obvious fifth, with a longbow bonus of its own, if you want a spare.
+- **Workday has nothing to trigger.** Its "Produce 1" only triggers buildings that need a Produce card, and no starting town has one (Open Fields and the River Mill run by themselves). *Recommendation:* Workday reads "Produce 1. If you have no building to trigger, +2 Production instead."
+- **Two new junk types, Sickness and Debt.** Debt comes from Forced Loan; Sickness has no source yet. *Recommendation:* keep both; give Sickness a source in era 2 (crowded towns).
+- **Trimming the pool.** An era is about 4 turns at 1–2 claims a turn: about 5 claims per player, so 10 for two players and 20 for four. 33 buildings and 24 actions in the pool. *Recommendation:* about 20 cards in the era-1 Blueprint stack after your review (enough for four players), 6 Technologies, 4 Wonders.
+
 ## Agreed, not yet written
+
+- **Era 1 cards into the prototype.** Once you've reviewed `Era1.cards.md`, the chosen cards go into
+  `prototype/cards/cards.csv` and `stacks.csv`, replacing the sample cards.
 
 - **Prototype support for the design frameworks:** counters for goods on building cards, a Coin counter
   and a Culture counter (`CoreLoop.framework.md`, `Culture.framework.md`), and a way to keep market

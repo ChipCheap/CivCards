@@ -53,9 +53,13 @@ A card has one kind, so a card never makes you pick how to use it in the middle 
 - **Action cards** are **played**. Playing one uses one of your plays, which is your population
   working. An action can make Production, Food or Knowledge, trigger buildings (Produce), start a
   venture, send military, and so on. Afterwards it goes to the discard pile unless its text says
-  otherwise.
-- **Blueprints** are **built** into a slot in your row. Building uses no play. You pay its cost with
-  what your plays made (Production, cards, a strategic resource, Coin on some cards).
+  otherwise. Action cards come from the starter deck, from the Blueprint stack, and from buildings
+  and Technologies that make them. Small inventions are action cards too, stronger than the base
+  cards, rather than upgrades.
+- **Blueprints** are **built** into a slot in your row. Building uses no play. Its main price is the
+  claim price, paid at the market with what your plays made. Building it costs the ring surcharge,
+  plus a build price only where the card prints one (Production, cards, a strategic resource, Coin on
+  some cards).
 - **Wonders** are build-only.
 - **Strategic resources** are cards, as in `framework.md`.
 - **Junk** cards do nothing (see Junk).
@@ -146,7 +150,8 @@ lean Industry and Trade, China Agriculture and State.
 
 A **modernization card** is built onto an older building. It replaces that building in its slot,
 costs less than a new building, pays no ring surcharge, and keeps the old building's stored good.
-*Example line:* Bloomery → Blast Furnace → Steelworks.
+*Example line:* Bloomery → Blast Furnace → Steelworks. Upgrades are kept for buildings that really
+grow out of an older one; most improvements are action cards instead.
 
 ### Coin
 

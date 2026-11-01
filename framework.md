@@ -66,11 +66,11 @@ Every card has one kind, which decides how it is used (details in `CoreLoop.fram
 - **Pay:** any card can be spent as payment for other cards. For example, a Heavy Sawmill costs 2 cards.
 - **Burn:** any card can be given up for a one-time payoff and removed from the game. The exact rules are open, starting from Hexarchy's version.
 
-Some emergency effects add **junk cards** to your deck, which you later have to work to clear out. Cards claimed from the market go **into your deck** to be built later. Technologies are the exception: they go into your tech display and take effect at once (details in `Technology.framework.md`). Wonders are also an exception: they are built straight into a slot when the turn resolves (details in `Culture.framework.md`).
+Some emergency effects add **junk cards** to your deck, which you later have to work to clear out. Cards claimed from the market go **into your deck**: blueprints to be built later, action cards to be played. Technologies are the exception: they go into your tech display and take effect at once (details in `Technology.framework.md`). Wonders are also an exception: they are built straight into a slot when the turn resolves (details in `Culture.framework.md`).
 
 ### Resources
 - **Cards:** the main currency.
-- **Strategic resources** (such as Iron) are cards. There are **at most 1–2 copies** of each in a game. Some cards need a specific one (a Forge needs Iron).
+- **Strategic resources** (such as Saltpetre) are cards. There are **at most 1–2 copies** of each in a game. Holding one gives a bonus; only a few cards also need a specific one (a Powder Mill needs Saltpetre).
 - **Production:** made by cards and buildings each turn. It doesn't carry over as Production: what is left at the end of a turn becomes Coin at 3:1.
 - **Food:** builds up from certain cards. Each time it crosses a threshold, population grows by +1. Food also mostly pays for military cards.
 - **Population:** just a number: how many cards you can Play each turn. You never assign or manage it.
@@ -88,10 +88,11 @@ There are four shared stacks. Each stack shows cards face-up, and a claimed card
 |---|---|---|
 | Strategic resources | Military | At most 1–2 copies of each in a game |
 | Technology | Knowledge | Split by era; brings new cards into the game |
-| Blueprints | Cards or Production | Split by era |
+| Blueprints | Cards or Production | Split by era; also holds action cards |
 | Wonders | Production + Culture | If several players claim the same Wonder, the highest Culture offer gets it |
 
 - **Claims buy time; nobody bids.** You state a claim, pay for it, and get the card. Claims stay hidden until the turn resolves. If several players claim the same card in the same turn, **all of them get it**, and it leaves only after that turn. The tension comes from waiting: you hold off a turn to grow your economy and hope nobody takes the card first. Wonders are the one exception: the highest Culture offer gets them.
+- **Prices.** Every market card has a claim price. Some also print a price to build or play them; building always adds the ring surcharge (`CoreLoop.framework.md`).
 - The Technology and Blueprint stacks change when the era changes. Each new era's stacks are a small core plus what the previous era's research added (details in `Technology.framework.md`).
 - **Trading partners:** 2–3 computer-run neighbouring civilizations, the same for every player, sell ordinary goods for Coin and pay more for goods they want. They never sell strategic resources (details in `CoreLoop.framework.md`).
 
@@ -125,6 +126,8 @@ There are four shared stacks. Each stack shows cards face-up, and a claimed card
 
 ### Civilizations
 - **Asymmetric starts:** each civilization has different starter cards and a different focus. Scouting gives real strategic information.
+- **Starting towns:** each player also picks a starting town, separately from their civilization: a small established town with 1–2 buildings already built, sometimes with terrain that shapes the row (a river that blocks slots). The civilization's own bonus comes on top.
+- **Nations:** in the prototype, the civilizations are European nations, since era 1 is Europe only.
 
 ### AI
 - AI plays by exactly the same rules as humans, either rule-based or trained, possibly with a genetic algorithm. It fills empty seats, plays solo games, and stands in for disconnected players.
@@ -216,7 +219,7 @@ Each has a recommended default.
 6. **Game-length target.** *Default: aim for 13–16 turns (roughly 10–18 at the extremes). It's a goal, not a hard rule.*
 7. **Make attacking the leader pay off.** *Default: write it down as a design goal checked in playtests (for example, plunder grows with the defender's wealth), not as a strict rule.*
 8. **Pricier options that skip a strategic resource.** *Default: not a goal. Revisit only if lockouts feel bad in playtests.*
-9. **Civilization list and starter decks.** *Default: begin with 2 contrasting civs in the prototype, sharing the same base starter deck plus a few unique cards each.*
+9. **Civilization list and starter decks.** *Partly settled: in the prototype the civilizations are European nations, about four for four seats, each with its own bonus. Default for the rest: they share the base starter deck plus a few unique cards each; China joins later as a civilization of its own.*
 10. **AI approach.** *Default: rule-based AI first. The headless, deterministic rules (A5: "The game rules work without any UI") keep trained or genetic-algorithm AI possible later.*
 11. **Hidden information in the final game.** Because builds are hidden, the final game must not send a player's hidden state to other players' machines. *Default: the prototype is exempt (it trusts players). The architect decides how the final game guarantees this.*
 12. **Roguelike and Constructed modes.** *Default: explore each in its own framework once the Engine Builder's core loop feels right in the prototype.*
