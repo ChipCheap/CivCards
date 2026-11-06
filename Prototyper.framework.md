@@ -90,7 +90,7 @@ of one. There is no other kind of object, so there are no half-stacked cards.
 - A **slot** is a fixed, outlined place on the board. A stack dropped on it snaps into it, and the slot stays on the board **even when empty**, so a deck always has a home to return to.
 - **Each player** has on their side of the board:
   - a **deck slot** and a **discard slot**;
-  - a **private zone** for their building row (see Hidden information).
+  - a **private zone** for their building row (see Hidden information). It holds 12 **building slots** in three rows of four (centre 1–4, town 5–8, outskirts 9–12, the rings of `CoreLoop.framework.md`, with the outskirts furthest from you) and a **main-building slot** below them, centred, for the starting town's building. The rest of the zone stays free for loose cards.
 - **The shared market** has, for each of its four stacks (Strategic resources, Technology, Blueprints, Wonders — the stacks in `framework.md` `### Market`), a face-down **supply slot** and **3 face-up display slots**. Players claim by copying a displayed card (C) and refill the display by hand.
 - **The starting layout comes from the repo.** The stacks file says where each predefined stack starts: in a named slot on the board, or in the right panel. Era 1 market stacks start on the board; the era 2, 3 and 4 stacks start in the right panel, to be dragged onto the market when an era begins.
 - **Starter decks:** both players start with **the same starter deck**, placed shuffled and face-down in their deck slot. Civilizations and their own starter decks are future content.
@@ -102,7 +102,7 @@ of one. There is no other kind of object, so there are no half-stacked cards.
 
 ### Private zone and hidden information
 - **Anything outside a private zone is visible to both players.** That includes deck and discard slots, which are not in the zone by default.
-- Each player's **private zone** hides its cards **completely** from the opponent — not even card backs. This is where your building row lives, matching `framework.md` A6: "Hidden information stays hidden: opponents' builds and exact scores."
+- Each player's **private zone** hides its cards **completely** from the opponent — not even card backs. That includes cards in its building slots; only the empty slot outlines show. This is where your building row lives, matching `framework.md` A6: "Hidden information stays hidden: opponents' builds and exact scores."
 - The owner has a **Reveal buildings** button that removes the hiding, so the opponent sees the zone's contents (for scouting and wave arrivals). Pressing it again hides them again.
 - Your **hand** shows to the opponent as card backs only, and there is no way to reveal it.
 - Players are trusted: hidden cards still travel to the opponent's browser and are only not drawn. `framework.md` open question 11 exempts the prototype ("*Default: the prototype is exempt (it trusts players).*").

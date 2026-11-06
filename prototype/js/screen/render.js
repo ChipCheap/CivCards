@@ -3,16 +3,17 @@
 // stacks in the opponent's unrevealed private zone are not drawn at all, and the opponent's hand shows
 // only card backs.
 
-import { CARD_HEIGHT, CARD_WIDTH, allSlotLayouts, isInPrivateZone, marketBlocks, privateZoneRectangle, stackRectangle } from "./layout.js";
+import { CARD_HEIGHT, CARD_WIDTH, allSlotLayouts, isStackInPrivateZone, marketBlocks, privateZoneRectangle, stackRectangle } from "./layout.js";
 
 const HAND_CARD_GAP = 6;
 
-// Whether `viewerSeat` may see a stack at all. Slots are always visible; a loose stack is hidden while
-// it lies in the other seat's private zone and that seat hasn't revealed it. The board has two sides,
-// so the other seat is 1 - viewerSeat.
+// Whether `viewerSeat` may see a stack's cards at all. A stack, loose or in a building slot, is hidden
+// while it lies in the other seat's private zone and that seat hasn't revealed it; the empty slot
+// outlines are part of the board and always drawn. The board has two sides, so the other seat is
+// 1 - viewerSeat.
 export function isStackVisibleTo(table, stack, viewerSeat) {
   const otherSeat = 1 - viewerSeat;
-  return stack.isSlot || table.seats[otherSeat].revealed || !isInPrivateZone(stack.position, otherSeat);
+  return table.seats[otherSeat].revealed || !isStackInPrivateZone(stack, otherSeat);
 }
 
 // One card face from the card template.

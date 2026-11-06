@@ -7,6 +7,9 @@ export const PANEL_START = "panel";
 export const MARKET_STARTS = Object.freeze(["market-resources", "market-tech", "market-blueprints", "market-wonders"]);
 
 export const DISPLAY_SLOTS_PER_MARKET = 3;
+// The building row of `CoreLoop.framework.md`: slots 1–4 are the centre, 5–8 the town, 9–12 the
+// outskirts. The main building, the starting town's, has a slot of its own.
+export const BUILDING_SLOTS_PER_SEAT = 12;
 
 export function deckSlotId(seat) {
   return `seat${seat}-deck`;
@@ -14,6 +17,14 @@ export function deckSlotId(seat) {
 
 export function discardSlotId(seat) {
   return `seat${seat}-discard`;
+}
+
+export function buildingSlotId(seat, slotNumber) {
+  return `seat${seat}-building-${slotNumber}`;
+}
+
+export function mainBuildingSlotId(seat) {
+  return `seat${seat}-main-building`;
 }
 
 export function supplySlotId(market) {
@@ -24,8 +35,8 @@ export function displaySlotId(market, displayNumber) {
   return `${market}-display-${displayNumber}`;
 }
 
-// Builds the starting table: each seat's shuffled deck, every market supply shuffled with its display
-// slots filled face-up, and the panel stacks kept aside for the right panel.
+// Builds the starting table: each seat's shuffled deck and empty building slots, every market supply
+// shuffled with its display slots filled face-up, and the panel stacks kept aside for the right panel.
 // `random` returns a number in [0, 1), like Math.random.
 export function createTable(cardDefinitions, stackDefinitions, seatCount, random) {
   const table = {
@@ -45,6 +56,10 @@ export function createTable(cardDefinitions, stackDefinitions, seatCount, random
     const deckCards = createCardsForStart(table, stackDefinitions, PLAYER_DECK_START);
     table.stacks.push(createSlotStack(deckSlotId(seat), shuffle(deckCards, random)));
     table.stacks.push(createSlotStack(discardSlotId(seat), []));
+    for (let slotNumber = 1; slotNumber <= BUILDING_SLOTS_PER_SEAT; slotNumber++) {
+      table.stacks.push(createSlotStack(buildingSlotId(seat, slotNumber), []));
+    }
+    table.stacks.push(createSlotStack(mainBuildingSlotId(seat), []));
   }
 
   for (const market of MARKET_STARTS) {

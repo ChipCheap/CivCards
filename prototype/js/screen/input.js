@@ -2,7 +2,7 @@
 // and search. The cursor point at drop time alone picks where a card goes (Prototyper.framework.md
 // PA3). It also sends this player's pointer and held card to the other player as presence.
 
-import { CARD_HEIGHT, CARD_WIDTH, containsPoint, isInPrivateZone, stackRectangle } from "./layout.js";
+import { CARD_HEIGHT, CARD_WIDTH, containsPoint, isStackInPrivateZone, stackRectangle } from "./layout.js";
 import { createCardBack, createCardFace, createElement, isStackVisibleTo } from "./render.js";
 
 const DRAG_THRESHOLD_PIXELS = 4;
@@ -378,7 +378,7 @@ export function createInput({ viewportElement, handElement, panelElement, screen
     }
     const stack = findStack(source.stackId);
     const card = stack.cards.at(-1);
-    const isInOwnHiddenZone = !stack.isSlot && isInPrivateZone(stack.position, seat) && !table.seats[seat].revealed;
+    const isInOwnHiddenZone = isStackInPrivateZone(stack, seat) && !table.seats[seat].revealed;
     return card.faceUp && !isInOwnHiddenZone ? card.definitionId : null;
   }
 

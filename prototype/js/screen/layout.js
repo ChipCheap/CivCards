@@ -3,19 +3,27 @@
 // "the slot positions themselves are kept in one place in the screen module").
 // Seat 0's side is at the bottom, seat 1's at the top, the market in the middle.
 
-import { DISPLAY_SLOTS_PER_MARKET, MARKET_STARTS, deckSlotId, discardSlotId, displaySlotId, supplySlotId } from "../core.js";
+import {
+  BUILDING_SLOTS_PER_SEAT, DISPLAY_SLOTS_PER_MARKET, MARKET_STARTS, buildingSlotId, deckSlotId, discardSlotId, displaySlotId,
+  mainBuildingSlotId, supplySlotId,
+} from "../core.js";
 
 export const CARD_WIDTH = 100;
 export const CARD_HEIGHT = 140;
 export const TABLE_WIDTH = 1800;
-export const TABLE_HEIGHT = 1900;
+export const TABLE_HEIGHT = 2580;
 
 const GAP = 20;
 const EDGE = 40;
 const LABEL_HEIGHT = 30;
 const PRIVATE_ZONE_COLUMNS = 10;
-const PRIVATE_ZONE_ROWS = 2;
+// Three rows of building slots and the main building's row below them.
+const PRIVATE_ZONE_ROWS = 4;
+const BUILDING_COLUMNS = 4;
 const SEAT_SIDES = 2;
+
+// The rings of the building row, innermost first, each one row of BUILDING_COLUMNS slots.
+const RING_NAMES = Object.freeze(["Centre", "Town", "Outskirts"]);
 
 const MARKET_NAMES = Object.freeze({
   "market-resources": "Strategic resources",
@@ -24,10 +32,11 @@ const MARKET_NAMES = Object.freeze({
   "market-wonders": "Wonders",
 });
 
-// Seat 0's side; seat 1's side is the same, mirrored top to bottom.
+// Seat 0's side; seat 1's side is the same, mirrored top to bottom. The zone leaves LABEL_HEIGHT free
+// at both ends, so its label, drawn at the top as each viewer sees it, never covers a slot.
 const BOTTOM_PRIVATE_ZONE = (() => {
   const width = PRIVATE_ZONE_COLUMNS * CARD_WIDTH + (PRIVATE_ZONE_COLUMNS + 1) * GAP;
-  const height = PRIVATE_ZONE_ROWS * CARD_HEIGHT + (PRIVATE_ZONE_ROWS + 1) * GAP;
+  const height = PRIVATE_ZONE_ROWS * CARD_HEIGHT + (PRIVATE_ZONE_ROWS - 1) * GAP + 2 * LABEL_HEIGHT;
   return { x: TABLE_WIDTH - EDGE - width, y: TABLE_HEIGHT - EDGE - height, width, height };
 })();
 const BOTTOM_PILE_Y = BOTTOM_PRIVATE_ZONE.y + (BOTTOM_PRIVATE_ZONE.height - CARD_HEIGHT) / 2;
@@ -51,6 +60,18 @@ const MARKET_BLOCKS = [];
 for (let seat = 0; seat < SEAT_SIDES; seat++) {
   SLOTS.set(deckSlotId(seat), { rectangle: sideRectangle(BOTTOM_DECK, seat), label: "Deck" });
   SLOTS.set(discardSlotId(seat), { rectangle: sideRectangle(BOTTOM_DISCARD, seat), label: "Discard" });
+  for (let slotNumber = 1; slotNumber <= BUILDING_SLOTS_PER_SEAT; slotNumber++) {
+    const ringIndex = Math.floor((slotNumber - 1) / BUILDING_COLUMNS);
+    const row = RING_NAMES.length - 1 - ringIndex;
+    SLOTS.set(buildingSlotId(seat, slotNumber), {
+      rectangle: sideRectangle(bottomBuildingRectangle(row, (slotNumber - 1) % BUILDING_COLUMNS), seat),
+      label: `${RING_NAMES[ringIndex]} ${slotNumber}`,
+    });
+  }
+  SLOTS.set(mainBuildingSlotId(seat), {
+    rectangle: sideRectangle(bottomBuildingRectangle(RING_NAMES.length, (BUILDING_COLUMNS - 1) / 2), seat),
+    label: "Main building",
+  });
 }
 MARKET_STARTS.forEach((market, marketIndex) => {
   const x = MARKET_COLUMN_X[marketIndex % 2];
@@ -87,8 +108,22 @@ export function containsPoint(rectangle, point) {
   return point.x >= rectangle.x && point.x <= rectangle.x + rectangle.width && point.y >= rectangle.y && point.y <= rectangle.y + rectangle.height;
 }
 
-export function isInPrivateZone(point, seat) {
-  return containsPoint(privateZoneRectangle(seat), point);
+// Whether a stack lies in a seat's private zone, judged by the centre of the rectangle it covers.
+export function isStackInPrivateZone(stack, seat) {
+  const rectangle = stackRectangle(stack);
+  const centre = { x: rectangle.x + rectangle.width / 2, y: rectangle.y + rectangle.height / 2 };
+  return containsPoint(privateZoneRectangle(seat), centre);
+}
+
+// A building slot on seat 0's side: the outskirts in the top row, the main building in the bottom one.
+// `column` may be fractional, to centre a slot between two columns.
+function bottomBuildingRectangle(row, column) {
+  return {
+    x: BOTTOM_PRIVATE_ZONE.x + GAP + column * (CARD_WIDTH + GAP),
+    y: BOTTOM_PRIVATE_ZONE.y + LABEL_HEIGHT + row * (CARD_HEIGHT + GAP),
+    width: CARD_WIDTH,
+    height: CARD_HEIGHT,
+  };
 }
 
 function sideRectangle(bottomRectangle, seat) {

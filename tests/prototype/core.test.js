@@ -1,6 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { apply, createTable, deckSlotId, discardSlotId, displaySlotId, supplySlotId } from "../../prototype/js/core.js";
+import {
+  apply, buildingSlotId, createTable, deckSlotId, discardSlotId, displaySlotId, mainBuildingSlotId, supplySlotId,
+} from "../../prototype/js/core.js";
 
 // A small seeded generator (mulberry32), so every test sees the same shuffles.
 function createRandom(seed) {
@@ -51,6 +53,23 @@ test("setup gives each seat its own shuffled, face-down deck and an empty discar
   assert.ok(secondDeck.cards.every(card => !firstIds.has(card.id)), "the seats share no card instances");
   assert.deepEqual(stackById(table, discardSlotId(0)).cards, []);
   assert.deepEqual(stackById(table, discardSlotId(1)).cards, []);
+});
+
+test("setup gives each seat 12 empty building slots and an empty main-building slot", () => {
+  const table = newTable();
+  for (const seat of [0, 1]) {
+    const buildingSlots = Array.from({ length: 12 }, (_, index) => stackById(table, buildingSlotId(seat, index + 1)));
+    buildingSlots.push(stackById(table, mainBuildingSlotId(seat)));
+    assert.ok(buildingSlots.every(slot => slot.isSlot && slot.cards.length === 0));
+  }
+});
+
+test("a card dropped on a building slot stays there as the slot's stack", () => {
+  const table = newTable();
+  const after = apply(table, 0, { kind: "move-card", from: { stackId: deckSlotId(0) }, to: { stackId: mainBuildingSlotId(0) } }, createRandom(1));
+  assert.equal(stackById(after, mainBuildingSlotId(0)).cards.length, 1);
+  const emptied = apply(after, 0, { kind: "move-card", from: { stackId: mainBuildingSlotId(0) }, to: { handIndex: 0 } }, createRandom(1));
+  assert.ok(stackById(emptied, mainBuildingSlotId(0)).isSlot, "an emptied building slot stays on the board");
 });
 
 test("setup fills 3 face-up displays per market stack from its shuffled supply", () => {
