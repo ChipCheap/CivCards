@@ -1,11 +1,13 @@
 id,name,type,era,cost,text,art
-farm,Farm,Building,1,1 card,Produces 1 Food each turn.,
-workshop,Workshop,Building,1,1 card,Produces 1 Production each turn.,
+labour,Labour,Action,1,,+3 Production.,
+harvest,Harvest,Action,1,,+2 Food.,
 militia,Militia,Unit,1,1 Food,"Attack 1
 Defense 1",
-scholar,Scholar,Action,1,,Gain 1 Knowledge.,
-levy,Emergency Levy,Action,1,,"Gain 3 Production this turn.
-Add an Unrest card to your discard pile.",
+workday,Workday,Action,1,,"+1 Production.
+Produce 1 (trigger one building).",
+study,Study,Action,1,,+2 Knowledge.,
+levy,Emergency Levy,Action,1,,"+5 Production.
+Add 1 Unrest to your discard pile.",
 unrest,Unrest,Junk,1,,Does nothing. Burn it to get rid of it.,
 iron,Iron,Resource,1,2 Military,Needed by the Forge.,
 coal,Coal,Resource,1,2 Military,Needed by the Steam Engine.,

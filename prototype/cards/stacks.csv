@@ -1,8 +1,9 @@
 stack,card,count,start
-Starter deck,farm,3,player-deck
-Starter deck,workshop,3,player-deck
+Starter deck,labour,3,player-deck
+Starter deck,harvest,2,player-deck
 Starter deck,militia,2,player-deck
-Starter deck,scholar,1,player-deck
+Starter deck,workday,1,player-deck
+Starter deck,study,1,player-deck
 Starter deck,levy,1,player-deck
 Era 1 Resources,iron,1,market-resources
 Era 1 Resources,coal,1,market-resources

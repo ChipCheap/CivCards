@@ -28,8 +28,9 @@ claimed, is settled in `Culture.framework.md`.
 
 ## Agreed, not yet written
 
-- **Era 1 cards into the prototype.** Once you've reviewed `Era1.cards.md`, the chosen cards go into
-  `prototype/cards/cards.csv` and `stacks.csv`, replacing the sample cards.
+- **Era 1 cards into the prototype.** The starter deck is in (`prototype/cards/`). Once you've
+  reviewed `Era1.cards.md`, the chosen market cards go into `cards.csv` and `stacks.csv` as well,
+  replacing the remaining sample cards.
 
 - **Prototype support for the design frameworks:** counters for goods on building cards, a Coin counter
   and a Culture counter (`CoreLoop.framework.md`, `Culture.framework.md`), and a way to keep market
