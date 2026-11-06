@@ -136,6 +136,27 @@ test("flipping a whole stack reverses its order and flips every card", () => {
   assert.deepEqual(stackById(after, deckSlotId(0)).cards, expected);
 });
 
+test("flip-all turns a mixed stack the way most cards face, order kept, then the other way", () => {
+  const table = newTable();
+  const deck = stackById(table, deckSlotId(0));
+  deck.cards = deck.cards.map((card, index) => ({ ...card, faceUp: index === 3 }));
+  const deckIds = deck.cards.map(card => card.id);
+  const once = apply(table, 0, { kind: "flip-all", stackId: deckSlotId(0) }, createRandom(1));
+  assert.deepEqual(stackById(once, deckSlotId(0)).cards.map(card => card.id), deckIds);
+  assert.ok(stackById(once, deckSlotId(0)).cards.every(card => !card.faceUp), "3 of 4 were face-down");
+  const twice = apply(once, 0, { kind: "flip-all", stackId: deckSlotId(0) }, createRandom(1));
+  assert.deepEqual(stackById(twice, deckSlotId(0)).cards.map(card => card.id), deckIds);
+  assert.ok(stackById(twice, deckSlotId(0)).cards.every(card => card.faceUp));
+});
+
+test("flip-all turns an evenly mixed stack face-up", () => {
+  const table = newTable();
+  const deck = stackById(table, deckSlotId(0));
+  deck.cards = deck.cards.map((card, index) => ({ ...card, faceUp: index % 2 === 0 }));
+  const after = apply(table, 0, { kind: "flip-all", stackId: deckSlotId(0) }, createRandom(1));
+  assert.ok(stackById(after, deckSlotId(0)).cards.every(card => card.faceUp));
+});
+
 test("flip turns over only the top card", () => {
   const table = newTable();
   const after = apply(table, 0, { kind: "flip", from: { stackId: deckSlotId(0) } }, createRandom(1));

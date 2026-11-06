@@ -86,6 +86,7 @@ const REQUEST_HANDLERS = Object.freeze({
   "move-stack": moveStack,
   "flip": flip,
   "flip-stack": flipStack,
+  "flip-all": flipAll,
   "shuffle": shuffleStack,
   "draw": draw,
   "take-card": takeChosenCard,
@@ -181,6 +182,20 @@ function flipStack({ table, seat, request }) {
     return false;
   }
   stack.cards = stack.cards.reverse().map(card => ({ ...card, faceUp: !card.faceUp }));
+  return true;
+}
+
+// { stackId } — turns every card of the stack the same way up, order kept. A mixed stack turns the
+// way most of its cards already face, face-up on a tie; a stack all one way turns to the other.
+function flipAll({ table, seat, request }) {
+  const stack = findUsableStack(table, seat, request.stackId);
+  if (stack === undefined || stack.cards.length === 0) {
+    return false;
+  }
+  const faceUpCount = stack.cards.filter(card => card.faceUp).length;
+  const isAllOneWay = faceUpCount === 0 || faceUpCount === stack.cards.length;
+  const faceUp = isAllOneWay ? faceUpCount === 0 : 2 * faceUpCount >= stack.cards.length;
+  stack.cards = stack.cards.map(card => ({ ...card, faceUp }));
   return true;
 }
 

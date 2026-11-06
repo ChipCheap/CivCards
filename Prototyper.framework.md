@@ -80,9 +80,10 @@ of one. There is no other kind of object, so there are no half-stacked cards.
 - You can reorder your hand by dragging a card to another position in it.
 - **F:** flip the card under the cursor (the top card of a stack), or the card you are holding.
 - **Shift + F:** flip the whole stack, reversing its order — this is how a discard pile becomes a face-down deck.
+- **Ctrl + Shift + F:** turn every card of the stack the same way up, keeping the order. A mixed stack turns the way most of its cards already face (face-up on a tie); pressing it again turns them all the other way.
 - **R:** shuffle the stack.
 - **C:** create a copy of the card under the cursor or in your hand, next to the cursor.
-- **Right-click:** a menu with the same actions (draw 1, draw N, flip, flip stack, shuffle, copy, delete).
+- **Right-click:** a menu with the same actions (draw 1, draw N, flip, flip stack, flip all with the order kept, shuffle, copy, delete).
 - **Search** (optional for the first build, only if it works cleanly): look through a stack and pull one chosen card out.
 
 ### Board and slots

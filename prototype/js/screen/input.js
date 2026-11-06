@@ -97,7 +97,9 @@ export function createInput({ viewportElement, handElement, panelElement, screen
   });
 
   window.addEventListener("keydown", event => {
-    if (event.repeat || event.ctrlKey || event.metaKey || event.altKey || isTyping(event.target)) {
+    // Ctrl + Shift + F is the one table key that uses Ctrl; every other Ctrl key stays the browser's.
+    const isFlipAll = event.code === "KeyF" && event.ctrlKey && event.shiftKey;
+    if (event.repeat || (event.ctrlKey && !isFlipAll) || event.metaKey || event.altKey || isTyping(event.target)) {
       return;
     }
     if (event.code === "Escape") {
@@ -112,7 +114,12 @@ export function createInput({ viewportElement, handElement, panelElement, screen
       return;
     }
     const drawKeyMatch = DRAW_KEY_PATTERN.exec(event.code);
-    if (drawKeyMatch !== null && focus.stackId !== undefined) {
+    if (isFlipAll) {
+      if (focus.stackId !== undefined) {
+        event.preventDefault();
+        sendRequest({ kind: "flip-all", stackId: focus.stackId });
+      }
+    } else if (drawKeyMatch !== null && focus.stackId !== undefined) {
       sendRequest({ kind: "draw", stackId: focus.stackId, count: Number(drawKeyMatch[1]) });
     } else if (event.code === "KeyF" && event.shiftKey && focus.stackId !== undefined) {
       sendRequest({ kind: "flip-stack", stackId: focus.stackId });
@@ -388,6 +395,7 @@ export function createInput({ viewportElement, handElement, panelElement, screen
       }],
       ["Flip top card", () => sendRequest({ kind: "flip", from: { stackId } })],
       ["Flip stack", () => sendRequest({ kind: "flip-stack", stackId })],
+      ["Flip all, order kept", () => sendRequest({ kind: "flip-all", stackId })],
       ["Shuffle", () => sendRequest({ kind: "shuffle", stackId })],
       ["Copy top card", () => sendRequest({ kind: "copy", from: { stackId }, position: besideStack(stackId) })],
       ["Search…", () => openSearch(stackId)],
