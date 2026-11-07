@@ -332,8 +332,8 @@ body:has(.side-panel.is-collapsed) {
 
 .token {
   position: absolute;
-  width: var(--token-size, 32px);
-  height: var(--token-size, 32px);
+  width: var(--token-size, 36px);
+  height: var(--token-size, 36px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -377,8 +377,8 @@ body:has(.side-panel.is-collapsed) {
 }
 
 .drag-ghost.is-token {
-  width: var(--token-size, 32px);
-  height: var(--token-size, 32px);
+  width: var(--token-size, 36px);
+  height: var(--token-size, 36px);
   transform: none;
 }
 

@@ -12,8 +12,8 @@ export const CARD_WIDTH = 100;
 export const CARD_HEIGHT = 140;
 export const TABLE_WIDTH = 1800;
 export const TABLE_HEIGHT = 2580;
-// A token is about 2 cm across against a card's 6.3 cm.
-export const TOKEN_SIZE = 32;
+// A token is a little over a third of a card's width.
+export const TOKEN_SIZE = 36;
 
 const GAP = 20;
 const EDGE = 40;

@@ -97,7 +97,7 @@ of one. There is no other kind of object, so there are no half-stacked cards.
 - **Setup the tool does once, when a table starts:** every stack that starts on the board is shuffled face-down into its slot, and each market stack's 3 display slots are filled face-up from its supply. Opening hands are drawn by hand. Setup is not a card rule, so PN1 still holds.
 
 ### Tokens
-- **Tokens** stand for goods kept on a building (`CoreLoop.framework.md`: stored goods). A token is a round marker about 2 cm across with an icon: plant, rock, tool or coin.
+- **Tokens** stand for goods kept on a building (`CoreLoop.framework.md`: stored goods). A token is a round marker a little over a third of a card's width, with an icon: plant, rock, tool or coin.
 - The right panel has **four token bags**, one per icon, each an endless supply: drag a token out as often as needed.
 - **Dropped on a card**, a token lies over the card's picture, in its top third. Tokens of the same icon on one card form a **pile** with a small number in its top right corner. **Dropped on the bare table**, a token lies loose; dropped on a loose pile of its icon, it joins it.
 - **Tokens belong to the top card of a stack.** Moving that card or the whole stack takes them along; a card put on top takes them over; taking the top card off carries them away.
