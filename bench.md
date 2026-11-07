@@ -49,4 +49,5 @@ claimed, is settled in `Culture.framework.md`.
 - Unity Netcode + Relay for multiplayer (rejected for the prototype; revisit when the final game's stack is chosen) → `backlog.md`.
 - Civilizations and their own starter decks (the prototype uses one shared starter deck) → `backlog.md`.
 - A "New game" button that resets the table in the same room (left out of `Prototyper.plan.md`; a new game means the host reloads and sends a new link) → `backlog.md`.
+- Claiming costs an action token, Millennium Blades style (revisit after the first live test) → `backlog.md`.
 - Military expeditions against trading partners (an add-on to `CoreLoop.framework.md`) → `backlog.md`.

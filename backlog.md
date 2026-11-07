@@ -13,3 +13,4 @@
 - **Genetic-algorithm AI training** — after a rule-based AI; relies on the headless, deterministic rules.
 - **Military expeditions against trading partners** — an add-on to `CoreLoop.framework.md`; trade only for now.
 - **Unit types that counter each other** — for example cavalry, archers and infantry in a triangle, with gunpowder and siege units later as a universal counter, or units destroyed at once if left unprotected and contested. Units have one Attack value and a sword icon for now.
+- **Claiming costs an action token** (as in Millennium Blades, where special action tokens are spent to trade or sell cards) — so each claim also takes one of a few actions per turn. Revisit after the first live test of the card-claim pricing.
