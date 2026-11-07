@@ -18,7 +18,7 @@ never appear.
 - Research is a race for a head start, not a lock on the technology.
 - Decks can grow again. Spread copies of Technologies add good cards to decks, while built blueprints
   leave the deck for good.
-- Every game's later eras look different, because the Blueprint stacks are shaped by what was
+- Every game's later eras look different, because the Development stacks are shaped by what was
   researched.
 - Slowing Modernization becomes a real weapon. A late era keeps everyone else on prototypes, while a
   player waiting for the full building may never see it.
@@ -33,7 +33,7 @@ different research paths end with visibly different worlds.
 - What a Technology does, where it goes, and what the researcher and other players each get.
 - Prototype buildings, and how they upgrade.
 - How Technologies spread to other players.
-- How research shapes the Blueprint stacks and follow-up Technologies.
+- How research shapes the Development stacks and follow-up Technologies.
 - Research pushing Modernization; Technology points.
 - The Technology market across eras.
 
@@ -77,7 +77,7 @@ What the two sides contain depends on the Technology:
 - A building Technology gives the researcher a **prototype** of a next-era building: it produces
   about half of what the full building does (rounded down, but at least 1) and costs the full price.
 - At the next era, everyone else gets the same prototype shuffled into their deck.
-- The **full building** is shuffled into the next era's Blueprint stack, and only because someone
+- The **full building** is shuffled into the next era's Development stack, and only because someone
   researched it. It may turn up late, or not before that era ends, which is why the prototype is
   still worth taking.
 - When the full blueprint is claimed, it can be built onto a prototype at a discount, using the
@@ -85,11 +85,11 @@ What the two sides contain depends on the Technology:
 
 ### Research shapes the world
 
-- **What goes in which stack.** An era's Blueprint stack holds what existed by the end of that era.
+- **What goes in which stack.** An era's Development stack holds what existed by the end of that era.
   Its Technology stack holds what came after, so research is how the next era's buildings arrive
   early. *Example:* era 1 runs to about 1600, so the printing house and the star fort are era-1
   blueprints, and the telescope and the first steam engine are era-1 Technologies.
-- **Each era's Blueprint stack** contains a small core of cards that always appear, plus the
+- **Each era's Development stack** contains a small core of cards that always appear, plus the
   blueprints that the previous era's research added. Research largely decides what can be built
   later.
 - **Follow-up Technologies** (Steam → Railway) enter the next era's Technology stack only if someone
@@ -121,7 +121,7 @@ In this order, once the turn's claims have resolved:
 1. Unclaimed Technologies of the old era leave.
 2. The new era's Technology stack is formed: its core Technologies plus the follow-ups whose base was
    researched.
-3. The new era's Blueprint stack is formed: its core blueprints plus those added by research.
+3. The new era's Development stack is formed: its core blueprints plus those added by research.
 4. Spread copies of last era's Technologies are shuffled into the draw piles of the players who didn't
    research them.
 
@@ -196,7 +196,7 @@ Each has a recommended default.
 
 1. **How many Technologies per era.** *Default: about 6 per era stack, with 3 shown at a time as in
    `framework.md`.*
-2. **The size of each era's core Blueprint stack.** *Default: about half the era's stack is core cards;
+2. **The size of each era's core Development stack.** *Default: about half the era's stack is core cards;
    the other half comes from research.*
 3. **Knowledge prices by era.** *Default: rising with the era (roughly 3 / 5 / 7 / 9); tune in
    playtests.*

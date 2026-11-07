@@ -34,7 +34,7 @@ const RING_NAMES = Object.freeze(["Centre", "Town", "Outskirts"]);
 const MARKET_NAMES = Object.freeze({
   "market-resources": "Strategic resources",
   "market-tech": "Technology",
-  "market-blueprints": "Blueprints",
+  "market-blueprints": "Developments",
   "market-wonders": "Wonders",
 });
 

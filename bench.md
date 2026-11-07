@@ -25,7 +25,7 @@ claimed, is settled in `Culture.framework.md`.
 - **Workday has nothing to trigger.** Its "Produce 1" only triggers buildings that need a Produce card, and no starting town has one (Open Fields and the River Mill run by themselves). *Recommendation:* Workday reads "Produce 1. If you have no building to trigger, +2 Production instead."
 - **Units attack only, for now** (your call; a shield icon under the sword can bring Defense back later). Defense then comes only from buildings and Wonders, as `framework.md` already allows ("some sits on buildings"). *What it costs:* a defender can no longer answer a wave by playing units that turn, so defense is slower to raise than attack; and Pike Square and Longbowmen, whose point was Defense, need a new role. *Recommendation:* Pike Square becomes a cheap, steady attacker; Longbowmen become the cheap unit of the Archery Butts.
 - **Two new junk types, Sickness and Debt.** Debt comes from Forced Loan; Sickness has no source yet. *Recommendation:* keep both; give Sickness a source in era 2 (crowded towns).
-- **Trimming the pool.** An era is about 4 turns at 1–2 claims a turn: about 5 claims per player, so 10 for two players and 20 for four. 33 buildings and 24 actions in the pool. *Recommendation:* about 20 cards in the era-1 Blueprint stack after your review (enough for four players), 6 Technologies, 4 Wonders.
+- **Trimming the pool.** An era is about 4 turns at 1–2 claims a turn: about 5 claims per player, so 10 for two players and 20 for four. 33 buildings and 24 actions in the pool. *Recommendation:* about 20 cards in the era-1 Development stack after your review (enough for four players), 6 Technologies, 4 Wonders.
 
 ## Agreed, not yet written
 

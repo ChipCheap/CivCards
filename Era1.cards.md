@@ -25,11 +25,11 @@ The **In history** column says what the thing was, so each card has something re
 
 ## Rules the list follows
 
-1. **The Blueprint stack is claimed with cards from your hand** (never junk), and a building
+1. **The Development stack is claimed with cards from your hand** (never junk), and a building
    claimed there costs **Production to build**, plus the ring surcharge ("Centre +0, Town +2,
    Outskirts +5", `CoreLoop.framework.md`) and any strategic resource it needs. An action card claimed
    there plays free unless it prints a price. The other stacks keep their own currencies.
-2. **Action cards come from three places:** the starter deck, the Blueprint stack (claimed like
+2. **Action cards come from three places:** the starter deck, the Development stack (claimed like
    blueprints, then shuffled into your deck), and buildings and Technologies that make them.
 3. **Small inventions are action cards**, stronger than the base cards. The base cards make 3
    Production or 2 Food. A later-era card like a conveyor belt might make 7. Upgrades exist only where
@@ -148,7 +148,7 @@ the rules I first drafted onto the towns. Any nation can pick any town.
 
 England is the obvious fifth (a bonus around its yeoman longbowmen) if a spare is wanted.
 
-## Blueprint stack: buildings
+## Development stack: buildings
 
 Claim = cards from your hand. Build = what building it costs: Production, plus the ring surcharge,
 plus any strategic resource or goods it names. The build prices are the old Production claim prices;
@@ -219,7 +219,7 @@ Culture buildings about "2 / 3 / 4 / 5 points by era").
 **33 buildings**, more than an era needs. Mark favourites and we trim the stack to about 20 cards,
 buildings and actions together.
 
-## Blueprint stack: action cards
+## Development stack: action cards
 
 Claimed like blueprints, then shuffled into your deck. Claim = cards from your hand: 1, or 2 for
 the strongest. Play = a price paid when playing it, on top of the play itself; most have none.

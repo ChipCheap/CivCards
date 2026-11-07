@@ -63,7 +63,7 @@ CivCards is a civilization-themed card game set at the turn from the late mediev
 Every card has one kind, which decides how it is used (details in `CoreLoop.framework.md`):
 - **Play:** action cards are played for their effect, using one of your plays. They go to the discard pile and come back later, like a normal deckbuilder.
 - **Build:** blueprints and Wonders are placed permanently in a slot of your building row, where they produce from then on. Building uses no play.
-- **Pay:** any card except junk can be spent as payment for other cards. Above all, cards from your hand are what claims from the Blueprint stack cost: a Heavy Sawmill costs 2 cards to claim.
+- **Pay:** any card except junk can be spent as payment for other cards. Above all, cards from your hand are what claims from the Development stack cost: a Heavy Sawmill costs 2 cards to claim.
 - **Burn:** any card can be given up for a one-time payoff and removed from the game. The exact rules are open, starting from Hexarchy's version.
 
 Some emergency effects add **junk cards** to your deck, which you later have to work to clear out. Cards claimed from the market go **into your deck**: blueprints to be built later, action cards to be played. Technologies are the exception: they go into your tech display and take effect at once (details in `Technology.framework.md`). Wonders are also an exception: they are built straight into a slot when the turn resolves (details in `Culture.framework.md`).
@@ -88,12 +88,12 @@ There are four shared stacks. Each stack shows cards face-up, and a claimed card
 |---|---|---|
 | Strategic resources | Military | At most 1–2 copies of each in a game |
 | Technology | Knowledge | Split by era; brings new cards into the game |
-| Blueprints | Cards | Split by era; buildings and action cards. A building then costs Production to build |
+| Developments | Cards | Split by era; buildings and action cards. A building then costs Production to build |
 | Wonders | Production + Culture | If several players claim the same Wonder, the highest Culture offer gets it |
 
 - **Claims buy time; nobody bids.** You state a claim, pay for it, and get the card. Claims stay hidden until the turn resolves. If several players claim the same card in the same turn, **all of them get it**, and it leaves only after that turn. The tension comes from waiting: you hold off a turn to grow your economy and hope nobody takes the card first. Wonders are the one exception: the highest Culture offer gets them.
-- **Prices.** Every market card has a claim price. The Blueprint stack is claimed with cards from your hand, never junk. A building claimed there then costs **Production to build**, plus the ring surcharge (`CoreLoop.framework.md`); an action card claimed there plays free unless it prints a price. So claiming spends your hand and building spends what your plays made. The other stacks keep their own currencies.
-- The Technology and Blueprint stacks change when the era changes. Each new era's stacks are a small core plus what the previous era's research added (details in `Technology.framework.md`).
+- **Prices.** Every market card has a claim price. The Development stack is claimed with cards from your hand, never junk. A building claimed there then costs **Production to build**, plus the ring surcharge (`CoreLoop.framework.md`); an action card claimed there plays free unless it prints a price. So claiming spends your hand and building spends what your plays made. The other stacks keep their own currencies.
+- The Technology and Development stacks change when the era changes. Each new era's stacks are a small core plus what the previous era's research added (details in `Technology.framework.md`).
 - **Trading partners:** 2–3 computer-run neighbouring civilizations, the same for every player, sell ordinary goods for Coin and pay more for goods they want. They never sell strategic resources (details in `CoreLoop.framework.md`).
 
 ### Modernization, eras, end of game

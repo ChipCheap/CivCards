@@ -53,9 +53,9 @@ A card has one kind, so a card never makes you pick how to use it in the middle 
 - **Action cards** are **played**. Playing one uses one of your plays, which is your population
   working. An action can make Production, Food or Knowledge, trigger buildings (Produce), start a
   venture, send military, and so on. Afterwards it goes to the discard pile unless its text says
-  otherwise. Action cards come from the starter deck, from the Blueprint stack, and from buildings
+  otherwise. Action cards come from the starter deck, from the Development stack, and from buildings
   and Technologies that make them. Small inventions are action cards too, stronger than the base
-  cards, rather than upgrades. One claimed from the Blueprint stack plays free unless it prints a
+  cards, rather than upgrades. One claimed from the Development stack plays free unless it prints a
   price.
 - **Blueprints** are **built** into a slot in your row. Building uses no play. A blueprint is claimed
   with cards from your hand (`framework.md`), and building it costs **Production**: its build price
