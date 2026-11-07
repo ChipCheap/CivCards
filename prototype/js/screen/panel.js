@@ -105,10 +105,19 @@ export function createPanel(panelElement, cards) {
 }
 
 // All the text on a card, one field per line, as the search sees it:
-// "Farm\nBuilding Era 1\n1 card\nProduces 1 Food each turn."
+// "Workday\nAction Era 1 Starter\nStat 1 Production\nProduce 1 (trigger one building)."
 function searchableText(card) {
-  const kind = [card.type, card.era === "" ? "" : `Era ${card.era}`].filter(Boolean).join(" ");
-  return [card.name, kind, card.cost, card.text].filter(Boolean).join("\n");
+  const kind = [card.type, card.era === "" ? "" : `Era ${card.era}`, card.origin].filter(Boolean).join(" ");
+  const listAmounts = amounts => amounts.map(({ amount, resource }) => `${amount} ${resource}`).join(", ");
+  return [
+    card.name,
+    kind,
+    card.cost.length > 0 ? `Cost ${listAmounts(card.cost)}` : "",
+    card.uses.length > 0 ? `Uses ${card.uses.join(", ")}` : "",
+    card.stat !== null ? `Stat ${listAmounts([card.stat])}` : "",
+    card.claim.length > 0 ? `Claim ${listAmounts(card.claim)}` : "",
+    card.text,
+  ].filter(Boolean).join("\n");
 }
 
 // A test for the searched text, or undefined when the pattern is not a valid regular expression.

@@ -123,7 +123,7 @@ of one. There is no other kind of object, so there are no half-stacked cards.
 
 ### Right panel
 - The **card catalog**: every card defined in the repo, filterable by type and era, dragged onto the table to create a card.
-- A **text search** over the catalog, a regular expression by default (a checkbox switches to plain text). It matches against all the text on a card, one field per line: name, then type and era (`Building Era 1`), then cost, then rules text — so `Farm` is searched as `Farm\nBuilding Era 1\n1 card\nProduces 1 Food each turn.`
+- A **text search** over the catalog, a regular expression by default (a checkbox switches to plain text). It matches against all the text on a card, one field per line: name, then type, era and origin (`Unit Era 1 Starter`), then each of cost, uses, stat and claim that the card has, then rules text — so Militia is searched as `Militia\nUnit Era 1 Starter\nCost 1 Food\nStat 1 Attack`.
 - The panel **collapses to the right**: a ◀ button reopens it. While collapsed, the thin strip that remains is still the trash can.
 - **Predefined stacks** whose starting place is the panel — the era 2, 3 and 4 market stacks, and any other prepared stacks — dragged out as a whole stack.
 - The **trash can**.
@@ -131,11 +131,19 @@ of one. There is no other kind of object, so there are no half-stacked cards.
 ### Card data and rendering
 - Card definitions, stack lists and art live **in the GitHub repo** and are served by GitHub Pages together with the page. A change goes live with a commit and push, plus about a minute for Pages to redeploy.
 - **Format: CSV**, edited in Excel or Google Sheets.
-  - **Cards file:** one row per card — id, name, type, era, cost, text, art (image file name).
+  - **Cards file:** one row per card — id, name, type, era, origin, cost (to play), uses (the tokens or strategic resources it consumes), stat (its quick value), claim (its market price), text, art (image file name). Amounts are written like `2 Production, 1 Culture`.
   - **Stacks file:** one row per card in a predefined stack — stack name, card id, count, and where the stack starts (a slot name, or the panel). Starter decks are stacks too.
   - **`art/` folder** with the card images.
 - JSON stays an option for later; one file per card is avoided, because GitHub Pages can't list a folder, so it would need a generated index and a build step.
 - Card definitions are **data**, not code, so they can move to the final engine (`framework.md` A4: "Card definitions are engine-independent data.").
+- **The card face** (in card units, the card being 100 × 140):
+  - **Top left:** the play cost. Each main cost is its own icon with the number on it (🌾 1); after it, one small circle per token or strategic resource the card uses, never a number. A card without them is free to play.
+  - **Top right:** the quick stat — 🌾 Food, ⚔️ Attack or ⚙️ Production, as its icon with the number on it. A card that only does that has no rules text. Units have Attack only for now.
+  - Both reach a little past the card's edge.
+  - **The art** across the top third (45 units tall), with the **type icon** under it: 🏠 building, a three-bar pyramid for a Wonder, ⚗️ Technology, none for play cards.
+  - Below: a narrow **era and origin line** (`Era 1 · Made by Stables`), the **name**, and a **text box** for keywords and the rarer unique effects.
+  - **Bottom left:** the **claim price**, as small circles with a number. A Wonder's whole price is its claim price, since it is built and in effect as soon as it is claimed.
+  - A stack's count badge sits at the bottom right, clear of the cost and stat.
 - **The page draws each card face** from its data and art using one card template. No card images are generated ahead of time, so a layout change shows up on the next page load.
 - **One generic card back** for every card.
 

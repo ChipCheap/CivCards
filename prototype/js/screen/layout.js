@@ -23,8 +23,9 @@ const PRIVATE_ZONE_COLUMNS = 10;
 const PRIVATE_ZONE_ROWS = 4;
 const BUILDING_COLUMNS = 4;
 const SEAT_SIDES = 2;
-// Tokens on a card sit in a row over its picture, in the top third of the card.
-const CARD_TOKEN_ROW_CENTRE_Y = 52;
+// Tokens on a card sit in a row across the middle of its art, which style.css places 5 to 50 units
+// from the card's top.
+const CARD_TOKEN_ROW_CENTRE_Y = 27.5;
 const CARD_TOKEN_SPACING = 4;
 
 // The rings of the building row, innermost first, each one row of BUILDING_COLUMNS slots.

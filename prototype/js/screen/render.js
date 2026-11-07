@@ -19,6 +19,29 @@ export const TOKEN_FACES = Object.freeze({
   coin: { symbol: "🪙", name: "Coin" },
 });
 
+// The symbol for each resource a card's cost, uses, stat or claim names, by lower-case name. The token
+// icons are included, so a card can use what a token stands for.
+const RESOURCE_SYMBOLS = Object.freeze({
+  ...Object.fromEntries(Object.entries(TOKEN_FACES).map(([icon, face]) => [icon, face.symbol])),
+  production: "⚙️",
+  food: "🌾",
+  attack: "⚔️",
+  military: "⚔️",
+  knowledge: "📖",
+  culture: "🏛️",
+  cards: "🃏",
+  iron: "⛓️",
+  powder: "💥",
+  timber: "🪵",
+  horses: "🐎",
+  stone: "🧱",
+});
+
+// The icon under the art for each card type that has one; play cards have none. A Wonder's pyramid is
+// drawn from three bars rather than a symbol.
+const TYPE_SYMBOLS = Object.freeze({ building: "🏠", blueprint: "🏠", technology: "⚗️" });
+const WONDER_TYPE = "wonder";
+
 // Whether `viewerSeat` may see a stack's cards at all. A stack, loose or in a building slot, is hidden
 // while it lies in the other seat's private zone and that seat hasn't revealed it; the empty slot
 // outlines are part of the board and always drawn. The board has two sides, so the other seat is
@@ -59,26 +82,89 @@ export function createCardTokenElements(piles, countOf = pile => pile.count) {
   });
 }
 
-// One card face from the card template.
+// One card face from the card template: the play cost over the top-left corner (the main costs as
+// their own icons with a number, then a circle per resource used), the quick stat over the top-right
+// corner, the art, the type icon under it, the era and origin line, the name, the rules text, and the
+// claim price in the bottom-left corner.
 export function createCardFace(definition) {
   const faceElement = createElement("div", "card face");
   faceElement.dataset.definitionId = definition.id;
-  faceElement.append(createElement("div", "card-name", definition.name));
-  const kind = [definition.type, definition.era === "" ? "" : `Era ${definition.era}`].filter(Boolean).join(" · ");
-  faceElement.append(createElement("div", "card-kind", kind));
+
+  const artElement = createElement("div", "card-art");
   if (definition.art !== "") {
-    const artElement = createElement("img", "card-art");
-    artElement.alt = "";
-    artElement.src = `cards/art/${encodeURIComponent(definition.art)}`;
+    const pictureElement = createElement("img", "card-picture");
+    pictureElement.alt = "";
+    pictureElement.src = `cards/art/${encodeURIComponent(definition.art)}`;
     // A missing picture leaves the card readable without it.
-    artElement.addEventListener("error", () => artElement.remove(), { once: true });
-    faceElement.append(artElement);
+    pictureElement.addEventListener("error", () => pictureElement.remove(), { once: true });
+    artElement.append(pictureElement);
   }
-  if (definition.cost !== "") {
-    faceElement.append(createElement("div", "card-cost", definition.cost));
+  faceElement.append(artElement);
+
+  if (definition.cost.length > 0 || definition.uses.length > 0) {
+    const costsElement = createElement("div", "card-costs");
+    costsElement.append(
+      ...definition.cost.map(({ amount, resource }) => createAmountIcon("card-cost", amount, resource)),
+      ...definition.uses.map(resource => createResourceCircle("card-use", resource)),
+    );
+    faceElement.append(costsElement);
   }
-  faceElement.append(createElement("div", "card-text", definition.text));
+  if (definition.stat !== null) {
+    faceElement.append(createAmountIcon("card-stat", definition.stat.amount, definition.stat.resource));
+  }
+
+  const typeName = definition.type.toLowerCase();
+  const hasTypeIcon = typeName === WONDER_TYPE || Object.hasOwn(TYPE_SYMBOLS, typeName);
+  if (hasTypeIcon) {
+    const typeElement = createElement("div", "card-type", TYPE_SYMBOLS[typeName]);
+    typeElement.title = definition.type;
+    if (typeName === WONDER_TYPE) {
+      typeElement.append(...["top", "middle", "bottom"].map(level => createElement("div", `pyramid-bar ${level}`)));
+    }
+    faceElement.append(typeElement);
+  }
+
+  const bodyElement = createElement("div", "card-body");
+  bodyElement.classList.toggle("has-type-icon", hasTypeIcon);
+  bodyElement.classList.toggle("has-claim", definition.claim.length > 0);
+  const eraLine = [definition.era === "" ? "" : `Era ${definition.era}`, definition.origin].filter(Boolean).join(" · ");
+  bodyElement.append(createElement("div", "card-era", eraLine), createElement("div", "card-name", definition.name));
+  if (definition.text !== "") {
+    bodyElement.append(createElement("div", "card-text", definition.text));
+  }
+  faceElement.append(bodyElement);
+
+  if (definition.claim.length > 0) {
+    const claimElement = createElement("div", "card-claim");
+    claimElement.title = "Claim price";
+    claimElement.append(...definition.claim.map(({ amount, resource }) => createResourceCircle("card-claim-amount", resource, amount)));
+    faceElement.append(claimElement);
+  }
   return faceElement;
+}
+
+// A resource's own icon, drawn large, with the amount written over it.
+function createAmountIcon(className, amount, resource) {
+  const iconElement = createElement("div", `card-amount ${className}`, resourceSymbol(resource));
+  iconElement.title = `${amount} ${resource}`;
+  iconElement.append(createElement("span", "card-amount-number", String(amount)));
+  return iconElement;
+}
+
+// A small circle with a resource's icon, and its amount when it has one.
+function createResourceCircle(className, resource, amount) {
+  const circleElement = createElement("div", `card-circle ${className}`);
+  circleElement.title = amount === undefined ? resource : `${amount} ${resource}`;
+  if (amount !== undefined) {
+    circleElement.append(createElement("span", "card-circle-number", String(amount)));
+  }
+  circleElement.append(createElement("span", "card-circle-symbol", resourceSymbol(resource)));
+  return circleElement;
+}
+
+// A resource without a symbol of its own shows its first two letters, so a new name still reads.
+function resourceSymbol(resource) {
+  return RESOURCE_SYMBOLS[resource.toLowerCase()] ?? resource.slice(0, 2);
 }
 
 export function createCardBack() {

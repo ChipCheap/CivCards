@@ -247,10 +247,11 @@ body:has(.side-panel.is-collapsed) {
   border-radius: 8px;
 }
 
+/* A stack's card count sits bottom right, clear of the cost and stat over the top corners. */
 .count-badge {
   position: absolute;
   right: -8px;
-  top: -8px;
+  bottom: -8px;
   min-width: 24px;
   padding: 2px 6px;
   border-radius: 12px;
@@ -261,14 +262,14 @@ body:has(.side-panel.is-collapsed) {
   text-align: center;
 }
 
-/* Cards */
+/* Cards: sizes in card units, the card being 100 x 140. The cost, stat and claim reach a little past
+   the card's edge, so a face doesn't clip; only the back does. */
 
 .card {
   width: var(--card-width, 100px);
   height: var(--card-height, 140px);
   border-radius: 8px;
   box-shadow: var(--shadow);
-  overflow: hidden;
   user-select: none;
 }
 
@@ -278,10 +279,7 @@ body:has(.side-panel.is-collapsed) {
 }
 
 .card.face {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding: 6px;
+  position: relative;
   background: var(--card-face);
   color: #24211c;
   border: 1px solid #b9ae98;
@@ -291,6 +289,7 @@ body:has(.side-panel.is-collapsed) {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
   background: var(--card-back);
   color: var(--card-back-text);
   font-size: 11px;
@@ -299,31 +298,176 @@ body:has(.side-panel.is-collapsed) {
   border: 3px solid var(--card-back-text);
 }
 
-.card-name {
-  font-weight: 700;
-  font-size: 11px;
-  line-height: 1.2;
-}
-
-.card-kind,
-.card-cost {
-  font-size: 9px;
-  color: #6e675b;
-}
-
-.card-cost {
-  font-weight: 700;
-}
-
+/* The art takes the top third; tokens on the card sit over it (layout.js CARD_TOKEN_ROW_CENTRE_Y). */
 .card-art {
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  width: 90px;
+  height: 45px;
+  border-radius: 3px;
+  background: #e8dfcc;
+  overflow: hidden;
+}
+
+.card-picture {
   width: 100%;
-  height: 40px;
+  height: 100%;
   object-fit: cover;
-  border-radius: 4px;
+}
+
+.card-costs {
+  position: absolute;
+  left: -6px;
+  top: -6px;
+  display: flex;
+  align-items: center;
+}
+
+.card-amount {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.card-amount-number {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.5em;
+  font-weight: 700;
+  color: #ffffff;
+  -webkit-text-stroke: 2px #24211c;
+  paint-order: stroke fill;
+}
+
+.card-cost {
+  width: 18px;
+  height: 18px;
+  font-size: 17px;
+}
+
+.card-stat {
+  position: absolute;
+  right: -6px;
+  top: -6px;
+  width: 25px;
+  height: 25px;
+  font-size: 24px;
+}
+
+.card-circle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid #6e675b;
+  background: var(--card-face);
+  line-height: 1;
+}
+
+.card-use {
+  width: 14px;
+  height: 14px;
+  margin-left: -1px;
+  font-size: 8px;
+}
+
+.card-claim {
+  position: absolute;
+  left: -5px;
+  bottom: -5px;
+  display: flex;
+  gap: 1px;
+}
+
+.card-claim-amount {
+  width: 18px;
+  height: 18px;
+  font-size: 6px;
+}
+
+.card-circle-number {
+  font-size: 7px;
+  font-weight: 700;
+}
+
+.card-type {
+  position: absolute;
+  left: 42.5px;
+  top: 42.5px;
+  width: 15px;
+  height: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  border-radius: 50%;
+  border: 1px solid #6e675b;
+  background: var(--card-face);
+  font-size: 9px;
+  line-height: 1;
+}
+
+.pyramid-bar {
+  height: 2px;
+  border-radius: 1px;
+  background: #24211c;
+}
+
+.pyramid-bar.top { width: 3px; }
+.pyramid-bar.middle { width: 6px; }
+.pyramid-bar.bottom { width: 9px; }
+
+.card-body {
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  top: 52.5px;
+  bottom: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5px;
+}
+
+.card-body.has-type-icon {
+  top: 59px;
+}
+
+.card-body.has-claim {
+  bottom: 14px;
+}
+
+.card-era {
+  font-size: 6px;
+  color: #6e675b;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-name {
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
 }
 
 .card-text {
-  font-size: 9px;
+  flex: 1;
+  min-height: 0;
+  padding: 2.5px;
+  border: 0.5px solid #b9ae98;
+  border-radius: 3px;
+  font-size: 7px;
+  line-height: 1.25;
   white-space: pre-line;
   overflow: hidden;
 }
