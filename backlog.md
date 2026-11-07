@@ -12,3 +12,4 @@
 - **Prototype "New game" button** — host-only reset that rebuilds and reshuffles the table in the same room, so the guest keeps the link. Left out of the first plan.
 - **Genetic-algorithm AI training** — after a rule-based AI; relies on the headless, deterministic rules.
 - **Military expeditions against trading partners** — an add-on to `CoreLoop.framework.md`; trade only for now.
+- **Unit types that counter each other** — for example cavalry, archers and infantry in a triangle, with gunpowder and siege units later as a universal counter, or units destroyed at once if left unprotected and contested. Units have one Attack value and a sword icon for now.
