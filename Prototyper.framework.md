@@ -137,12 +137,12 @@ of one. There is no other kind of object, so there are no half-stacked cards.
 - JSON stays an option for later; one file per card is avoided, because GitHub Pages can't list a folder, so it would need a generated index and a build step.
 - Card definitions are **data**, not code, so they can move to the final engine (`framework.md` A4: "Card definitions are engine-independent data.").
 - **The card face** (in card units, the card being 100 × 140):
-  - **Top left:** the play cost. Each main cost is its own icon with the number on it (🌾 1); after it, one small circle per token or strategic resource the card uses, never a number. A card without them is free to play.
+  - **Top left:** the play cost. Each main cost is its own icon with the number on it (🌾 1); after it, one smaller icon per token or strategic resource the card uses, never a number. A card without them is free to play.
   - **Top right:** the quick stat — 🌾 Food, ⚔️ Attack or ⚙️ Production, as its icon with the number on it. A card that only does that has no rules text. Units have Attack only for now.
   - Both reach a little past the card's edge.
   - **The art** across the top third (45 units tall), with the **type icon** under it: 🏠 building, a three-bar pyramid for a Wonder, ⚗️ Technology, none for play cards.
   - Below: a narrow **era and origin line** (`Era 1 · Made by Stables`), the **name**, and a **text box** for keywords and the rarer unique effects.
-  - **Bottom left:** the **claim price**, as small circles with a number. A Wonder's whole price is its claim price, since it is built and in effect as soon as it is claimed.
+  - **Bottom left:** the **claim price**, again as icons with the number on them, reaching past the corner like the cost. Every amount on a card is drawn this way; there are no circles. A Wonder's whole price is its claim price, since it is built and in effect as soon as it is claimed.
   - A stack's count badge sits at the bottom right, clear of the cost and stat.
 - **The page draws each card face** from its data and art using one card template. No card images are generated ahead of time, so a layout change shows up on the next page load.
 - **One generic card back** for every card.

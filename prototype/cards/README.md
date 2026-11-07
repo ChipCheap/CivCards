@@ -18,7 +18,7 @@ written as amounts is left empty and listed the same way; its card still loads.
 | `era` | The era number, used by the catalog's era filter. |
 | `origin` | Optional. Where the card comes from, printed after the era (for example `Starter` or `Made by Stables`). |
 | `cost` | What it costs to play, as amounts (for example `1 Food` or `2 Production, 1 Culture`). Leave empty for a free card. Each amount is drawn as its icon with the number on it, top left. |
-| `uses` | Optional. Tokens or strategic resources the card consumes, one circle each, next to the cost (for example `Iron, Powder` or `2 Powder`). |
+| `uses` | Optional. Tokens or strategic resources the card consumes, one small icon each, next to the cost (for example `Iron, Powder` or `2 Powder`). |
 | `stat` | Optional. The card's quick value, one amount (for example `3 Production` or `4 Attack`), drawn top right. |
 | `claim` | Optional. The market price, as amounts (for example `4 Production`), drawn bottom left. A Wonder's price goes here. |
 | `text` | The rules text. Line breaks inside a cell are kept. |

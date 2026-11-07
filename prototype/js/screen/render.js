@@ -82,10 +82,10 @@ export function createCardTokenElements(piles, countOf = pile => pile.count) {
   });
 }
 
-// One card face from the card template: the play cost over the top-left corner (the main costs as
-// their own icons with a number, then a circle per resource used), the quick stat over the top-right
-// corner, the art, the type icon under it, the era and origin line, the name, the rules text, and the
-// claim price in the bottom-left corner.
+// One card face from the card template: the play cost over the top-left corner (the main costs, then
+// one smaller icon per resource used), the quick stat over the top-right corner, the art, the type
+// icon under it, the era and origin line, the name, the rules text, and the claim price over the
+// bottom-left corner. Every amount is drawn the same way: the resource's own icon, number on top.
 export function createCardFace(definition) {
   const faceElement = createElement("div", "card face");
   faceElement.dataset.definitionId = definition.id;
@@ -104,13 +104,13 @@ export function createCardFace(definition) {
   if (definition.cost.length > 0 || definition.uses.length > 0) {
     const costsElement = createElement("div", "card-costs");
     costsElement.append(
-      ...definition.cost.map(({ amount, resource }) => createAmountIcon("card-cost", amount, resource)),
-      ...definition.uses.map(resource => createResourceCircle("card-use", resource)),
+      ...definition.cost.map(({ amount, resource }) => createAmountIcon("card-cost", resource, amount)),
+      ...definition.uses.map(resource => createAmountIcon("card-use", resource)),
     );
     faceElement.append(costsElement);
   }
   if (definition.stat !== null) {
-    faceElement.append(createAmountIcon("card-stat", definition.stat.amount, definition.stat.resource));
+    faceElement.append(createAmountIcon("card-stat", definition.stat.resource, definition.stat.amount));
   }
 
   const typeName = definition.type.toLowerCase();
@@ -137,29 +137,21 @@ export function createCardFace(definition) {
   if (definition.claim.length > 0) {
     const claimElement = createElement("div", "card-claim");
     claimElement.title = "Claim price";
-    claimElement.append(...definition.claim.map(({ amount, resource }) => createResourceCircle("card-claim-amount", resource, amount)));
+    claimElement.append(...definition.claim.map(({ amount, resource }) => createAmountIcon("card-claim-amount", resource, amount)));
     faceElement.append(claimElement);
   }
   return faceElement;
 }
 
-// A resource's own icon, drawn large, with the amount written over it.
-function createAmountIcon(className, amount, resource) {
+// A resource's own icon, with its amount written over it when it has one. A resource used up by a
+// card has no amount: each one used gets an icon of its own.
+function createAmountIcon(className, resource, amount) {
   const iconElement = createElement("div", `card-amount ${className}`, resourceSymbol(resource));
-  iconElement.title = `${amount} ${resource}`;
-  iconElement.append(createElement("span", "card-amount-number", String(amount)));
-  return iconElement;
-}
-
-// A small circle with a resource's icon, and its amount when it has one.
-function createResourceCircle(className, resource, amount) {
-  const circleElement = createElement("div", `card-circle ${className}`);
-  circleElement.title = amount === undefined ? resource : `${amount} ${resource}`;
+  iconElement.title = amount === undefined ? resource : `${amount} ${resource}`;
   if (amount !== undefined) {
-    circleElement.append(createElement("span", "card-circle-number", String(amount)));
+    iconElement.append(createElement("span", "card-amount-number", String(amount)));
   }
-  circleElement.append(createElement("span", "card-circle-symbol", resourceSymbol(resource)));
-  return circleElement;
+  return iconElement;
 }
 
 // A resource without a symbol of its own shows its first two letters, so a new name still reads.

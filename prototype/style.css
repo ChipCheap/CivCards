@@ -360,28 +360,16 @@ body:has(.side-panel.is-collapsed) {
   font-size: 24px;
 }
 
-.card-circle {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  border: 1px solid #6e675b;
-  background: var(--card-face);
-  line-height: 1;
-}
-
 .card-use {
   width: 14px;
   height: 14px;
-  margin-left: -1px;
-  font-size: 8px;
+  font-size: 13px;
 }
 
 .card-claim {
   position: absolute;
-  left: -5px;
-  bottom: -5px;
+  left: -6px;
+  bottom: -6px;
   display: flex;
   gap: 1px;
 }
@@ -389,12 +377,7 @@ body:has(.side-panel.is-collapsed) {
 .card-claim-amount {
   width: 18px;
   height: 18px;
-  font-size: 6px;
-}
-
-.card-circle-number {
-  font-size: 7px;
-  font-weight: 700;
+  font-size: 17px;
 }
 
 .card-type {
