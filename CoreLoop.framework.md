@@ -55,16 +55,16 @@ A card has one kind, so a card never makes you pick how to use it in the middle 
   venture, send military, and so on. Afterwards it goes to the discard pile unless its text says
   otherwise. Action cards come from the starter deck, from the Blueprint stack, and from buildings
   and Technologies that make them. Small inventions are action cards too, stronger than the base
-  cards, rather than upgrades.
-- **Blueprints** are **built** into a slot in your row. Building uses no play. Its main price is the
-  claim price, paid at the market with what your plays made. Building it costs the ring surcharge,
-  plus a build price only where the card prints one (Production, cards, a strategic resource, Coin on
-  some cards).
+  cards, rather than upgrades. One claimed from the Blueprint stack plays free unless it prints a
+  price.
+- **Blueprints** are **built** into a slot in your row. Building uses no play. A blueprint is claimed
+  with cards from your hand (`framework.md`), and building it costs **Production**: its build price
+  plus the ring surcharge, and a strategic resource or other price where the card prints one.
 - **Wonders** are build-only.
 - **Strategic resources** are cards, as in `framework.md`.
 - **Junk** cards do nothing (see Junk).
 - **Pay** and **Burn** from `framework.md` work for every kind: any card can be spent as payment or
-  burned.
+  burned, except that junk can't pay, so it stays a burden until Burned or cleared.
 
 *Game choice, with its cost:* `framework.md`'s intent gives as its example "giving up a card you'd want
 to build later because you badly need the resource *this* turn". With separate kinds, a card can no

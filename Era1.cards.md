@@ -25,8 +25,10 @@ The **In history** column says what the thing was, so each card has something re
 
 ## Rules the list follows
 
-1. **Every market card has a claim price.** Some also print a price to build or play them. Building
-   always adds the ring surcharge ("Centre +0, Town +2, Outskirts +5", `CoreLoop.framework.md`).
+1. **The Blueprint stack is claimed with cards from your hand** (never junk), and a building
+   claimed there costs **Production to build**, plus the ring surcharge ("Centre +0, Town +2,
+   Outskirts +5", `CoreLoop.framework.md`) and any strategic resource it needs. An action card claimed
+   there plays free unless it prints a price. The other stacks keep their own currencies.
 2. **Action cards come from three places:** the starter deck, the Blueprint stack (claimed like
    blueprints, then shuffled into your deck), and buildings and Technologies that make them.
 3. **Small inventions are action cards**, stronger than the base cards. The base cards make 3
@@ -148,105 +150,106 @@ England is the obvious fifth (a bonus around its yeoman longbowmen) if a spare i
 
 ## Blueprint stack: buildings
 
-Claim = the market price, in Production. Extra = a price paid when building, on top of the ring
-surcharge; most have none. Pts = points at the end, only while it stands (`Culture.framework.md`:
+Claim = cards from your hand. Build = what building it costs: Production, plus the ring surcharge,
+plus any strategic resource or goods it names. The build prices are the old Production claim prices;
+the card claims are 1 up to a price of 3, 2 up to 6, and 3 above. Pts = points at the end, only while it stands (`Culture.framework.md`:
 Culture buildings about "2 / 3 / 4 / 5 points by era").
 
 ### Agriculture
 
-| Card | Tags | Claim | Extra | Effect | In history |
+| Card | Tags | Claim | Build | Effect | In history |
 |---|---|---|---|---|---|
-| Open Fields | Agriculture | 3 | — | Each turn: +1 Grain. | Large unfenced fields around a village, split into long strips farmed by different households. The village ploughed, sowed and harvested together. |
-| Sheep Pasture | Agriculture | 2 | — | Each turn: +1 Wool. Cheap, made for the outskirts. | Grazing kept for wool, not meat. English wool fed the looms of Flanders and Italy; later, lords fenced off common land for sheep. |
-| Fishery | Agriculture | 3 | — | Each turn: +1 Food. | Fish ponds, weirs and coastal boats. The Church banned meat on many fast days but allowed fish, so salted herring and pond carp were staples. |
-| Manor | Agriculture, State | 5 | — | Each turn: +1 Grain or +1 Timber, and a **Corvée** into your hand. | A lord's estate: his own fields, the peasants' strips, woods and a mill. Peasants owed him days of unpaid labour (corvée) and part of their harvest. |
-| Windmill | Agriculture, Industry | 4 | — | Produce: spend up to 2 Grain for +2 Food each. | Wind-driven mills grinding grain, common from the late 1100s where rivers were too flat or froze. Lords often forced tenants to grind at their mill, for a fee. |
-| Granary | Agriculture | 3 | — | Storage 3 (any goods). | A raised, dry store that kept grain from damp and rats. Towns kept public granaries to sell grain cheaply in famine years and head off riots. |
-| Brewery | Agriculture, Trade | 3 | — | Converter: 2 Grain → +1 Culture and +1 Coin. | Ale and beer were everyday drinks and a source of calories. Monasteries and town brewers made it; hops, from the 1300s, let beer keep and travel. |
-| Nitre Beds | Agriculture, Industry | 3 | — | Converter: 1 Grain and 1 Timber → 1 Powder. | Heaps of manure, earth, straw and urine left to rot for a year or more, yielding saltpetre for gunpowder. Saltpetre men could also dig up barn floors. |
+| Open Fields | Agriculture | 1 | 3 Production | Each turn: +1 Grain. | Large unfenced fields around a village, split into long strips farmed by different households. The village ploughed, sowed and harvested together. |
+| Sheep Pasture | Agriculture | 1 | 2 Production | Each turn: +1 Wool. Cheap, made for the outskirts. | Grazing kept for wool, not meat. English wool fed the looms of Flanders and Italy; later, lords fenced off common land for sheep. |
+| Fishery | Agriculture | 1 | 3 Production | Each turn: +1 Food. | Fish ponds, weirs and coastal boats. The Church banned meat on many fast days but allowed fish, so salted herring and pond carp were staples. |
+| Manor | Agriculture, State | 2 | 5 Production | Each turn: +1 Grain or +1 Timber, and a **Corvée** into your hand. | A lord's estate: his own fields, the peasants' strips, woods and a mill. Peasants owed him days of unpaid labour (corvée) and part of their harvest. |
+| Windmill | Agriculture, Industry | 2 | 4 Production | Produce: spend up to 2 Grain for +2 Food each. | Wind-driven mills grinding grain, common from the late 1100s where rivers were too flat or froze. Lords often forced tenants to grind at their mill, for a fee. |
+| Granary | Agriculture | 1 | 3 Production | Storage 3 (any goods). | A raised, dry store that kept grain from damp and rats. Towns kept public granaries to sell grain cheaply in famine years and head off riots. |
+| Brewery | Agriculture, Trade | 1 | 3 Production | Converter: 2 Grain → +1 Culture and +1 Coin. | Ale and beer were everyday drinks and a source of calories. Monasteries and town brewers made it; hops, from the 1300s, let beer keep and travel. |
+| Nitre Beds | Agriculture, Industry | 1 | 3 Production | Converter: 1 Grain and 1 Timber → 1 Powder. | Heaps of manure, earth, straw and urine left to rot for a year or more, yielding saltpetre for gunpowder. Saltpetre men could also dig up barn floors. |
 
 ### Industry
 
-| Card | Tags | Claim | Extra | Effect | In history |
+| Card | Tags | Claim | Build | Effect | In history |
 |---|---|---|---|---|---|
-| Woodcutters' Camp | Industry | 2 | — | Each turn: +1 Timber. | Woodcutters and charcoal burners. Wood was the fuel and building material for everything, and ironworks burned whole forests as charcoal. |
-| Bog-Iron Pit | Industry | 3 | — | Each turn: +1 Iron. | Iron ore dug from bogs, where it forms in lumps near the surface. Poor but easy to get: most early medieval iron in northern Europe came from it. |
-| Bloomery | Industry | 4 | — | Converter: 1 Timber → 1 Iron and +1 Production. | A small clay furnace burning charcoal and ore into a spongy lump of iron, the "bloom", then hammered to drive out slag. One batch at a time. |
-| Blast Furnace | Industry | 4 | — | **Upgrade onto a Bloomery.** Each turn: +1 Iron. Converter: 1 Timber → 2 Iron. | A tall furnace with water-driven bellows, hot enough to melt iron so it runs out as cast iron, without stopping. Spread from the 1400s; far more iron per worker. |
-| Pumped Mine | Industry | 6 | — | Each turn: +2 Iron. | Deep mines kept dry by pumps and hoists driven by water wheels and horses. Agricola's *De re metallica* (1556) drew them in detail. |
-| Smithy | Industry, Military | 4 | — | Converter: 1 Iron → +3 Production. | The blacksmith forged tools, nails, horseshoes, ploughshares and weapons from bar iron. Every village had one; armourers worked in the towns. |
-| Watermill | Industry | 5 | — | Produce: +4 Production. | A river-turned wheel that ground grain and also drove hammers, saws, bellows and cloth-fulling stocks. England's Domesday Book (1086) counted about 5,600. |
-| Weavers' Hall | Industry, Trade | 4 | — | Converter: up to 2 Wool → 1 Cloth each. | Weaving workshops and the hall where the weavers' guild checked and sold cloth. Flemish and Italian towns grew rich on fine woollens. |
-| Masons' Lodge | Industry | 4 | — | Each turn: +1 Production. Your Wonders cost 2 Production less. | The workshop and guild of the stonemasons on a great building site. Lodges kept the geometry of cathedral building, and masons moved from site to site. |
-| Powder Mill | Industry, Military | 5 | — | **Needs Saltpetre.** Converter: 1 Timber → 2 Powder. | A mill grinding saltpetre, sulphur and charcoal into gunpowder, often water-driven. Powder mills blew up regularly and were built away from towns. |
-| Gun Foundry | Industry, Military | 6 | 2 Iron | **Needs Copper.** Each turn: a **Cannon** into your hand. | Cannon were cast in bronze by the same craftsmen who cast church bells. Bronze cost more than iron but was safer: it bent before it burst. |
+| Woodcutters' Camp | Industry | 1 | 2 Production | Each turn: +1 Timber. | Woodcutters and charcoal burners. Wood was the fuel and building material for everything, and ironworks burned whole forests as charcoal. |
+| Bog-Iron Pit | Industry | 1 | 3 Production | Each turn: +1 Iron. | Iron ore dug from bogs, where it forms in lumps near the surface. Poor but easy to get: most early medieval iron in northern Europe came from it. |
+| Bloomery | Industry | 2 | 4 Production | Converter: 1 Timber → 1 Iron and +1 Production. | A small clay furnace burning charcoal and ore into a spongy lump of iron, the "bloom", then hammered to drive out slag. One batch at a time. |
+| Blast Furnace | Industry | 2 | 4 Production | **Upgrade onto a Bloomery.** Each turn: +1 Iron. Converter: 1 Timber → 2 Iron. | A tall furnace with water-driven bellows, hot enough to melt iron so it runs out as cast iron, without stopping. Spread from the 1400s; far more iron per worker. |
+| Pumped Mine | Industry | 2 | 6 Production | Each turn: +2 Iron. | Deep mines kept dry by pumps and hoists driven by water wheels and horses. Agricola's *De re metallica* (1556) drew them in detail. |
+| Smithy | Industry, Military | 2 | 4 Production | Converter: 1 Iron → +3 Production. | The blacksmith forged tools, nails, horseshoes, ploughshares and weapons from bar iron. Every village had one; armourers worked in the towns. |
+| Watermill | Industry | 2 | 5 Production | Produce: +4 Production. | A river-turned wheel that ground grain and also drove hammers, saws, bellows and cloth-fulling stocks. England's Domesday Book (1086) counted about 5,600. |
+| Weavers' Hall | Industry, Trade | 2 | 4 Production | Converter: up to 2 Wool → 1 Cloth each. | Weaving workshops and the hall where the weavers' guild checked and sold cloth. Flemish and Italian towns grew rich on fine woollens. |
+| Masons' Lodge | Industry | 2 | 4 Production | Each turn: +1 Production. Your Wonders cost 2 Production less. | The workshop and guild of the stonemasons on a great building site. Lodges kept the geometry of cathedral building, and masons moved from site to site. |
+| Powder Mill | Industry, Military | 2 | 5 Production, Saltpetre | Converter: 1 Timber → 2 Powder. | A mill grinding saltpetre, sulphur and charcoal into gunpowder, often water-driven. Powder mills blew up regularly and were built away from towns. |
+| Gun Foundry | Industry, Military | 2 | 6 Production, Copper, 2 Iron | Each turn: a **Cannon** into your hand. | Cannon were cast in bronze by the same craftsmen who cast church bells. Bronze cost more than iron but was safer: it bent before it burst. |
 
 ### Trade and State
 
-| Card | Tags | Claim | Extra | Effect | In history |
+| Card | Tags | Claim | Build | Effect | In history |
 |---|---|---|---|---|---|
-| Market Square | Trade | 4 | — | Each turn: +1 Coin. Coin cap +1. | The town's marketplace, held under a charter from a lord or king. Market days drew farmers and traders, and the town collected tolls and stall fees. |
-| Harbour | Trade | 5 | — | Goods from trading partners cost you 1 Coin less (at least 1). Adds a **Hanseatic Convoy** to your deck when built. | Quays, cranes and warehouses for loading ships. Ports such as Lübeck, Bruges and Venice controlled whole trade routes. |
-| Shipyard | Trade, Military | 6 | 2 Timber | Each turn: +1 Production. Adds a **Caravel Voyage** to your deck when built. | Where ships were built and repaired: the Hanse's cogs, and the caravels and carracks of the Portuguese voyages. |
-| Counting House | Trade | 5 | — | Each turn: +1 Coin. Coin cap +2. | Merchant bankers' offices handling accounts, bills of exchange and loans across Europe. The Medici and the Fugger ran networks of them and lent to kings and popes. |
-| Guildhall | Trade, State | 6 | — | Each turn: +1 Production for every 2 Industry buildings you have. | Seat of the craft and merchant guilds, which set prices, quality and wages and decided who could practise a trade. Strong guilds often ran the town council. |
-| Mint | State, Trade | 5 | — | **Needs Silver.** Each turn: +1 Coin. Coin cap +3. | Where silver was struck into coin under the ruler's authority. Minting brought profit and power, and rulers made money by debasing the coin. |
-| Hospital | State | 4 | — | Each turn: remove 1 Sickness or Unrest from your hand. | Run by monasteries, religious orders or town charities, caring for the sick, the poor and pilgrims. Leper and plague houses kept contagion outside the walls. |
+| Market Square | Trade | 2 | 4 Production | Each turn: +1 Coin. Coin cap +1. | The town's marketplace, held under a charter from a lord or king. Market days drew farmers and traders, and the town collected tolls and stall fees. |
+| Harbour | Trade | 2 | 5 Production | Goods from trading partners cost you 1 Coin less (at least 1). Adds a **Hanseatic Convoy** to your deck when built. | Quays, cranes and warehouses for loading ships. Ports such as Lübeck, Bruges and Venice controlled whole trade routes. |
+| Shipyard | Trade, Military | 2 | 6 Production, 2 Timber | Each turn: +1 Production. Adds a **Caravel Voyage** to your deck when built. | Where ships were built and repaired: the Hanse's cogs, and the caravels and carracks of the Portuguese voyages. |
+| Counting House | Trade | 2 | 5 Production | Each turn: +1 Coin. Coin cap +2. | Merchant bankers' offices handling accounts, bills of exchange and loans across Europe. The Medici and the Fugger ran networks of them and lent to kings and popes. |
+| Guildhall | Trade, State | 2 | 6 Production | Each turn: +1 Production for every 2 Industry buildings you have. | Seat of the craft and merchant guilds, which set prices, quality and wages and decided who could practise a trade. Strong guilds often ran the town council. |
+| Mint | State, Trade | 2 | 5 Production, Silver | Each turn: +1 Coin. Coin cap +3. | Where silver was struck into coin under the ruler's authority. Minting brought profit and power, and rulers made money by debasing the coin. |
+| Hospital | State | 2 | 4 Production | Each turn: remove 1 Sickness or Unrest from your hand. | Run by monasteries, religious orders or town charities, caring for the sick, the poor and pilgrims. Leper and plague houses kept contagion outside the walls. |
 
 ### Military
 
-| Card | Tags | Claim | Extra | Effect | In history |
+| Card | Tags | Claim | Build | Effect | In history |
 |---|---|---|---|---|---|
-| Town Walls | Military, State | 6 | — | Defense 2. While it stands, your centre-ring buildings get +3 Defense. (The "Walls" of `CoreLoop.framework.md`.) | Stone walls with towers and gates. They kept out raiders and let the town charge tolls at its gates; citizens took turns on watch. |
-| Keep | Military, State | 6 | — | Defense 4. Each turn: a **Men-at-Arms** into your hand. | The strong central tower of a castle: the lord's home and the last refuge in a siege. Its garrison of men-at-arms held the land around it. |
-| Stables | Military | 4 | — | Each turn: a **Knight** into your hand. | Stables and pasture for warhorses. Keeping a knight mounted cost a fortune: warhorses trained for years and needed grain, not just grass. |
-| Archery Butts | Military | 3 | — | Each turn: a **Longbowmen** into your hand. | Earth mounds used as targets. English law required men to practise the longbow on Sundays and holidays, which supplied the archers of Crécy and Agincourt. |
-| Star Fort | Military | 8 | 2 cards | Defense 6. Your centre-ring buildings get +2 Defense. | Low, thick, angled walls with arrow-shaped bastions, so cannonballs glanced off and every wall could be covered by fire. An Italian answer to cannon, about 1500. |
+| Town Walls | Military, State | 2 | 6 Production | Defense 2. While it stands, your centre-ring buildings get +3 Defense. (The "Walls" of `CoreLoop.framework.md`.) | Stone walls with towers and gates. They kept out raiders and let the town charge tolls at its gates; citizens took turns on watch. |
+| Keep | Military, State | 2 | 6 Production | Defense 4. Each turn: a **Men-at-Arms** into your hand. | The strong central tower of a castle: the lord's home and the last refuge in a siege. Its garrison of men-at-arms held the land around it. |
+| Stables | Military | 2 | 4 Production | Each turn: a **Knight** into your hand. | Stables and pasture for warhorses. Keeping a knight mounted cost a fortune: warhorses trained for years and needed grain, not just grass. |
+| Archery Butts | Military | 1 | 3 Production | Each turn: a **Longbowmen** into your hand. | Earth mounds used as targets. English law required men to practise the longbow on Sundays and holidays, which supplied the archers of Crécy and Agincourt. |
+| Star Fort | Military | 3 | 10 Production | Defense 6. Your centre-ring buildings get +2 Defense. | Low, thick, angled walls with arrow-shaped bastions, so cannonballs glanced off and every wall could be covered by fire. An Italian answer to cannon, about 1500. |
 
 ### Culture and Science
 
-| Card | Tags | Claim | Extra | Effect | In history |
+| Card | Tags | Claim | Build | Effect | In history |
 |---|---|---|---|---|---|
-| Parish Church | Culture | 4 | — | Each turn: +1 Culture. 2 pts. Adds a **Festival** to your deck when built. | The centre of village life: baptisms, weddings, burials, feast days and news. Paid for by the tithe, a tenth of the harvest. |
-| Monastery | Culture, Science, Agriculture | 6 | — | Each turn: +1 Culture, +1 Knowledge, +1 Wool. 2 pts. | Monks living by a rule of prayer and work. Monasteries farmed, kept sheep, brewed, copied books and ran schools; some were among the richest landowners. |
-| University | Science, Culture | 7 | — | Each turn: +2 Knowledge. 2 pts. Adds a **Disputation** to your deck when built. | Self-governing guilds of masters and students teaching law, medicine, theology and the arts. Latin let scholars move freely between them. |
-| Printing House | Science, Culture | 6 | — | Each turn: +1 Knowledge, +1 Culture. 2 pts. | Printing with movable metal type, after Gutenberg in Mainz around 1450. By 1500, presses ran in over 250 towns and books had become cheap. |
-| Botanical Garden | Science, Agriculture | 5 | — | Each turn: +1 Knowledge, +1 Food. | Gardens of medicinal plants for training doctors, first at Pisa and Padua in the 1540s. New plants from the Americas and Asia were grown and studied there. |
+| Parish Church | Culture | 2 | 4 Production | Each turn: +1 Culture. 2 pts. Adds a **Festival** to your deck when built. | The centre of village life: baptisms, weddings, burials, feast days and news. Paid for by the tithe, a tenth of the harvest. |
+| Monastery | Culture, Science, Agriculture | 2 | 6 Production | Each turn: +1 Culture, +1 Knowledge, +1 Wool. 2 pts. | Monks living by a rule of prayer and work. Monasteries farmed, kept sheep, brewed, copied books and ran schools; some were among the richest landowners. |
+| University | Science, Culture | 3 | 7 Production | Each turn: +2 Knowledge. 2 pts. Adds a **Disputation** to your deck when built. | Self-governing guilds of masters and students teaching law, medicine, theology and the arts. Latin let scholars move freely between them. |
+| Printing House | Science, Culture | 2 | 6 Production | Each turn: +1 Knowledge, +1 Culture. 2 pts. | Printing with movable metal type, after Gutenberg in Mainz around 1450. By 1500, presses ran in over 250 towns and books had become cheap. |
+| Botanical Garden | Science, Agriculture | 2 | 5 Production | Each turn: +1 Knowledge, +1 Food. | Gardens of medicinal plants for training doctors, first at Pisa and Padua in the 1540s. New plants from the Americas and Asia were grown and studied there. |
 
 **33 buildings**, more than an era needs. Mark favourites and we trim the stack to about 20 cards,
 buildings and actions together.
 
 ## Blueprint stack: action cards
 
-Claimed like blueprints, then shuffled into your deck. Claim = the market price, in Production.
-Play = a price paid when playing it, on top of the play itself.
+Claimed like blueprints, then shuffled into your deck. Claim = cards from your hand: 1, or 2 for
+the strongest. Play = a price paid when playing it, on top of the play itself; most have none.
 
 ### Inventions
 
 | Card | Claim | Play | Effect | In history |
 |---|---|---|---|---|
-| Heavy Plough | 2 | — | +2 Food. Your Open Fields make +1 Grain each this turn. | A wheeled iron plough that turned heavy, wet clay, pulled by teams of oxen. It opened the rich soils of northern Europe. |
-| Horse Collar | 2 | — | +3 Production. Produce 1. | A padded collar that let a horse pull with its shoulders without choking. Horses replaced oxen for ploughing and hauling: faster, though dearer to feed. |
-| Three-Field Rotation | 3 | — | +1 Food for each of your Agriculture buildings, at least +2. | Fields rotated through winter grain, spring crops (oats, beans, peas) and a fallow year. Two thirds of the land bore a crop each year instead of half. |
-| Spinning Wheel | 2 | — | Turn up to 3 Wool into Cloth. No building needed. | A wheel-driven spindle that spun wool into thread far faster than a hand spindle. In Europe from the 1200s, mostly worked at home. |
-| Trip Hammer | 2 | — | Produce 2, Industry buildings only. | A heavy hammer lifted by cams on a water-wheel shaft and dropped again and again, to forge iron, crush ore or pound cloth. |
-| Treadwheel Crane | 3 | — | +5 Production, only for a Wonder or a ring surcharge. | A crane driven by men walking inside a big wooden wheel. It lifted stone to the tops of cathedrals and unloaded ships in harbours. |
-| Mechanical Clock | 3 | — | Draw 2 cards. +1 Production. | Weight-driven clocks in church and town towers from about 1300, striking the hours. Work and markets began to follow the clock rather than the sun. |
-| Mariner's Compass | 2 | — | Buy up to 2 goods from trading partners for 1 Coin less each. | A magnetised needle pointing north, used at sea from the 1200s. Ships could hold a course under cloud and sail in winter. |
-| Astrolabe | 2 | — | +2 Knowledge. Scout one opponent. | A brass instrument measuring the height of the sun or a star to find latitude and the time. Portuguese navigators used a simple sea version on Atlantic voyages. |
-| Double-Entry Bookkeeping | 3 | — | +2 Coin. Your Coin cap is +2 until the end of the turn. | Every sum written twice, as debit and credit, so the books must balance. Italian merchants used it; Luca Pacioli wrote it down in 1494. |
-| Corned Powder | 2 | — | Spend up to 2 Powder: +2 Attack each this turn. | Gunpowder wetted, pressed and broken into grains instead of left as dust. It burned faster and more evenly, and kept better. |
+| Heavy Plough | 1 | — | +2 Food. Your Open Fields make +1 Grain each this turn. | A wheeled iron plough that turned heavy, wet clay, pulled by teams of oxen. It opened the rich soils of northern Europe. |
+| Horse Collar | 1 | — | +3 Production. Produce 1. | A padded collar that let a horse pull with its shoulders without choking. Horses replaced oxen for ploughing and hauling: faster, though dearer to feed. |
+| Three-Field Rotation | 2 | — | +1 Food for each of your Agriculture buildings, at least +2. | Fields rotated through winter grain, spring crops (oats, beans, peas) and a fallow year. Two thirds of the land bore a crop each year instead of half. |
+| Spinning Wheel | 1 | — | Turn up to 3 Wool into Cloth. No building needed. | A wheel-driven spindle that spun wool into thread far faster than a hand spindle. In Europe from the 1200s, mostly worked at home. |
+| Trip Hammer | 1 | — | Produce 2, Industry buildings only. | A heavy hammer lifted by cams on a water-wheel shaft and dropped again and again, to forge iron, crush ore or pound cloth. |
+| Treadwheel Crane | 2 | — | +5 Production, only for a Wonder or a ring surcharge. | A crane driven by men walking inside a big wooden wheel. It lifted stone to the tops of cathedrals and unloaded ships in harbours. |
+| Mechanical Clock | 2 | — | Draw 2 cards. +1 Production. | Weight-driven clocks in church and town towers from about 1300, striking the hours. Work and markets began to follow the clock rather than the sun. |
+| Mariner's Compass | 1 | — | Buy up to 2 goods from trading partners for 1 Coin less each. | A magnetised needle pointing north, used at sea from the 1200s. Ships could hold a course under cloud and sail in winter. |
+| Astrolabe | 1 | — | +2 Knowledge. Scout one opponent. | A brass instrument measuring the height of the sun or a star to find latitude and the time. Portuguese navigators used a simple sea version on Atlantic voyages. |
+| Double-Entry Bookkeeping | 2 | — | +2 Coin. Your Coin cap is +2 until the end of the turn. | Every sum written twice, as debit and credit, so the books must balance. Italian merchants used it; Luca Pacioli wrote it down in 1494. |
+| Corned Powder | 1 | — | Spend up to 2 Powder: +2 Attack each this turn. | Gunpowder wetted, pressed and broken into grains instead of left as dust. It burned faster and more evenly, and kept better. |
 
 ### Economy, Culture and emergencies
 
 | Card | Claim | Play | Effect |
 |---|---|---|---|
-| Tithe | 2 | — | +2 Food, +1 Culture. |
-| Market Day | 2 | — | Sell up to 3 goods this turn for 1 Coin more each. |
-| Annual Fair | 3 | — | This turn, every trading partner counts as wanting every good. |
-| Patronage | 2 | 2 Coin | +3 Culture. (`Culture.framework.md`: "A card may turn Coin into Culture".) |
-| Pilgrimage | 2 | — | +1 Culture, +1 Coin. |
-| Royal Charter | 3 | — | Remove up to 2 Unrest from your hand and discard pile. +1 Coin. |
+| Tithe | 1 | — | +2 Food, +1 Culture. |
+| Market Day | 1 | — | Sell up to 3 goods this turn for 1 Coin more each. |
+| Annual Fair | 2 | — | This turn, every trading partner counts as wanting every good. |
+| Patronage | 1 | 2 Coin | +3 Culture. (`Culture.framework.md`: "A card may turn Coin into Culture".) |
+| Pilgrimage | 1 | — | +1 Culture, +1 Coin. |
+| Royal Charter | 2 | — | Remove up to 2 Unrest from your hand and discard pile. +1 Coin. |
 | Herbalist | 1 | — | Remove 1 Sickness from your hand. +1 Food. |
 | Forced Loan | 1 | — | +3 Coin. Add 1 Debt to your discard pile. |
 | Clipped Coinage | 1 | — | +3 Coin. Add 1 Unrest to your discard pile. |
@@ -258,9 +261,9 @@ later.
 
 | Card | Claim | Play | Effect |
 |---|---|---|---|
-| Pike Square | 2 | 2 Food | Attack 1, Defense 4. |
-| Arquebusiers | 3 | 1 Food, 1 Powder | Attack 3, Defense 2. |
-| Free Company | 2 | 3 Coin | Attack 3, Defense 1. Removed after use. Mercenaries, paid in Coin instead of Food. |
+| Pike Square | 1 | 2 Food | Attack 1, Defense 4. |
+| Arquebusiers | 2 | 1 Food, 1 Powder | Attack 3, Defense 2. |
+| Free Company | 1 | 3 Coin | Attack 3, Defense 1. Removed after use. Mercenaries, paid in Coin instead of Food. |
 | Outriders | 1 | 1 Food | Attack 1. Scout one opponent. |
 
 **24 actions** in the stack.
