@@ -3,9 +3,21 @@
 // stacks in the opponent's unrevealed private zone are not drawn at all, and the opponent's hand shows
 // only card backs.
 
-import { CARD_HEIGHT, CARD_WIDTH, allSlotLayouts, isStackInPrivateZone, marketBlocks, privateZoneRectangle, stackRectangle } from "./layout.js";
+import { TOKEN_ICONS } from "../core.js";
+import {
+  CARD_HEIGHT, CARD_WIDTH, TOKEN_SIZE, allSlotLayouts, cardTokenRectangle, isInPrivateZone, isStackInPrivateZone,
+  looseTokenRectangle, marketBlocks, privateZoneRectangle, stackRectangle,
+} from "./layout.js";
 
 const HAND_CARD_GAP = 6;
+
+// The face of each token icon in `TOKEN_ICONS`.
+export const TOKEN_FACES = Object.freeze({
+  plant: { symbol: "🌿", name: "Plant" },
+  rock: { symbol: "🪨", name: "Rock" },
+  tool: { symbol: "🔨", name: "Tool" },
+  coin: { symbol: "🪙", name: "Coin" },
+});
 
 // Whether `viewerSeat` may see a stack's cards at all. A stack, loose or in a building slot, is hidden
 // while it lies in the other seat's private zone and that seat hasn't revealed it; the empty slot
@@ -14,6 +26,37 @@ const HAND_CARD_GAP = 6;
 export function isStackVisibleTo(table, stack, viewerSeat) {
   const otherSeat = 1 - viewerSeat;
   return table.seats[otherSeat].revealed || !isStackInPrivateZone(stack, otherSeat);
+}
+
+// A loose token pile follows the same hiding rule as a loose stack; a pile on a card is drawn with
+// its card's stack.
+export function isLoosePileVisibleTo(table, pile, viewerSeat) {
+  const otherSeat = 1 - viewerSeat;
+  return table.seats[otherSeat].revealed || !isInPrivateZone(pile.position, otherSeat);
+}
+
+// One round token showing its icon, with the number of tokens when it is a pile of more than one.
+export function createTokenElement(icon, count) {
+  const tokenElement = createElement("div", "token", TOKEN_FACES[icon].symbol);
+  tokenElement.title = TOKEN_FACES[icon].name;
+  if (count > 1) {
+    tokenElement.append(createElement("div", "token-count", String(count)));
+  }
+  return tokenElement;
+}
+
+// The piles on one card, in a row over its picture, placed relative to the card. `countOf` gives the
+// number to draw for a pile, which is less than its count while part of it is being dragged.
+export function createCardTokenElements(piles, countOf = pile => pile.count) {
+  const drawnPiles = piles
+    .filter(pile => countOf(pile) > 0)
+    .sort((first, second) => TOKEN_ICONS.indexOf(first.icon) - TOKEN_ICONS.indexOf(second.icon));
+  return drawnPiles.map((pile, pileIndex) => {
+    const tokenElement = createTokenElement(pile.icon, countOf(pile));
+    tokenElement.dataset.tokenId = pile.id;
+    placeElement(tokenElement, cardTokenRectangle(pileIndex, drawnPiles.length));
+    return tokenElement;
+  });
 }
 
 // One card face from the card template.
@@ -47,13 +90,15 @@ export function createScreen({ boardElement, handElement, opponentHandElement, p
   const definitions = new Map(cards.map(card => [card.id, card]));
   const opponentSeat = 1 - seat;
   let currentTable;
-  // What the local player is dragging, drawn as already lifted: { stackId, wholeStack } or { handIndex }.
+  // What the local player is dragging, drawn as already lifted: { stackId, wholeStack }, { handIndex }
+  // or { tokenId, wholePile }.
   let dragSource = null;
   // The stack or slot id a drop would land on, highlighted.
   let highlightedId = null;
 
   boardElement.style.setProperty("--card-width", `${CARD_WIDTH}px`);
   boardElement.style.setProperty("--card-height", `${CARD_HEIGHT}px`);
+  document.documentElement.style.setProperty("--token-size", `${TOKEN_SIZE}px`);
   const ownZoneLabel = drawPrivateZone(seat, "own");
   const opponentZoneLabel = drawPrivateZone(opponentSeat, "opponent");
   for (const { slotId, rectangle, label } of allSlotLayouts()) {
@@ -129,16 +174,33 @@ export function createScreen({ boardElement, handElement, opponentHandElement, p
     return dragSource.wholeStack ? [] : stack.cards.slice(0, -1);
   }
 
-  function createStackElement(stack, cardsToDraw) {
+  // How many tokens of a pile are drawn where it lies: fewer while some are being dragged.
+  function drawnTokenCount(pile) {
+    if (dragSource?.tokenId !== pile.id) {
+      return pile.count;
+    }
+    return dragSource.wholePile ? 0 : pile.count - 1;
+  }
+
+  function createStackElement(stack, cardsToDraw, tokenPiles) {
     const stackElement = createElement("div", "stack");
     stackElement.dataset.stackId = stack.id;
     stackElement.classList.toggle("is-held", stack.heldBy !== null && stack.heldBy !== seat);
     placeElement(stackElement, view.toBoardRectangle(stackRectangle(stack)));
-    stackElement.append(createCardElement(cardsToDraw.at(-1)));
+    const topCard = cardsToDraw.at(-1);
+    stackElement.append(createCardElement(topCard));
+    stackElement.append(...createCardTokenElements(tokenPiles.filter(pile => pile.cardId === topCard.id), drawnTokenCount));
     if (cardsToDraw.length > 1) {
       stackElement.append(createElement("div", "count-badge", String(cardsToDraw.length)));
     }
     return stackElement;
+  }
+
+  function createLooseTokenElement(pile) {
+    const tokenElement = createTokenElement(pile.icon, drawnTokenCount(pile));
+    tokenElement.dataset.tokenId = pile.id;
+    placeElement(tokenElement, view.toBoardRectangle(looseTokenRectangle(pile.position)));
+    return tokenElement;
   }
 
   function createCardElement(card) {
@@ -182,10 +244,14 @@ export function createScreen({ boardElement, handElement, opponentHandElement, p
     for (const stack of table.stacks) {
       const cardsToDraw = drawnCards(stack);
       if (cardsToDraw.length > 0 && isStackVisibleTo(table, stack, seat)) {
-        stackElements.push(createStackElement(stack, cardsToDraw));
+        stackElements.push(createStackElement(stack, cardsToDraw, table.tokens));
       }
     }
-    stackLayer.replaceChildren(...stackElements);
+    // Loose tokens lie above every card.
+    const looseTokenElements = table.tokens
+      .filter(pile => pile.cardId === null && drawnTokenCount(pile) > 0 && isLoosePileVisibleTo(table, pile, seat))
+      .map(createLooseTokenElement);
+    stackLayer.replaceChildren(...stackElements, ...looseTokenElements);
     applyHighlight();
     ownZoneLabel.textContent = table.seats[seat].revealed
       ? "Your buildings — revealed to your opponent"

@@ -12,6 +12,8 @@ export const CARD_WIDTH = 100;
 export const CARD_HEIGHT = 140;
 export const TABLE_WIDTH = 1800;
 export const TABLE_HEIGHT = 2580;
+// A token is about 2 cm across against a card's 6.3 cm.
+export const TOKEN_SIZE = 32;
 
 const GAP = 20;
 const EDGE = 40;
@@ -21,6 +23,9 @@ const PRIVATE_ZONE_COLUMNS = 10;
 const PRIVATE_ZONE_ROWS = 4;
 const BUILDING_COLUMNS = 4;
 const SEAT_SIDES = 2;
+// Tokens on a card sit in a row over its picture, in the top third of the card.
+const CARD_TOKEN_ROW_CENTRE_Y = 52;
+const CARD_TOKEN_SPACING = 4;
 
 // The rings of the building row, innermost first, each one row of BUILDING_COLUMNS slots.
 const RING_NAMES = Object.freeze(["Centre", "Town", "Outskirts"]);
@@ -108,11 +113,28 @@ export function containsPoint(rectangle, point) {
   return point.x >= rectangle.x && point.x <= rectangle.x + rectangle.width && point.y >= rectangle.y && point.y <= rectangle.y + rectangle.height;
 }
 
+export function isInPrivateZone(point, seat) {
+  return containsPoint(privateZoneRectangle(seat), point);
+}
+
 // Whether a stack lies in a seat's private zone, judged by the centre of the rectangle it covers.
 export function isStackInPrivateZone(stack, seat) {
   const rectangle = stackRectangle(stack);
-  const centre = { x: rectangle.x + rectangle.width / 2, y: rectangle.y + rectangle.height / 2 };
-  return containsPoint(privateZoneRectangle(seat), centre);
+  return isInPrivateZone({ x: rectangle.x + rectangle.width / 2, y: rectangle.y + rectangle.height / 2 }, seat);
+}
+
+// The rectangle a loose token pile covers, around its centre position.
+export function looseTokenRectangle(position) {
+  return { x: position.x - TOKEN_SIZE / 2, y: position.y - TOKEN_SIZE / 2, width: TOKEN_SIZE, height: TOKEN_SIZE };
+}
+
+// Where the pile at `pileIndex` of `pileCount` piles on one card sits, relative to the card's top-left
+// corner. The row is centred and squeezes together when it would not fit the card's width.
+export function cardTokenRectangle(pileIndex, pileCount) {
+  const naturalStep = TOKEN_SIZE + CARD_TOKEN_SPACING;
+  const step = pileCount > 1 ? Math.min(naturalStep, (CARD_WIDTH - TOKEN_SIZE - 2 * CARD_TOKEN_SPACING) / (pileCount - 1)) : 0;
+  const centreX = CARD_WIDTH / 2 + (pileIndex - (pileCount - 1) / 2) * step;
+  return { x: centreX - TOKEN_SIZE / 2, y: CARD_TOKEN_ROW_CENTRE_Y - TOKEN_SIZE / 2, width: TOKEN_SIZE, height: TOKEN_SIZE };
 }
 
 // A building slot on seat 0's side: the outskirts in the top row, the main building in the bottom one.

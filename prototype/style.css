@@ -328,6 +328,60 @@ body:has(.side-panel.is-collapsed) {
   overflow: hidden;
 }
 
+/* Tokens */
+
+.token {
+  position: absolute;
+  width: var(--token-size, 32px);
+  height: var(--token-size, 32px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  background: var(--card-face);
+  box-shadow: var(--shadow);
+  font-size: 17px;
+  line-height: 1;
+  pointer-events: auto;
+  cursor: grab;
+  user-select: none;
+}
+
+.token-count {
+  position: absolute;
+  right: -6px;
+  top: -6px;
+  min-width: 16px;
+  padding: 1px 4px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--card-face);
+  font-size: 10px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.token-bags {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.token-bag {
+  position: relative;
+}
+
+.drag-ghost .token {
+  pointer-events: none;
+}
+
+.drag-ghost.is-token {
+  width: var(--token-size, 32px);
+  height: var(--token-size, 32px);
+  transform: none;
+}
+
 /* Preview: the same card template, drawn larger */
 
 .card-preview {

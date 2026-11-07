@@ -32,8 +32,7 @@ claimed, is settled in `Culture.framework.md`.
   reviewed `Era1.cards.md`, the chosen market cards go into `cards.csv` and `stacks.csv` as well,
   replacing the remaining sample cards.
 
-- **Prototype support for the design frameworks:** counters for goods on building cards, a Coin counter
-  and a Culture counter (`CoreLoop.framework.md`, `Culture.framework.md`), and a way to keep market
+- **Prototype support for the design frameworks:** a Coin counter and a Culture counter (`CoreLoop.framework.md`, `Culture.framework.md`), and a way to keep market
   claims hidden until the turn ends, as `framework.md` now requires. Until then, players can write
   their claims in the notes field and reveal them together. Needs a change to `Prototyper.framework.md`
   and its plan.

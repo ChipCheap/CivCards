@@ -10,6 +10,8 @@ export const DISPLAY_SLOTS_PER_MARKET = 3;
 // The building row of `CoreLoop.framework.md`: slots 1–4 are the centre, 5–8 the town, 9–12 the
 // outskirts. The main building, the starting town's, has a slot of its own.
 export const BUILDING_SLOTS_PER_SEAT = 12;
+// What a token can show. The token bags hold an endless supply of each.
+export const TOKEN_ICONS = Object.freeze(["plant", "rock", "tool", "coin"]);
 
 export function deckSlotId(seat) {
   return `seat${seat}-deck`;
@@ -49,6 +51,9 @@ export function createTable(cardDefinitions, stackDefinitions, seatCount, random
     counters: { modernization: 0, turn: 1 },
     seats: [],
     stacks: [],
+    // Token piles: { id, icon, count, cardId, position }. A pile lies on a card (cardId) or loose on
+    // the table (position); the other field is null.
+    tokens: [],
   };
 
   for (let seat = 0; seat < seatCount; seat++) {
@@ -89,6 +94,7 @@ export function apply(table, seat, request, random) {
   if (!REQUEST_HANDLERS[request.kind]({ table: nextTable, seat, request, random })) {
     return table;
   }
+  settleTokens(nextTable);
   nextTable.sequence += 1;
   return nextTable;
 }
@@ -112,6 +118,10 @@ const REQUEST_HANDLERS = Object.freeze({
   "spawn-stack": spawnStack,
   "add-counter": addCounter,
   "toggle-reveal": toggleReveal,
+  "spawn-token": spawnToken,
+  "move-token": moveToken,
+  "set-token-icon": setTokenIcon,
+  "trash-token": trashToken,
 });
 
 // { stackId } — locks a stack to the grabbing seat while its top card is dragged.
@@ -329,6 +339,119 @@ function addCounter({ table, request }) {
 function toggleReveal({ table, seat }) {
   table.seats[seat].revealed = !table.seats[seat].revealed;
   return true;
+}
+
+// { icon, to: { stackId } | { tokenId } | { position } } — a new token from the token bags.
+function spawnToken({ table, seat, request }) {
+  return TOKEN_ICONS.includes(request.icon) && placeTokens(table, seat, request.icon, 1, request.to);
+}
+
+// { tokenId, wholePile, to: { stackId } | { tokenId } | { position } } — moves one token of a pile, or
+// the whole pile.
+function moveToken({ table, seat, request }) {
+  const pile = findTokenPile(table, request.tokenId);
+  if (pile === undefined || request.to?.tokenId === pile.id) {
+    return false;
+  }
+  if (pile.cardId !== null && request.to?.stackId !== undefined
+    && findUsableStack(table, seat, request.to.stackId)?.cards.at(-1)?.id === pile.cardId) {
+    return false;
+  }
+  const count = request.wholePile === true ? pile.count : 1;
+  takeTokens(table, pile, count);
+  return placeTokens(table, seat, pile.icon, count, request.to);
+}
+
+// { tokenId, icon } — changes what a whole pile shows.
+function setTokenIcon({ table, request }) {
+  const pile = findTokenPile(table, request.tokenId);
+  if (pile === undefined || !TOKEN_ICONS.includes(request.icon) || pile.icon === request.icon) {
+    return false;
+  }
+  pile.icon = request.icon;
+  return true;
+}
+
+// { tokenId, wholePile } — removes one token of a pile, or the whole pile.
+function trashToken({ table, request }) {
+  const pile = findTokenPile(table, request.tokenId);
+  if (pile === undefined) {
+    return false;
+  }
+  takeTokens(table, pile, request.wholePile === true ? pile.count : 1);
+  return true;
+}
+
+// Adds `count` tokens at a target: onto a stack's top card, onto a pile showing the same icon, or as a
+// new loose pile at a table position. Returns whether the target was valid.
+function placeTokens(table, seat, icon, count, to) {
+  if (to?.stackId !== undefined) {
+    const topCard = findUsableStack(table, seat, to.stackId)?.cards.at(-1);
+    if (topCard === undefined) {
+      return false;
+    }
+    table.tokens.push(createTokenPile(table, icon, count, topCard.id, null));
+    return true;
+  }
+  if (to?.tokenId !== undefined) {
+    const targetPile = findTokenPile(table, to.tokenId);
+    if (targetPile === undefined || targetPile.icon !== icon) {
+      return false;
+    }
+    targetPile.count += count;
+    return true;
+  }
+  if (!isPosition(to?.position)) {
+    return false;
+  }
+  table.tokens.push(createTokenPile(table, icon, count, null, { x: to.position.x, y: to.position.y }));
+  return true;
+}
+
+function takeTokens(table, pile, count) {
+  pile.count -= count;
+  if (pile.count === 0) {
+    table.tokens.splice(table.tokens.indexOf(pile), 1);
+  }
+}
+
+// Runs after every change. Tokens on a card always sit on its stack's top card, so a card put on top
+// takes them over and the top card taken off carries them away; piles of one icon on one card become
+// one pile. Tokens whose card has left the table (into a hand, or removed) are gone.
+function settleTokens(table) {
+  const topCardIds = new Map();
+  for (const stack of table.stacks) {
+    const topCardId = stack.cards.at(-1)?.id;
+    for (const card of stack.cards) {
+      topCardIds.set(card.id, topCardId);
+    }
+  }
+  const settledPiles = [];
+  for (const pile of table.tokens) {
+    if (pile.cardId === null) {
+      settledPiles.push(pile);
+      continue;
+    }
+    const topCardId = topCardIds.get(pile.cardId);
+    if (topCardId === undefined) {
+      continue;
+    }
+    const samePile = settledPiles.find(other => other.cardId === topCardId && other.icon === pile.icon);
+    if (samePile === undefined) {
+      settledPiles.push({ ...pile, cardId: topCardId });
+    } else {
+      samePile.count += pile.count;
+    }
+  }
+  table.tokens = settledPiles;
+}
+
+function findTokenPile(table, tokenId) {
+  return table.tokens.find(pile => pile.id === tokenId);
+}
+
+function createTokenPile(table, icon, count, cardId, position) {
+  return { id: `token-${table.nextId++}`, icon, count, cardId, position };
 }
 
 // A card source is a non-empty stack the seat may use, or a valid index into the seat's hand.

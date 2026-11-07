@@ -1,9 +1,11 @@
-// The right panel: the card catalog with a text search and type and era filters, the predefined panel
-// stacks, and the trash can. It collapses to a thin strip on the right that is still the trash can.
-// It only draws; dragging out of it and onto the trash is handled by the input module, which finds
-// catalog cards by data-definition-id, panel stacks by data-panel-stack and the trash by .trash-can.
+// The right panel: the token bags, the card catalog with a text search and type and era filters, the
+// predefined panel stacks, and the trash can. It collapses to a thin strip on the right that is still
+// the trash can. It only draws; dragging out of it and onto the trash is handled by the input module,
+// which finds token bags by data-token-icon, catalog cards by data-definition-id, panel stacks by
+// data-panel-stack and the trash by .trash-can.
 
-import { createCardFace, createElement } from "./render.js";
+import { TOKEN_ICONS } from "../core.js";
+import { createCardFace, createElement, createTokenElement } from "./render.js";
 
 const ALL_OPTION = "";
 const COLLAPSED_STORAGE_KEY = "civcards-panel-collapsed";
@@ -25,9 +27,19 @@ export function createPanel(panelElement, cards) {
   const catalogElement = createElement("div", "catalog");
   const panelStacksElement = createElement("div", "panel-stacks");
   const trashElement = createElement("div", "trash-can", "Trash — drop cards here to remove them");
+  // One bag per icon, each an endless supply of tokens.
+  const tokenBagsElement = createElement("div", "token-bags");
+  tokenBagsElement.append(...TOKEN_ICONS.map(icon => {
+    const bagElement = createTokenElement(icon, 1);
+    bagElement.classList.add("token-bag");
+    bagElement.dataset.tokenIcon = icon;
+    return bagElement;
+  }));
 
   const panelContent = createElement("div", "panel-content");
   panelContent.append(
+    createElement("h2", "panel-heading", "Tokens"),
+    tokenBagsElement,
     createElement("h2", "panel-heading", "Cards"),
     searchInput,
     regexLabel,

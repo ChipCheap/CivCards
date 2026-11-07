@@ -13,7 +13,7 @@ const MIDDLE_BUTTON = 1;
 
 // `viewportElement` is the visible table area; `boardElement` is the full-size board inside it, which
 // this view moves and scales. The middle button pans from anywhere; the left button pans from empty
-// board (anything that isn't a card stack), since on a stack it drags a card.
+// board (anything that isn't a card stack or a token), since on those it drags.
 export function createView(viewportElement, boardElement, isMirrored) {
   let scale = 1;
   let offsetX = 0;
@@ -59,7 +59,7 @@ export function createView(viewportElement, boardElement, isMirrored) {
 
   viewportElement.addEventListener("pointerdown", event => {
     const isMiddlePan = event.button === MIDDLE_BUTTON;
-    const isLeftPan = event.button === LEFT_BUTTON && event.target.closest(".stack") === null;
+    const isLeftPan = event.button === LEFT_BUTTON && event.target.closest(".stack, .token") === null;
     if (!isMiddlePan && !isLeftPan) {
       return;
     }

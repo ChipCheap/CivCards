@@ -96,6 +96,15 @@ of one. There is no other kind of object, so there are no half-stacked cards.
 - **Starter decks:** both players start with **the same starter deck**, placed shuffled and face-down in their deck slot. Civilizations and their own starter decks are future content.
 - **Setup the tool does once, when a table starts:** every stack that starts on the board is shuffled face-down into its slot, and each market stack's 3 display slots are filled face-up from its supply. Opening hands are drawn by hand. Setup is not a card rule, so PN1 still holds.
 
+### Tokens
+- **Tokens** stand for goods kept on a building (`CoreLoop.framework.md`: stored goods). A token is a round marker about 2 cm across with an icon: plant, rock, tool or coin.
+- The right panel has **four token bags**, one per icon, each an endless supply: drag a token out as often as needed.
+- **Dropped on a card**, a token lies over the card's picture, in its top third. Tokens of the same icon on one card form a **pile** with a small number in its top right corner. **Dropped on the bare table**, a token lies loose; dropped on a loose pile of its icon, it joins it.
+- **Tokens belong to the top card of a stack.** Moving that card or the whole stack takes them along; a card put on top takes them over; taking the top card off carries them away.
+- A card that goes into a hand **loses its tokens**.
+- **Drag** takes one token off a pile, **Shift + drag** the whole pile. **Double-click** a pile to pick another icon for it. The **trash can** removes tokens.
+- Tokens follow the private zone's hiding like cards do: on a hidden card, or loose in an unrevealed zone, the opponent doesn't see them.
+
 ### Copy and trash
 - **C** creates a copy. This is how a market claim works: `framework.md` says "If several players claim the same card in the same turn, **all of them get it**", so each claimant copies the displayed card instead of taking the one object.
 - A **trash can** on the right panel deletes any card or stack dropped on it, for everyone. This also covers Burn ("remove it from the game").
@@ -159,7 +168,7 @@ Labelled **PA** (Prototyper Always) and **PN** (Prototyper Never), so they don't
 - **PA1.** Joining is opening a link. No downloads, no installs, no player accounts, no network setup.
 - **PA2.** The host's state is the truth. Every change made by a player goes through the host and reaches every player.
 - **PA3.** Everything on the table is a stack of one or more cards, and the cursor point at drop time alone decides which stack a card joins.
-- **PA4.** Cards in a player's private zone and hand are never drawn face-up on the opponent's screen, unless the owner reveals the private zone. Everything else on the table is visible to both players.
+- **PA4.** Cards and tokens in a player's private zone, and cards in their hand, are never drawn face-up on the opponent's screen, unless the owner reveals the private zone. Everything else on the table is visible to both players.
 - **PA5.** Card definitions, stack lists and art come from the repo and are data, never code.
 
 **Never**

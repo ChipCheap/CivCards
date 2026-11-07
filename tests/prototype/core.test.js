@@ -323,3 +323,62 @@ test("two simultaneous +1 clicks on a shared counter both count", () => {
   ]);
   assert.equal(after.counters.modernization, 2);
 });
+
+test("a token spawned on a stack lies on its top card, and one of the same icon joins its pile", () => {
+  const table = newTable();
+  const after = applyAll(table, 0, [
+    { kind: "spawn-token", icon: "coin", to: { stackId: deckSlotId(0) } },
+    { kind: "spawn-token", icon: "coin", to: { stackId: deckSlotId(0) } },
+    { kind: "spawn-token", icon: "plant", to: { stackId: deckSlotId(0) } },
+  ]);
+  const topCardId = stackById(after, deckSlotId(0)).cards.at(-1).id;
+  assert.deepEqual(after.tokens.map(pile => [pile.icon, pile.count, pile.cardId]), [["coin", 2, topCardId], ["plant", 1, topCardId]]);
+});
+
+test("tokens move to a card put on top, and leave with the top card when it is taken off", () => {
+  const table = newTable();
+  const withToken = apply(table, 0, { kind: "spawn-token", icon: "rock", to: { stackId: deckSlotId(0) } }, createRandom(1));
+  const covered = apply(withToken, 0, { kind: "move-card", from: { stackId: deckSlotId(1) }, to: { stackId: deckSlotId(0) } }, createRandom(1));
+  assert.equal(covered.tokens[0].cardId, stackById(covered, deckSlotId(0)).cards.at(-1).id);
+  const taken = apply(covered, 0, { kind: "move-card", from: { stackId: deckSlotId(0) }, to: { position: { x: 900, y: 900 } } }, createRandom(1));
+  assert.equal(taken.tokens[0].cardId, newestStack(taken).cards[0].id);
+});
+
+test("tokens are removed when their card goes into a hand", () => {
+  const table = newTable();
+  const after = applyAll(table, 0, [
+    { kind: "spawn-token", icon: "tool", to: { stackId: deckSlotId(0) } },
+    { kind: "draw", stackId: deckSlotId(0), count: 1 },
+  ]);
+  assert.deepEqual(after.tokens, []);
+});
+
+test("a token can lie loose, join a loose pile of its icon, and come off one at a time", () => {
+  const table = newTable();
+  const placed = applyAll(table, 0, [
+    { kind: "spawn-token", icon: "plant", to: { position: { x: 300, y: 300 } } },
+  ]);
+  const pileId = placed.tokens[0].id;
+  const grown = applyAll(placed, 0, [
+    { kind: "spawn-token", icon: "plant", to: { tokenId: pileId } },
+    { kind: "spawn-token", icon: "plant", to: { tokenId: pileId } },
+  ]);
+  assert.equal(grown.tokens[0].count, 3);
+  assert.equal(apply(grown, 0, { kind: "spawn-token", icon: "coin", to: { tokenId: pileId } }, createRandom(1)), grown, "another icon doesn't join");
+  const split = apply(grown, 0, { kind: "move-token", tokenId: pileId, wholePile: false, to: { stackId: deckSlotId(0) } }, createRandom(1));
+  assert.deepEqual(split.tokens.map(pile => pile.count), [2, 1]);
+  const trashed = apply(split, 0, { kind: "trash-token", tokenId: pileId, wholePile: true }, createRandom(1));
+  assert.equal(trashed.tokens.length, 1);
+});
+
+test("changing a pile's icon merges it with a pile of that icon on the same card", () => {
+  const table = newTable();
+  const placed = applyAll(table, 0, [
+    { kind: "spawn-token", icon: "coin", to: { stackId: deckSlotId(0) } },
+    { kind: "spawn-token", icon: "rock", to: { stackId: deckSlotId(0) } },
+  ]);
+  const rockId = placed.tokens.find(pile => pile.icon === "rock").id;
+  const after = apply(placed, 0, { kind: "set-token-icon", tokenId: rockId, icon: "coin" }, createRandom(1));
+  assert.deepEqual(after.tokens.map(pile => [pile.icon, pile.count]), [["coin", 2]]);
+  assert.equal(apply(after, 0, { kind: "set-token-icon", tokenId: after.tokens[0].id, icon: "gold" }, createRandom(1)), after);
+});

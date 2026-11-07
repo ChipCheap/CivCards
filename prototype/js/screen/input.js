@@ -2,8 +2,12 @@
 // and search. The cursor point at drop time alone picks where a card goes (Prototyper.framework.md
 // PA3). It also sends this player's pointer and held card to the other player as presence.
 
-import { CARD_HEIGHT, CARD_WIDTH, containsPoint, isStackInPrivateZone, stackRectangle } from "./layout.js";
-import { createCardBack, createCardFace, createElement, isStackVisibleTo } from "./render.js";
+import { TOKEN_ICONS } from "../core.js";
+import { CARD_HEIGHT, CARD_WIDTH, TOKEN_SIZE, containsPoint, isStackInPrivateZone, looseTokenRectangle, stackRectangle } from "./layout.js";
+import {
+  TOKEN_FACES, createCardBack, createCardFace, createCardTokenElements, createElement, createTokenElement, isLoosePileVisibleTo,
+  isStackVisibleTo,
+} from "./render.js";
 
 const DRAG_THRESHOLD_PIXELS = 4;
 const PRESENCE_INTERVAL_MILLISECONDS = 50;
@@ -23,19 +27,33 @@ export function createInput({ viewportElement, handElement, panelElement, screen
   // What the cursor is over when nothing is held: { stackId } or { handIndex }, or null.
   let hovered = null;
   // The drag in progress, or null. `source` is one of { stackId, wholeStack }, { handIndex },
-  // { definitionId } (catalog card) or { panelStackName }.
+  // { definitionId } (catalog card), { panelStackName }, { tokenId, wholePile } (a pile on the table)
+  // or { tokenIcon } (a token bag).
   let drag = null;
   let lastPresenceAt = 0;
   // "No pointer on the table" needs sending only once until the pointer comes back.
   let hasSentNoPointer = false;
-  // The open menu or search, and the stack it acts on.
+  // The open menu, search or token picker, and the stack it acts on (none for the token picker).
   let openPopup = null;
   let popupStackId = null;
 
+  // A token lies on top of its card, so it is found first.
   viewportElement.addEventListener("pointerdown", event => {
+    if (event.button !== 0) {
+      return;
+    }
+    const tokenElement = event.target.closest("[data-token-id]");
     const stackElement = event.target.closest("[data-stack-id]");
-    if (event.button === 0 && stackElement !== null) {
+    if (tokenElement !== null) {
+      startDrag(event, { tokenId: tokenElement.dataset.tokenId, wholePile: event.shiftKey });
+    } else if (stackElement !== null) {
       startDrag(event, { stackId: stackElement.dataset.stackId, wholeStack: event.shiftKey });
+    }
+  });
+  viewportElement.addEventListener("dblclick", event => {
+    const tokenElement = event.target.closest("[data-token-id]");
+    if (tokenElement !== null) {
+      openTokenPicker(tokenElement.dataset.tokenId, event.clientX, event.clientY);
     }
   });
   handElement.addEventListener("pointerdown", event => {
@@ -47,10 +65,13 @@ export function createInput({ viewportElement, handElement, panelElement, screen
   panelElement.addEventListener("pointerdown", event => {
     const catalogElement = event.target.closest(".catalog-card");
     const panelStackElement = event.target.closest(".panel-stack");
+    const tokenBagElement = event.target.closest(".token-bag");
     if (event.button !== 0) {
       return;
     }
-    if (catalogElement !== null) {
+    if (tokenBagElement !== null) {
+      startDrag(event, { tokenIcon: tokenBagElement.dataset.tokenIcon });
+    } else if (catalogElement !== null) {
       startDrag(event, { definitionId: catalogElement.dataset.definitionId });
     } else if (panelStackElement !== null) {
       startDrag(event, { panelStackName: panelStackElement.dataset.panelStack });
@@ -178,29 +199,53 @@ export function createInput({ viewportElement, handElement, panelElement, screen
     document.body.append(drag.ghostElement);
     refreshGhost();
     placeGhost();
-    if (source.stackId !== undefined || source.handIndex !== undefined) {
+    if (isLiftingFromTable(source)) {
       screen.setDragSource(source);
     }
   }
 
-  // The ghost shows the card as the table has it now, so a flip while dragging shows at once.
+  // Whether the drag takes something that is on the table or in the hand, which is then drawn as lifted.
+  function isLiftingFromTable(source) {
+    return source.stackId !== undefined || source.handIndex !== undefined || source.tokenId !== undefined;
+  }
+
+  // The ghost shows the card as the table has it now, so a flip while dragging shows at once. A card
+  // taken from the top of a stack carries its tokens along.
   function refreshGhost() {
     const { source, ghostElement } = drag;
-    let cardElement;
-    if (source.definitionId !== undefined) {
-      cardElement = createCardFace(definitions.get(source.definitionId));
-    } else if (source.panelStackName !== undefined) {
-      cardElement = createCardBack();
-    } else {
-      const card = heldCard();
-      cardElement = card.faceUp ? createCardFace(definitions.get(card.definitionId)) : createCardBack();
+    ghostElement.classList.toggle("is-token", isTokenDrag());
+    if (source.tokenIcon !== undefined) {
+      ghostElement.replaceChildren(createTokenElement(source.tokenIcon, 1));
+      return;
     }
-    ghostElement.replaceChildren(cardElement);
+    if (source.tokenId !== undefined) {
+      const pile = findTokenPile(source.tokenId);
+      ghostElement.replaceChildren(createTokenElement(pile.icon, source.wholePile ? pile.count : 1));
+      return;
+    }
+    if (source.definitionId !== undefined) {
+      ghostElement.replaceChildren(createCardFace(definitions.get(source.definitionId)));
+      return;
+    }
+    if (source.panelStackName !== undefined) {
+      ghostElement.replaceChildren(createCardBack());
+      return;
+    }
+    const card = heldCard();
+    const cardElement = card.faceUp ? createCardFace(definitions.get(card.definitionId)) : createCardBack();
+    const tokenPiles = source.stackId === undefined ? [] : table.tokens.filter(pile => pile.cardId === card.id);
+    ghostElement.replaceChildren(cardElement, ...createCardTokenElements(tokenPiles));
   }
 
   function placeGhost() {
-    drag.ghostElement.style.left = `${pointer.clientX - CARD_WIDTH / 2}px`;
-    drag.ghostElement.style.top = `${pointer.clientY - CARD_HEIGHT / 2}px`;
+    const width = isTokenDrag() ? TOKEN_SIZE : CARD_WIDTH;
+    const height = isTokenDrag() ? TOKEN_SIZE : CARD_HEIGHT;
+    drag.ghostElement.style.left = `${pointer.clientX - width / 2}px`;
+    drag.ghostElement.style.top = `${pointer.clientY - height / 2}px`;
+  }
+
+  function isTokenDrag() {
+    return drag.source.tokenId !== undefined || drag.source.tokenIcon !== undefined;
   }
 
   function heldCard() {
@@ -224,8 +269,20 @@ export function createInput({ viewportElement, handElement, panelElement, screen
       return null;
     }
     const point = view.toTablePoint(clientX, clientY);
+    const pile = isTokenDrag() ? loosePileAt(point) : undefined;
+    if (pile !== undefined) {
+      return { tokenId: pile.id, position: point };
+    }
     const stack = stackAt(point);
     return stack === undefined ? { position: point } : { stackId: stack.id, position: point };
+  }
+
+  // The topmost loose pile under a table point, visible to this player, that the dragged token could
+  // join: one showing the same icon, other than the pile being dragged from.
+  function loosePileAt(point) {
+    const icon = drag.source.tokenIcon ?? findTokenPile(drag.source.tokenId).icon;
+    return table.tokens.findLast(pile => pile.cardId === null && pile.icon === icon && pile.id !== drag.source.tokenId
+      && isLoosePileVisibleTo(table, pile, seat) && containsPoint(looseTokenRectangle(pile.position), point));
   }
 
   // The topmost stack or slot under a table point that this player may see. The stack being lifted
@@ -288,6 +345,9 @@ export function createInput({ viewportElement, handElement, panelElement, screen
   }
 
   function dropRequests(source, target) {
+    if (source.tokenIcon !== undefined || source.tokenId !== undefined) {
+      return tokenDropRequests(source, target);
+    }
     if (source.definitionId !== undefined || source.panelStackName !== undefined) {
       if (target.position === undefined) {
         return [];
@@ -318,6 +378,20 @@ export function createInput({ viewportElement, handElement, panelElement, screen
     return [{ kind: "move-card", from, to: tableTarget(target) }];
   }
 
+  // Tokens go onto a card, a pile of their icon or the bare table; the hand doesn't take them.
+  function tokenDropRequests(source, target) {
+    if (target.handIndex !== undefined || (target.trash && source.tokenIcon !== undefined)) {
+      return [];
+    }
+    if (target.trash) {
+      return [{ kind: "trash-token", tokenId: source.tokenId, wholePile: source.wholePile }];
+    }
+    const to = target.tokenId !== undefined ? { tokenId: target.tokenId } : tableTarget(target);
+    return source.tokenIcon !== undefined
+      ? [{ kind: "spawn-token", icon: source.tokenIcon, to }]
+      : [{ kind: "move-token", tokenId: source.tokenId, wholePile: source.wholePile, to }];
+  }
+
   function tableTarget(target) {
     return target.stackId !== undefined ? { stackId: target.stackId } : { position: target.position };
   }
@@ -335,7 +409,7 @@ export function createInput({ viewportElement, handElement, panelElement, screen
     }
     clearTimeout(drag.pendingTimer);
     drag.ghostElement?.remove();
-    const wasLifting = drag.isMoving && (drag.source.stackId !== undefined || drag.source.handIndex !== undefined);
+    const wasLifting = drag.isMoving && isLiftingFromTable(drag.source);
     drag = null;
     highlightTarget(null);
     if (wasLifting) {
@@ -367,7 +441,8 @@ export function createInput({ viewportElement, handElement, panelElement, screen
     if (cursor === undefined) {
       return null;
     }
-    return { cursor, held: drag?.isMoving && !drag.isDropping ? { definitionId: shownHeldDefinitionId() } : null };
+    const isHoldingCard = drag?.isMoving && !drag.isDropping && !isTokenDrag();
+    return { cursor, held: isHoldingCard ? { definitionId: shownHeldDefinitionId() } : null };
   }
 
   // The opponent learns which card is held only if it is face-up and they could already see it there.
@@ -438,6 +513,23 @@ export function createInput({ viewportElement, handElement, panelElement, screen
     showPopup(dialogElement, stackId);
   }
 
+  // A small window of the token icons; picking one changes what the whole pile shows.
+  function openTokenPicker(tokenId, clientX, clientY) {
+    const pickerElement = createElement("div", "context-menu token-picker");
+    for (const icon of TOKEN_ICONS) {
+      const iconButton = createElement("button", "context-menu-item", `${TOKEN_FACES[icon].symbol} ${TOKEN_FACES[icon].name}`);
+      iconButton.type = "button";
+      iconButton.addEventListener("click", () => {
+        closePopup();
+        sendRequest({ kind: "set-token-icon", tokenId, icon });
+      });
+      pickerElement.append(iconButton);
+    }
+    pickerElement.style.left = `${clientX}px`;
+    pickerElement.style.top = `${clientY}px`;
+    showPopup(pickerElement, null);
+  }
+
   function showPopup(popupElement, stackId) {
     closePopup();
     openPopup = popupElement;
@@ -455,6 +547,10 @@ export function createInput({ viewportElement, handElement, panelElement, screen
 
   function findStack(stackId) {
     return table.stacks.find(stack => stack.id === stackId);
+  }
+
+  function findTokenPile(tokenId) {
+    return table.tokens.find(pile => pile.id === tokenId);
   }
 
   function hoveredThing(element) {
@@ -502,7 +598,7 @@ export function createInput({ viewportElement, handElement, panelElement, screen
   return {
     // Keeps the input in step with the table: forgets a hovered stack or hand card that is gone or now
     // hidden, closes a menu or search whose stack is gone, ends a finished drop, and drops a drag whose
-    // stack was taken by the other player first or no longer exists.
+    // stack was taken by the other player first, or whose stack or token pile no longer exists.
     setTable(nextTable) {
       table = nextTable;
       if (hovered !== null && !isStillThere(hovered)) {
@@ -527,6 +623,10 @@ export function createInput({ viewportElement, handElement, panelElement, screen
         }
       }
       if (source.handIndex !== undefined && table.seats[seat].hand[source.handIndex] === undefined) {
+        endDrag();
+        return;
+      }
+      if (source.tokenId !== undefined && findTokenPile(source.tokenId) === undefined) {
         endDrag();
         return;
       }
