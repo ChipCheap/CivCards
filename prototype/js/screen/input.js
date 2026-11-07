@@ -2,11 +2,10 @@
 // and search. The cursor point at drop time alone picks where a card goes (Prototyper.framework.md
 // PA3). It also sends this player's pointer and held card to the other player as presence.
 
-import { TOKEN_ICONS } from "../core.js";
+import { RESOURCES, TOKEN_ICONS } from "../resources.js";
 import { CARD_HEIGHT, CARD_WIDTH, TOKEN_SIZE, containsPoint, isStackInPrivateZone, looseTokenRectangle, stackRectangle } from "./layout.js";
 import {
-  TOKEN_FACES, createCardBack, createCardFace, createCardTokenElements, createElement, createTokenElement, isLoosePileVisibleTo,
-  isStackVisibleTo,
+  createCardBack, createCardFace, createCardTokenElements, createElement, createTokenElement, isLoosePileVisibleTo, isStackVisibleTo,
 } from "./render.js";
 
 const DRAG_THRESHOLD_PIXELS = 4;
@@ -513,11 +512,12 @@ export function createInput({ viewportElement, handElement, panelElement, screen
     showPopup(dialogElement, stackId);
   }
 
-  // A small window of the token icons; picking one changes what the whole pile shows.
+  // A small window of every token icon, so a token can stand for any good; picking one changes what
+  // the whole pile shows.
   function openTokenPicker(tokenId, clientX, clientY) {
     const pickerElement = createElement("div", "context-menu token-picker");
     for (const icon of TOKEN_ICONS) {
-      const iconButton = createElement("button", "context-menu-item", `${TOKEN_FACES[icon].symbol} ${TOKEN_FACES[icon].name}`);
+      const iconButton = createElement("button", "context-menu-item", `${RESOURCES[icon].symbol} ${RESOURCES[icon].name}`);
       iconButton.type = "button";
       iconButton.addEventListener("click", () => {
         closePopup();

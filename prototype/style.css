@@ -316,15 +316,9 @@ body:has(.side-panel.is-collapsed) {
   object-fit: cover;
 }
 
-.card-costs {
-  position: absolute;
-  left: -6px;
-  top: -6px;
-  display: flex;
-  align-items: center;
-}
-
-.card-amount {
+/* Every icon on a card is bare, never in a circle: an amount is its resource's icon with the number on
+   top, and a resource needed or used up is a smaller icon of its own. */
+.card-icon {
   position: relative;
   display: flex;
   align-items: center;
@@ -332,7 +326,7 @@ body:has(.side-panel.is-collapsed) {
   line-height: 1;
 }
 
-.card-amount-number {
+.card-icon-number {
   position: absolute;
   inset: 0;
   display: flex;
@@ -345,39 +339,55 @@ body:has(.side-panel.is-collapsed) {
   paint-order: stroke fill;
 }
 
-.card-cost {
+.card-costs,
+.card-claim {
+  position: absolute;
+  left: -6px;
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.card-costs {
+  top: -6px;
+}
+
+.card-claim {
+  bottom: -6px;
+}
+
+.card-price {
   width: 18px;
   height: 18px;
   font-size: 17px;
 }
 
-.card-stat {
-  position: absolute;
-  right: -6px;
-  top: -6px;
-  width: 25px;
-  height: 25px;
-  font-size: 24px;
-}
-
-.card-use {
+.card-need {
   width: 14px;
   height: 14px;
   font-size: 13px;
 }
 
-.card-claim {
+/* The quick stat, with a building's hit points under it. */
+.card-corner {
   position: absolute;
-  left: -6px;
-  bottom: -6px;
+  right: -6px;
+  top: -6px;
   display: flex;
-  gap: 1px;
+  flex-direction: column;
+  align-items: center;
 }
 
-.card-claim-amount {
-  width: 18px;
-  height: 18px;
-  font-size: 17px;
+.card-stat {
+  width: 25px;
+  height: 25px;
+  font-size: 24px;
+}
+
+.card-hp {
+  width: 16px;
+  height: 16px;
+  font-size: 15px;
 }
 
 .card-type {
@@ -391,10 +401,7 @@ body:has(.side-panel.is-collapsed) {
   align-items: center;
   justify-content: center;
   gap: 1px;
-  border-radius: 50%;
-  border: 1px solid #6e675b;
-  background: var(--card-face);
-  font-size: 9px;
+  font-size: 13px;
   line-height: 1;
 }
 
@@ -468,17 +475,19 @@ body:has(.side-panel.is-collapsed) {
   border: 2px solid var(--accent);
   background: var(--card-face);
   box-shadow: var(--shadow);
-  font-size: 17px;
+  /* The icon fills most of the circle without touching its edge. */
+  font-size: calc(var(--token-size, 36px) * 0.72);
   line-height: 1;
   pointer-events: auto;
   cursor: grab;
   user-select: none;
 }
 
+/* Like a stack's card count, at the bottom right. */
 .token-count {
   position: absolute;
   right: -6px;
-  top: -6px;
+  bottom: -6px;
   min-width: 16px;
   padding: 1px 4px;
   border-radius: 8px;
@@ -803,6 +812,12 @@ body:has(.side-panel.is-collapsed) {
 
 .context-menu-item:hover {
   background: var(--background);
+}
+
+/* Every token icon, three to a row, so the list stays short. */
+.token-picker {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
 }
 
 .search-dialog {

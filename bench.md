@@ -29,6 +29,10 @@ claimed, is settled in `Culture.framework.md`.
 
 ## Agreed, not yet written
 
+- **Hit points for the Era 1 buildings and Wonders** in `Era1.cards.md`: 1–2 for early buildings,
+  more for Town Walls, Keep, Star Fort and the Wonders, rising with later eras. They are the building
+  "Defense" of `framework.md`'s raid rule ("destroys buildings whose Defense is lower than that
+  leftover"), shown on the card as a 🧱 wall.
 - **Era 1 cards into the prototype.** The starter deck is in (`prototype/cards/`). Once you've
   reviewed `Era1.cards.md`, the chosen market cards go into `cards.csv` and `stacks.csv` as well,
   replacing the remaining sample cards.

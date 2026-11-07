@@ -99,10 +99,10 @@ of one. There is no other kind of object, so there are no half-stacked cards.
 ### Tokens
 - **Tokens** stand for goods kept on a building (`CoreLoop.framework.md`: stored goods). A token is a round marker a little over a third of a card's width, with an icon: plant, rock, tool or coin.
 - The right panel has **four token bags**, one per icon, each an endless supply: drag a token out as often as needed.
-- **Dropped on a card**, a token lies over the card's picture, in its top third. Tokens of the same icon on one card form a **pile** with a small number in its top right corner. **Dropped on the bare table**, a token lies loose; dropped on a loose pile of its icon, it joins it.
+- **Dropped on a card**, a token lies over the card's picture, in its top third. Tokens of the same icon on one card form a **pile** with a small number in its bottom right corner, where a stack shows its card count. The icon fills most of the circle without touching its edge. **Dropped on the bare table**, a token lies loose; dropped on a loose pile of its icon, it joins it.
 - **Tokens belong to the top card of a stack.** Moving that card or the whole stack takes them along; a card put on top takes them over; taking the top card off carries them away.
 - A card that goes into a hand **loses its tokens**.
-- **Drag** takes one token off a pile, **Shift + drag** the whole pile. **Double-click** a pile to pick another icon for it. The **trash can** removes tokens.
+- **Drag** takes one token off a pile, **Shift + drag** the whole pile. **Double-click** a pile to pick another icon for it, from every good and resource the cards use, so a token can stand for anything a building makes. The **trash can** removes tokens.
 - Tokens follow the private zone's hiding like cards do: on a hidden card, or loose in an unrevealed zone, the opponent doesn't see them.
 
 ### Copy and trash
@@ -131,18 +131,21 @@ of one. There is no other kind of object, so there are no half-stacked cards.
 ### Card data and rendering
 - Card definitions, stack lists and art live **in the GitHub repo** and are served by GitHub Pages together with the page. A change goes live with a commit and push, plus about a minute for Pages to redeploy.
 - **Format: CSV**, edited in Excel or Google Sheets.
-  - **Cards file:** one row per card — id, name, type, era, origin, cost (to play), uses (the tokens or strategic resources it consumes), stat (its quick value), claim (its market price), text, art (image file name). Amounts are written like `2 Production, 1 Culture`.
+  - **Cards file:** one row per card — id, name, type, era, origin, cost (to play), stat (its quick value), hp (a building's hit points), claim (its market price), text, art (image file name). Costs and claims are written like `2 Production, 1 Culture, Timber`: an amount, or a resource alone when it is needed or used up.
   - **Stacks file:** one row per card in a predefined stack — stack name, card id, count, and where the stack starts (a slot name, or the panel). Starter decks are stacks too.
   - **`art/` folder** with the card images.
 - JSON stays an option for later; one file per card is avoided, because GitHub Pages can't list a folder, so it would need a generated index and a build step.
 - Card definitions are **data**, not code, so they can move to the final engine (`framework.md` A4: "Card definitions are engine-independent data.").
 - **The card face** (in card units, the card being 100 × 140):
-  - **Top left:** the play cost. Each main cost is its own icon with the number on it (🌾 1); after it, one smaller icon per token or strategic resource the card uses, never a number. A card without them is free to play.
-  - **Top right:** the quick stat — 🌾 Food, ⚔️ Attack or ⚙️ Production, as its icon with the number on it. A card that only does that has no rules text. Units have Attack only for now.
+  - **Everything is a bare icon, never in a circle:** an amount is its resource's icon with the number on it (🌾 1); a resource needed or used up is a smaller icon of its own, one per unit, never a number.
+  - **Top left:** the play cost: the main costs, then the resources needed or used up. A blueprint that needs a strategic resource (Sawmill: Timber) shows it here, since it is needed to build. A card without any is free to play.
+  - **Top right:** the quick stat — 🌾 Food, ⚔️ Attack or ⚙️ Production, as its icon with the number on it. A card that only does that has no rules text. Units have Attack only for now. A strategic resource card shows the resource it provides here, without a number.
+  - **Under the stat:** a building's or Wonder's **hit points**, a 🧱 wall with a number: the leftover Attack a raid must beat to destroy it (`framework.md`: a raid "destroys buildings whose Defense is lower than that leftover"). Early buildings have 1–2; later eras, walls and Wonders are sturdier.
   - Both reach a little past the card's edge.
-  - **The art** across the top third (45 units tall), with the **type icon** under it: 🏠 building, a three-bar pyramid for a Wonder, ⚗️ Technology, none for play cards.
+  - **The art** across the top third (45 units tall), with the **type icon** under it: 🏠 building, a three-bar pyramid for a Wonder, ⚗️ Technology, the resource itself for a strategic resource, none for play cards.
+  - **Rules text** shows each amount of a resource as its icon: "+3 Production" reads "+3 ⚙️".
   - Below: a narrow **era and origin line** (`Era 1 · Made by Stables`), the **name**, and a **text box** for keywords and the rarer unique effects.
-  - **Bottom left:** the **claim price**, again as icons with the number on them, reaching past the corner like the cost. Every amount on a card is drawn this way; there are no circles. A Wonder's whole price is its claim price, since it is built and in effect as soon as it is claimed.
+  - **Bottom left:** the **claim price**, reaching past the corner like the cost. A Wonder's whole price is its claim price, since it is built and in effect as soon as it is claimed, so a strategic resource it needs is shown here too: without it, the Wonder can't be claimed. The same holds for a Technology that needs one (Steam Engine: Coal).
   - A stack's count badge sits at the bottom right, clear of the cost and stat.
 - **The page draws each card face** from its data and art using one card template. No card images are generated ahead of time, so a layout change shows up on the next page load.
 - **One generic card back** for every card.

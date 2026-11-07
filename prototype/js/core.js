@@ -2,6 +2,8 @@
 // It is pure (Prototyper.architecture.md PG1): no page, network, timers or randomness of its own,
 // so the same table, requests and random source always give the same result.
 
+import { TOKEN_ICONS } from "./resources.js";
+
 export const PLAYER_DECK_START = "player-deck";
 export const PANEL_START = "panel";
 export const MARKET_STARTS = Object.freeze(["market-resources", "market-tech", "market-blueprints", "market-wonders"]);
@@ -10,8 +12,6 @@ export const DISPLAY_SLOTS_PER_MARKET = 3;
 // The building row of `CoreLoop.framework.md`: slots 1–4 are the centre, 5–8 the town, 9–12 the
 // outskirts. The main building, the starting town's, has a slot of its own.
 export const BUILDING_SLOTS_PER_SEAT = 12;
-// What a token can show. The token bags hold an endless supply of each.
-export const TOKEN_ICONS = Object.freeze(["plant", "rock", "tool", "coin"]);
 
 export function deckSlotId(seat) {
   return `seat${seat}-deck`;

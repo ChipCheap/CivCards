@@ -3,7 +3,7 @@
 // stacks in the opponent's unrevealed private zone are not drawn at all, and the opponent's hand shows
 // only card backs.
 
-import { TOKEN_ICONS } from "../core.js";
+import { RESOURCES, TOKEN_ICONS, isKnownResource, resourceSymbol } from "../resources.js";
 import {
   CARD_HEIGHT, CARD_WIDTH, TOKEN_SIZE, allSlotLayouts, cardTokenRectangle, isInPrivateZone, isStackInPrivateZone,
   looseTokenRectangle, marketBlocks, privateZoneRectangle, stackRectangle,
@@ -11,36 +11,15 @@ import {
 
 const HAND_CARD_GAP = 6;
 
-// The face of each token icon in `TOKEN_ICONS`.
-export const TOKEN_FACES = Object.freeze({
-  plant: { symbol: "🌿", name: "Plant" },
-  rock: { symbol: "🪨", name: "Rock" },
-  tool: { symbol: "🔨", name: "Tool" },
-  coin: { symbol: "🪙", name: "Coin" },
-});
-
-// The symbol for each resource a card's cost, uses, stat or claim names, by lower-case name. The token
-// icons are included, so a card can use what a token stands for.
-const RESOURCE_SYMBOLS = Object.freeze({
-  ...Object.fromEntries(Object.entries(TOKEN_FACES).map(([icon, face]) => [icon, face.symbol])),
-  production: "⚙️",
-  food: "🌾",
-  attack: "⚔️",
-  military: "⚔️",
-  knowledge: "📖",
-  culture: "🏛️",
-  cards: "🃏",
-  iron: "⛓️",
-  powder: "💥",
-  timber: "🪵",
-  horses: "🐎",
-  stone: "🧱",
-});
-
 // The icon under the art for each card type that has one; play cards have none. A Wonder's pyramid is
-// drawn from three bars rather than a symbol.
+// drawn from three bars, and a strategic resource shows the resource it provides.
 const TYPE_SYMBOLS = Object.freeze({ building: "🏠", blueprint: "🏠", technology: "⚗️" });
 const WONDER_TYPE = "wonder";
+const STRATEGIC_RESOURCE_TYPE = "resource";
+// A building's hit points: the leftover Attack a raid needs to beat to destroy it.
+const HP_SYMBOL = "🧱";
+// "+3 Production" in rules text: a signed or plain number, then one word that may name a resource.
+const TEXT_AMOUNT_PATTERN = /([+-]?\d+) ([A-Za-z]+)\b/g;
 
 // Whether `viewerSeat` may see a stack's cards at all. A stack, loose or in a building slot, is hidden
 // while it lies in the other seat's private zone and that seat hasn't revealed it; the empty slot
@@ -60,8 +39,8 @@ export function isLoosePileVisibleTo(table, pile, viewerSeat) {
 
 // One round token showing its icon, with the number of tokens when it is a pile of more than one.
 export function createTokenElement(icon, count) {
-  const tokenElement = createElement("div", "token", TOKEN_FACES[icon].symbol);
-  tokenElement.title = TOKEN_FACES[icon].name;
+  const tokenElement = createElement("div", "token", RESOURCES[icon].symbol);
+  tokenElement.title = RESOURCES[icon].name;
   if (count > 1) {
     tokenElement.append(createElement("div", "token-count", String(count)));
   }
@@ -82,10 +61,11 @@ export function createCardTokenElements(piles, countOf = pile => pile.count) {
   });
 }
 
-// One card face from the card template: the play cost over the top-left corner (the main costs, then
-// one smaller icon per resource used), the quick stat over the top-right corner, the art, the type
-// icon under it, the era and origin line, the name, the rules text, and the claim price over the
-// bottom-left corner. Every amount is drawn the same way: the resource's own icon, number on top.
+// One card face from the card template: the play cost over the top-left corner, the quick stat and a
+// building's hit points over the top-right corner, the art, the type icon under it, the era and origin
+// line, the name, the rules text, and the claim price over the bottom-left corner. Everything is drawn
+// as bare icons: an amount is its resource's icon with the number on top, and a resource needed or
+// used up without an amount is a smaller icon of its own.
 export function createCardFace(definition) {
   const faceElement = createElement("div", "card face");
   faceElement.dataset.definitionId = definition.id;
@@ -101,22 +81,30 @@ export function createCardFace(definition) {
   }
   faceElement.append(artElement);
 
-  if (definition.cost.length > 0 || definition.uses.length > 0) {
+  if (definition.cost.length > 0) {
     const costsElement = createElement("div", "card-costs");
-    costsElement.append(
-      ...definition.cost.map(({ amount, resource }) => createAmountIcon("card-cost", resource, amount)),
-      ...definition.uses.map(resource => createAmountIcon("card-use", resource)),
-    );
+    costsElement.append(...definition.cost.map(createEntryIcon));
     faceElement.append(costsElement);
   }
-  if (definition.stat !== null) {
-    faceElement.append(createAmountIcon("card-stat", definition.stat.resource, definition.stat.amount));
+  if (definition.stat !== null || definition.hp !== null) {
+    const cornerElement = createElement("div", "card-corner");
+    if (definition.stat !== null) {
+      const { amount, resource } = definition.stat;
+      cornerElement.append(createIcon("card-stat", resourceSymbol(resource), entryTitle(definition.stat), amount));
+    }
+    if (definition.hp !== null) {
+      cornerElement.append(createIcon("card-hp", HP_SYMBOL, `${definition.hp} HP`, definition.hp));
+    }
+    faceElement.append(cornerElement);
   }
 
   const typeName = definition.type.toLowerCase();
-  const hasTypeIcon = typeName === WONDER_TYPE || Object.hasOwn(TYPE_SYMBOLS, typeName);
+  const typeSymbol = typeName === STRATEGIC_RESOURCE_TYPE
+    ? resourceSymbol(definition.stat?.resource ?? definition.name)
+    : TYPE_SYMBOLS[typeName];
+  const hasTypeIcon = typeName === WONDER_TYPE || typeSymbol !== undefined;
   if (hasTypeIcon) {
-    const typeElement = createElement("div", "card-type", TYPE_SYMBOLS[typeName]);
+    const typeElement = createElement("div", "card-type", typeSymbol);
     typeElement.title = definition.type;
     if (typeName === WONDER_TYPE) {
       typeElement.append(...["top", "middle", "bottom"].map(level => createElement("div", `pyramid-bar ${level}`)));
@@ -130,33 +118,43 @@ export function createCardFace(definition) {
   const eraLine = [definition.era === "" ? "" : `Era ${definition.era}`, definition.origin].filter(Boolean).join(" · ");
   bodyElement.append(createElement("div", "card-era", eraLine), createElement("div", "card-name", definition.name));
   if (definition.text !== "") {
-    bodyElement.append(createElement("div", "card-text", definition.text));
+    bodyElement.append(createElement("div", "card-text", withResourceIcons(definition.text)));
   }
   faceElement.append(bodyElement);
 
   if (definition.claim.length > 0) {
     const claimElement = createElement("div", "card-claim");
     claimElement.title = "Claim price";
-    claimElement.append(...definition.claim.map(({ amount, resource }) => createAmountIcon("card-claim-amount", resource, amount)));
+    claimElement.append(...definition.claim.map(createEntryIcon));
     faceElement.append(claimElement);
   }
   return faceElement;
 }
 
-// A resource's own icon, with its amount written over it when it has one. A resource used up by a
-// card has no amount: each one used gets an icon of its own.
-function createAmountIcon(className, resource, amount) {
-  const iconElement = createElement("div", `card-amount ${className}`, resourceSymbol(resource));
-  iconElement.title = amount === undefined ? resource : `${amount} ${resource}`;
-  if (amount !== undefined) {
-    iconElement.append(createElement("span", "card-amount-number", String(amount)));
+// A cost or claim entry: an amount is its resource's icon with the number on top; a resource needed
+// or used up without an amount is a smaller icon of its own.
+function createEntryIcon(entry) {
+  const className = entry.amount === null ? "card-need" : "card-price";
+  return createIcon(className, resourceSymbol(entry.resource), entryTitle(entry), entry.amount);
+}
+
+function entryTitle({ amount, resource }) {
+  return amount === null ? resource : `${amount} ${resource}`;
+}
+
+// A bare icon, with `amount` written over it unless it is null.
+function createIcon(className, symbol, title, amount) {
+  const iconElement = createElement("div", `card-icon ${className}`, symbol);
+  iconElement.title = title;
+  if (amount !== null) {
+    iconElement.append(createElement("span", "card-icon-number", String(amount)));
   }
   return iconElement;
 }
 
-// A resource without a symbol of its own shows its first two letters, so a new name still reads.
-function resourceSymbol(resource) {
-  return RESOURCE_SYMBOLS[resource.toLowerCase()] ?? resource.slice(0, 2);
+// Rules text with each amount of a known resource shown as its icon: "+3 Production" reads "+3 ⚙️".
+function withResourceIcons(text) {
+  return text.replace(TEXT_AMOUNT_PATTERN, (match, amount, word) => isKnownResource(word) ? `${amount} ${resourceSymbol(word)}` : match);
 }
 
 export function createCardBack() {

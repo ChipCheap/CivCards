@@ -3,12 +3,14 @@
 // skip instead of failing, so a typo in one card never stops a game.
 
 import { MARKET_STARTS, PANEL_START, PLAYER_DECK_START } from "./core.js";
+import { isKnownResource } from "./resources.js";
 
 const CARD_COLUMNS = Object.freeze(["id", "name", "type", "era", "cost", "text", "art"]);
 // Columns a cards file may leave out; each is then empty on every card.
-const OPTIONAL_CARD_COLUMNS = Object.freeze(["origin", "uses", "stat", "claim"]);
-// One amount in a cost, stat or claim cell: a whole number and what it counts ("2 Production").
-const AMOUNT_PATTERN = /^(\d+)\s+(\S.*)$/;
+const OPTIONAL_CARD_COLUMNS = Object.freeze(["origin", "stat", "hp", "claim"]);
+// One entry in a cost, stat or claim cell: an amount of a resource ("2 Production"), or a resource
+// alone ("Timber") for one that is needed or used up rather than counted.
+const ENTRY_PATTERN = /^(?:(\d+)\s+)?(\S.*)$/;
 const STACK_COLUMNS = Object.freeze(["stack", "card", "count", "start"]);
 const VALID_STARTS = new Set([PLAYER_DECK_START, PANEL_START, ...MARKET_STARTS]);
 
@@ -56,18 +58,21 @@ function parseCards(text, problems) {
     }
     seenIds.add(id);
     const cells = Object.fromEntries(["cost", ...OPTIONAL_CARD_COLUMNS].map(column => [column, (row.values[column] ?? "").trim()]));
-    // A cell that can't be read is left empty and listed; the card itself still loads.
-    const readAmounts = column => {
-      const amounts = parseAmounts(cells[column]);
-      if (amounts === undefined) {
-        problems.push(`cards.csv row ${row.number}: ${column} "${cells[column]}" is not like "2 Production, 1 Culture"; left empty.`);
-        return [];
+    // A resource with no emoji yet is kept and listed, so a typo shows; the card itself still loads.
+    const readEntries = column => {
+      const entries = parseEntries(cells[column]);
+      for (const { resource } of entries.filter(entry => !isKnownResource(entry.resource))) {
+        problems.push(`cards.csv row ${row.number}: ${column} names "${resource}", which has no icon; its first letters are shown.`);
       }
-      return amounts;
+      return entries;
     };
-    const statAmounts = readAmounts("stat");
-    if (statAmounts.length > 1) {
-      problems.push(`cards.csv row ${row.number}: stat "${cells.stat}" has more than one amount; only the first is shown.`);
+    const statEntries = readEntries("stat");
+    if (statEntries.length > 1) {
+      problems.push(`cards.csv row ${row.number}: stat "${cells.stat}" has more than one entry; only the first is shown.`);
+    }
+    const hasValidHp = /^\d+$/.test(cells.hp);
+    if (cells.hp !== "" && !hasValidHp) {
+      problems.push(`cards.csv row ${row.number}: hp "${cells.hp}" is not a whole number; left empty.`);
     }
     cards.push({
       id,
@@ -75,10 +80,10 @@ function parseCards(text, problems) {
       type: row.values.type.trim(),
       era: row.values.era.trim(),
       origin: cells.origin,
-      cost: readAmounts("cost"),
-      uses: parseUses(cells.uses),
-      stat: statAmounts[0] ?? null,
-      claim: readAmounts("claim"),
+      cost: readEntries("cost"),
+      stat: statEntries[0] ?? null,
+      hp: hasValidHp ? Number(cells.hp) : null,
+      claim: readEntries("claim"),
       text: row.values.text.trim(),
       art: row.values.art.trim(),
     });
@@ -86,28 +91,13 @@ function parseCards(text, problems) {
   return cards;
 }
 
-// "10 Production, 4 Culture" → [{ amount: 10, resource: "Production" }, { amount: 4, resource: "Culture" }].
-// An empty cell gives no amounts; a part without a leading number makes the whole cell undefined.
-function parseAmounts(cellText) {
-  if (cellText === "") {
-    return [];
-  }
-  const amounts = cellText.split(",").map(part => AMOUNT_PATTERN.exec(part.trim()));
-  if (amounts.some(match => match === null)) {
-    return undefined;
-  }
-  return amounts.map(match => ({ amount: Number(match[1]), resource: match[2].trim() }));
-}
-
-// "Iron, 2 Powder" → ["Iron", "Powder", "Powder"]: one entry per resource used, a leading number repeating it.
-function parseUses(cellText) {
-  if (cellText === "") {
-    return [];
-  }
-  return cellText.split(",").flatMap(part => {
-    const match = AMOUNT_PATTERN.exec(part.trim());
-    return match === null ? [part.trim()] : Array(Number(match[1])).fill(match[2].trim());
-  }).filter(resource => resource !== "");
+// "10 Production, Stone" → [{ amount: 10, resource: "Production" }, { amount: null, resource: "Stone" }].
+// An empty cell gives no entries.
+function parseEntries(cellText) {
+  return cellText.split(",")
+    .map(part => ENTRY_PATTERN.exec(part.trim()))
+    .filter(match => match !== null)
+    .map(match => ({ amount: match[1] === undefined ? null : Number(match[1]), resource: match[2].trim() }));
 }
 
 function parseStacks(text, knownCardIds, problems) {

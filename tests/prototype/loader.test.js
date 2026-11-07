@@ -13,33 +13,36 @@ test("quoted cells keep separators, line breaks and doubled quotes", () => {
   assert.deepEqual(cards, [{
     id: "forge", name: "Forge", type: "Blueprint", era: "1", origin: "",
     cost: [{ amount: 2, resource: "Production" }, { amount: 1, resource: "Culture" }],
-    uses: [], stat: null, claim: [],
+    stat: null, hp: null, claim: [],
     text: "Defense 1\nSays \"hello\"", art: "forge.png",
   }]);
 });
 
-test("the optional columns give origin, used resources, a stat and a claim price", () => {
-  const cardsText = "id,name,type,era,origin,cost,uses,stat,claim,text,art\n"
-    + "knight,Knight,Unit,1,Made by Stables,2 Food,\"Iron, 2 Powder\",4 Attack,3 Production,,\n";
+test("the optional columns give origin, a stat, hit points and a claim price; a resource may stand without an amount", () => {
+  const cardsText = "id,name,type,era,origin,cost,stat,hp,claim,text,art\n"
+    + "knight,Knight,Unit,1,Made by Stables,\"2 Food, Iron, Powder\",4 Attack,2,\"8 Production, Stone\",,\n";
   const { cards, problems } = parseCardData(cardsText, STACKS_HEADER);
   assert.deepEqual(problems, []);
   assert.equal(cards[0].origin, "Made by Stables");
-  assert.deepEqual(cards[0].uses, ["Iron", "Powder", "Powder"]);
+  assert.deepEqual(cards[0].cost, [
+    { amount: 2, resource: "Food" }, { amount: null, resource: "Iron" }, { amount: null, resource: "Powder" },
+  ]);
   assert.deepEqual(cards[0].stat, { amount: 4, resource: "Attack" });
-  assert.deepEqual(cards[0].claim, [{ amount: 3, resource: "Production" }]);
+  assert.equal(cards[0].hp, 2);
+  assert.deepEqual(cards[0].claim, [{ amount: 8, resource: "Production" }, { amount: null, resource: "Stone" }]);
 });
 
-test("a cost, stat or claim that isn't an amount is left empty and listed, and the card still loads", () => {
-  const cardsText = "id,name,type,era,cost,stat,claim,text,art\n"
-    + "odd,Odd,,1,lots of Food,\"1 Attack, 2 Food\",free,,\n";
+test("unknown resources, extra stats and bad hit points are listed, and the card still loads", () => {
+  const cardsText = "id,name,type,era,cost,stat,hp,claim,text,art\n"
+    + "odd,Odd,,1,3 Gold,\"1 Attack, 2 Food\",lots,,,\n";
   const { cards, problems } = parseCardData(cardsText, STACKS_HEADER);
-  assert.deepEqual(cards[0].cost, []);
+  assert.deepEqual(cards[0].cost, [{ amount: 3, resource: "Gold" }]);
   assert.deepEqual(cards[0].stat, { amount: 1, resource: "Attack" });
-  assert.deepEqual(cards[0].claim, []);
+  assert.equal(cards[0].hp, null);
   assert.equal(problems.length, 3);
-  assert.match(problems[0], /^cards\.csv row 2: stat "1 Attack, 2 Food" has more than one amount/);
-  assert.match(problems[1], /^cards\.csv row 2: cost "lots of Food" is not like/);
-  assert.match(problems[2], /^cards\.csv row 2: claim "free" is not like/);
+  assert.match(problems[0], /^cards\.csv row 2: stat "1 Attack, 2 Food" has more than one entry/);
+  assert.match(problems[1], /^cards\.csv row 2: hp "lots" is not a whole number/);
+  assert.match(problems[2], /^cards\.csv row 2: cost names "Gold", which has no icon/);
 });
 
 test("a quote in the middle of an unquoted cell is kept as text and doesn't swallow later rows", () => {
@@ -58,7 +61,7 @@ test("Windows line endings and a byte-order mark are handled", () => {
 });
 
 test("semicolon-separated files, as German Excel saves them, are read too", () => {
-  const cardsText = "id;name;type;era;cost;text;art\nfarm;Farm;Building;1;1 card;\"Food; lots of it\";\n";
+  const cardsText = "id;name;type;era;cost;text;art\nfarm;Farm;Building;1;1 Food;\"Food; lots of it\";\n";
   const stacksText = "stack;card;count;start\nStarter deck;farm;3;player-deck\n";
   const { cards, stacks, problems } = parseCardData(cardsText, stacksText);
   assert.deepEqual(problems, []);

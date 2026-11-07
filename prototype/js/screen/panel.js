@@ -4,7 +4,7 @@
 // which finds token bags by data-token-icon, catalog cards by data-definition-id, panel stacks by
 // data-panel-stack and the trash by .trash-can.
 
-import { TOKEN_ICONS } from "../core.js";
+import { TOKEN_BAG_ICONS } from "../resources.js";
 import { createCardFace, createElement, createTokenElement } from "./render.js";
 
 const ALL_OPTION = "";
@@ -29,7 +29,7 @@ export function createPanel(panelElement, cards) {
   const trashElement = createElement("div", "trash-can", "Trash — drop cards here to remove them");
   // One bag per icon, each an endless supply of tokens.
   const tokenBagsElement = createElement("div", "token-bags");
-  tokenBagsElement.append(...TOKEN_ICONS.map(icon => {
+  tokenBagsElement.append(...TOKEN_BAG_ICONS.map(icon => {
     const bagElement = createTokenElement(icon, 1);
     bagElement.classList.add("token-bag");
     bagElement.dataset.tokenIcon = icon;
@@ -108,14 +108,14 @@ export function createPanel(panelElement, cards) {
 // "Workday\nAction Era 1 Starter\nStat 1 Production\nProduce 1 (trigger one building)."
 function searchableText(card) {
   const kind = [card.type, card.era === "" ? "" : `Era ${card.era}`, card.origin].filter(Boolean).join(" ");
-  const listAmounts = amounts => amounts.map(({ amount, resource }) => `${amount} ${resource}`).join(", ");
+  const listEntries = entries => entries.map(({ amount, resource }) => (amount === null ? resource : `${amount} ${resource}`)).join(", ");
   return [
     card.name,
     kind,
-    card.cost.length > 0 ? `Cost ${listAmounts(card.cost)}` : "",
-    card.uses.length > 0 ? `Uses ${card.uses.join(", ")}` : "",
-    card.stat !== null ? `Stat ${listAmounts([card.stat])}` : "",
-    card.claim.length > 0 ? `Claim ${listAmounts(card.claim)}` : "",
+    card.cost.length > 0 ? `Cost ${listEntries(card.cost)}` : "",
+    card.stat !== null ? `Stat ${listEntries([card.stat])}` : "",
+    card.hp !== null ? `HP ${card.hp}` : "",
+    card.claim.length > 0 ? `Claim ${listEntries(card.claim)}` : "",
     card.text,
   ].filter(Boolean).join("\n");
 }
