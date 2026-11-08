@@ -13,6 +13,7 @@ export const RESOURCES = Object.freeze({
   plant: { name: "Plant", symbol: "🌿" },
   rock: { name: "Rock", symbol: "🪨" },
   tool: { name: "Tool", symbol: "🔨" },
+  grain: { name: "Grain", symbol: "🌱" },
   timber: { name: "Timber", symbol: "🪵" },
   wool: { name: "Wool", symbol: "🧶" },
   cloth: { name: "Cloth", symbol: "🧵" },

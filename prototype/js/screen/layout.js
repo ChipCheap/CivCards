@@ -5,7 +5,7 @@
 
 import {
   BUILDING_SLOTS_PER_SEAT, DISPLAY_SLOTS_PER_MARKET, MARKET_STARTS, buildingSlotId, deckSlotId, discardSlotId, displaySlotId,
-  mainBuildingSlotId, supplySlotId,
+  mainBuildingSlotId, starterBuildingSlotId, supplySlotId,
 } from "../core.js";
 
 export const CARD_WIDTH = 100;
@@ -19,7 +19,7 @@ const GAP = 20;
 const EDGE = 40;
 const LABEL_HEIGHT = 30;
 const PRIVATE_ZONE_COLUMNS = 10;
-// Three rows of building slots and the main building's row below them.
+// Three rows of building slots, and below them the main and starter buildings side by side.
 const PRIVATE_ZONE_ROWS = 4;
 const BUILDING_COLUMNS = 4;
 const SEAT_SIDES = 2;
@@ -75,8 +75,12 @@ for (let seat = 0; seat < SEAT_SIDES; seat++) {
     });
   }
   SLOTS.set(mainBuildingSlotId(seat), {
-    rectangle: sideRectangle(bottomBuildingRectangle(RING_NAMES.length, (BUILDING_COLUMNS - 1) / 2), seat),
+    rectangle: sideRectangle(bottomBuildingRectangle(RING_NAMES.length, BUILDING_COLUMNS / 2 - 1), seat),
     label: "Main building",
+  });
+  SLOTS.set(starterBuildingSlotId(seat), {
+    rectangle: sideRectangle(bottomBuildingRectangle(RING_NAMES.length, BUILDING_COLUMNS / 2), seat),
+    label: "Starter building",
   });
 }
 MARKET_STARTS.forEach((market, marketIndex) => {
@@ -138,8 +142,8 @@ export function cardTokenRectangle(pileIndex, pileCount) {
   return { x: centreX - TOKEN_SIZE / 2, y: CARD_TOKEN_ROW_CENTRE_Y - TOKEN_SIZE / 2, width: TOKEN_SIZE, height: TOKEN_SIZE };
 }
 
-// A building slot on seat 0's side: the outskirts in the top row, the main building in the bottom one.
-// `column` may be fractional, to centre a slot between two columns.
+// A building slot on seat 0's side: the outskirts in the top row, the main and starter buildings in
+// the bottom one.
 function bottomBuildingRectangle(row, column) {
   return {
     x: BOTTOM_PRIVATE_ZONE.x + GAP + column * (CARD_WIDTH + GAP),

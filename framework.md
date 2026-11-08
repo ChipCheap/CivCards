@@ -127,6 +127,7 @@ There are four shared stacks. Each stack shows cards face-up, and a claimed card
 ### Civilizations
 - **Asymmetric starts:** each civilization has different starter cards and a different focus. Scouting gives real strategic information.
 - **Starting towns:** each player also picks a starting town, separately from their civilization: a small established town with 1–2 buildings already built, sometimes with terrain that shapes the row (a river that blocks slots). The civilization's own bonus comes on top.
+- **Starter building:** each player also drafts one starter building next to the main building. It makes one good when a Produce card triggers it, and no two players start with the same good, though other buildings make it too. It can be raided like any building.
 - **Nations:** in the prototype, the civilizations are European nations, since era 1 is Europe only.
 
 ### AI

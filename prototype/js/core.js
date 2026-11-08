@@ -10,7 +10,8 @@ export const MARKET_STARTS = Object.freeze(["market-resources", "market-tech", "
 
 export const DISPLAY_SLOTS_PER_MARKET = 3;
 // The building row of `CoreLoop.framework.md`: slots 1–4 are the centre, 5–8 the town, 9–12 the
-// outskirts. The main building, the starting town's, has a slot of its own.
+// outskirts. Below them sit the starting town's main building and the drafted starter building,
+// each in a slot of its own.
 export const BUILDING_SLOTS_PER_SEAT = 12;
 
 export function deckSlotId(seat) {
@@ -27,6 +28,10 @@ export function buildingSlotId(seat, slotNumber) {
 
 export function mainBuildingSlotId(seat) {
   return `seat${seat}-main-building`;
+}
+
+export function starterBuildingSlotId(seat) {
+  return `seat${seat}-starter-building`;
 }
 
 export function supplySlotId(market) {
@@ -64,7 +69,7 @@ export function createTable(cardDefinitions, stackDefinitions, seatCount, random
     for (let slotNumber = 1; slotNumber <= BUILDING_SLOTS_PER_SEAT; slotNumber++) {
       table.stacks.push(createSlotStack(buildingSlotId(seat, slotNumber), []));
     }
-    table.stacks.push(createSlotStack(mainBuildingSlotId(seat), []));
+    table.stacks.push(createSlotStack(mainBuildingSlotId(seat), []), createSlotStack(starterBuildingSlotId(seat), []));
   }
 
   for (const market of MARKET_STARTS) {

@@ -1,7 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
-  apply, buildingSlotId, createTable, deckSlotId, discardSlotId, displaySlotId, mainBuildingSlotId, supplySlotId,
+  apply, buildingSlotId, createTable, deckSlotId, discardSlotId, displaySlotId, mainBuildingSlotId, starterBuildingSlotId,
+  supplySlotId,
 } from "../../prototype/js/core.js";
 
 // A small seeded generator (mulberry32), so every test sees the same shuffles.
@@ -55,11 +56,11 @@ test("setup gives each seat its own shuffled, face-down deck and an empty discar
   assert.deepEqual(stackById(table, discardSlotId(1)).cards, []);
 });
 
-test("setup gives each seat 12 empty building slots and an empty main-building slot", () => {
+test("setup gives each seat 12 empty building slots and empty main and starter building slots", () => {
   const table = newTable();
   for (const seat of [0, 1]) {
     const buildingSlots = Array.from({ length: 12 }, (_, index) => stackById(table, buildingSlotId(seat, index + 1)));
-    buildingSlots.push(stackById(table, mainBuildingSlotId(seat)));
+    buildingSlots.push(stackById(table, mainBuildingSlotId(seat)), stackById(table, starterBuildingSlotId(seat)));
     assert.ok(buildingSlots.every(slot => slot.isSlot && slot.cards.length === 0));
   }
 });

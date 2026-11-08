@@ -5,6 +5,17 @@ Starter deck,militia,2,player-deck
 Starter deck,workday,1,player-deck
 Starter deck,study,1,player-deck
 Starter deck,levy,1,player-deck
+Starter buildings (draft),common-fields,1,panel
+Starter buildings (draft),common-woods,1,panel
+Starter buildings (draft),common-pasture,1,panel
+Starter buildings (draft),bog-iron-diggings,1,panel
+Town: Mill Town,river-mill,1,panel
+Town: Castle Town,stables,1,panel
+Town: Castle Town,bog-iron-pit,1,panel
+Town: Hanse Port,town-market-hall,1,panel
+Town: Cathedral City,cathedral-school,1,panel
+Town: Mining Town,bog-iron-pit,1,panel
+Town: Mining Town,smithy,1,panel
 Era 1 Resources,iron,1,market-resources
 Era 1 Resources,coal,1,market-resources
 Era 1 Resources,horses,1,market-resources

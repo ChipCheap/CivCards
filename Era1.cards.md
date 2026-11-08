@@ -133,6 +133,20 @@ their own laws and tax breaks.
 
 Five towns against four seats, so one can go if it doesn't play well.
 
+### Starter buildings (draft)
+
+After picking towns, the players take turns choosing one starter building each, beside the main
+building. Each makes one good when a Produce card triggers it, so the starter deck's Workday always has
+a target. No two players start with the same good, but other buildings make it too, so it is a head
+start, not a monopoly. It can be raided like any building.
+
+| Card | HP | Effect | In history |
+|---|---|---|---|
+| Common Fields | 1 | Produce: +2 Grain. | The village's shared arable land, farmed in strips by every household under common rules. |
+| Common Woods | 1 | Produce: +2 Timber. | Woodland where villagers held rights to gather firewood and cut building timber. |
+| Common Pasture | 1 | Produce: +2 Wool. | Shared grazing on which every household could keep a set number of sheep. |
+| Bog-Iron Diggings | 1 | Produce: +1 Iron. | Lumps of iron ore dug by hand from the local marsh and smelted in the village. |
+
 ## Nations *(new, for review)*
 
 In the prototype the civilizations are European nations (`framework.md`: "in the prototype, the
