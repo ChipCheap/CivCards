@@ -22,11 +22,11 @@ that isn't a whole number is listed the same way; its card still loads.
 | `hp` | Optional. A building's or Wonder's hit points, a whole number, drawn as a wall under the stat. |
 | `claim` | Optional. The market price, bottom left, written like `cost` (for example `4 Production` or `8 Production, Stone`). A Wonder's price, and any strategic resource it needs, go here. |
 | `text` | The rules text. Line breaks inside a cell are kept. An amount of a resource, like `+3 Production`, is shown with its icon. |
+| `art` | A picture's file name in `art/` (for example `forge.png`). Leave empty for no picture; a missing file just leaves the picture out. |
 
 Resource names are the ones in `js/resources.js` (Production, Food, Knowledge, Culture, Coin, Attack,
-Military, Cards, Plant, Rock, Tool, Timber, Wool, Cloth, Iron, Powder, Horses, Stone, Coal, Salt).
+Military, Cards, Plant, Rock, Tool, Grain, Timber, Wool, Cloth, Iron, Powder, Horses, Stone, Coal, Salt).
 A name not on that list shows its first two letters and is listed when the table starts.
-| `art` | A picture's file name in `art/` (for example `forge.png`). Leave empty for no picture; a missing file just leaves the picture out. |
 
 ## `stacks.csv` — one row per card in a ready-made stack
 
