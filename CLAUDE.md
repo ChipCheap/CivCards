@@ -121,4 +121,9 @@ live in `.claude/skills/`.
 - **Always quote the rule you cite** — see `## Working Rules` above. Repeated here only because this
   skill cites identifiers heavily.
 
+### Card brainstorm
+
+- **Always quote the rule you cite** — see `## Working Rules` above. Effects are checked against the
+  frameworks constantly, so this skill cites them often.
+
 ### Implementer
