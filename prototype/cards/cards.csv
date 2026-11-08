@@ -24,13 +24,13 @@ granary,Granary,Blueprint,1,,2 Production,,1,1 Cards,Keeps 2 Food between turns.
 barracks,Barracks,Blueprint,1,,3 Production,1 Attack,2,1 Cards,Defense 2,
 market-hall,Market Hall,Blueprint,1,,4 Production,,1,2 Cards,Draw 1 extra card each turn.,
 harbor,Harbor,Blueprint,1,,"4 Production, Timber",,2,2 Cards,Each turn: +1 Food and +1 Knowledge.,
-cathedral,Cathedral,Wonder,1,,,,5,8 Production,"Worth 4 points.
+cathedral,Cathedral,Wonder,1,,,,5,"8 Production, 4 Culture","Worth 4 points.
 Your population grows by 1.",
-great-library,Great Library,Wonder,1,,,,4,8 Knowledge,Worth 4 points. Each turn: +2 Knowledge.,
-royal-palace,Royal Palace,Wonder,1,,,,5,10 Production,Worth 6 points.,
-observatory,Observatory,Wonder,1,,,,3,"6 Production, 4 Knowledge",Worth 3 points. Modernization moves +1 each turn.,
-grand-canal,Grand Canal,Wonder,1,,,,4,9 Production,Worth 4 points. Each turn: +2 Food.,
-citadel,Citadel,Wonder,1,,,,6,"8 Production, Stone","Worth 3 points.
+great-library,Great Library,Wonder,1,,,,4,"8 Knowledge, 3 Culture",Worth 4 points. Each turn: +2 Knowledge.,
+royal-palace,Royal Palace,Wonder,1,,,,5,"10 Production, 4 Culture",Worth 6 points.,
+observatory,Observatory,Wonder,1,,,,3,"6 Production, 4 Knowledge, 3 Culture",Worth 3 points. Modernization moves +1 each turn.,
+grand-canal,Grand Canal,Wonder,1,,,,4,"9 Production, 3 Culture",Worth 4 points. Each turn: +2 Food.,
+citadel,Citadel,Wonder,1,,,,6,"8 Production, 3 Culture, Stone","Worth 3 points.
 Defense 5",
 steam-engine,Steam Engine,Technology,2,,,,,"5 Knowledge, Coal",Your Industry buildings produce +1 Production.,
 railway,Railway,Technology,2,,,,,6 Knowledge,Waves you send arrive 1 turn sooner.,
